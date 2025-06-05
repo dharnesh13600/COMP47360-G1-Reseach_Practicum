@@ -13,22 +13,23 @@ git checkout frontend 			# or backend, data-analytics
 git pull origin frontend		# sync with the latest resource
 git checkout -b feature/FE-login-UI	# use feature as prefix 
 ```
-## Push your branch:
+2.	Push your branch:
 ```bash
 git push -u origin feature/FE-login-UI
 ```
-## Open a Pull Request (PR):
-Base Branch: your team branch (frontend, backend or data-analytics)
-Title Format:
-```bash
+## 🧷 Open a Pull Request (PR):
+**Base Branch:** your team branch (frontend, backend or data-analytics)
+**Title Format:**
+```text
 feature(frontend): add login UI
-## Pull Request Review and Approval
-Code owners are auto-requested for review via .github/CODEOWNERS
+```
+## ✅ Pull Request Review and Approval
+Code owners are auto-requested for review via `.github/CODEOWNERS`
 Ensure your code is as expected
 Address feedback and wait for approval before merging
-## Merging Workflow (Feature -> Team Branch -> Main)
+## 🔁 Merging Workflow (Feature -> Team Branch -> Main)
 A.	Merging feature branch into team branch
-Once PR is approved:
+**Once PR is approved:**
 ```bash
 git checkout frontend                      # or backend, data-analytics
 git pull origin frontend                   	 # make sure it’s up-to-date
@@ -36,14 +37,10 @@ git merge feature/123-login-ui      # merge the feature branch
 git push origin frontend                  # push updated branch
 ```
 B.	Merging Team Branch into main (Production)
-Base Branch: main
-Compare:  your team branch (frontend, backend, data-analytics)
-Title:
-```bash
+**Base Branch:** main
+**Compare:**  your team branch (frontend, backend, data-analytics)
+**Title:**
+```text
 Merge(frontend): UI updates
-	```
-Merge the PR.
-
-
-
-
+```
+### ✅ Merge the PR.
