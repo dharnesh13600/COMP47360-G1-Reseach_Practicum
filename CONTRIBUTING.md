@@ -32,9 +32,9 @@ A.	Merging feature branch into team branch
 **Once PR is approved:**
 ```bash
 git checkout frontend                      # or backend, data-analytics
-git pull origin frontend                   	 # make sure it’s up-to-date
-git merge feature/123-login-ui      # merge the feature branch
-git push origin frontend                  # push updated branch
+git pull origin frontend                   # make sure it’s up-to-date
+git merge feature/123-login-ui             # merge the feature branch
+git push origin frontend                   # push updated branch
 ```
 B.	Merging Team Branch into main (Production)
 **Base Branch:** main
