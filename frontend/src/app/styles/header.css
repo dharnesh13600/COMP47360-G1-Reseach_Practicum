@@ -1,0 +1,43 @@
+.header {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+  width: 100%;
+  height:90px;
+  /* overflow: hidden; */
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+}
+
+.header-area svg {
+  width: 100%;
+  height: 100%;
+  border-bottom:solid var(--surface-1);
+  display:block;
+  overflow: hidden;
+}
+
+/* NAVIGATION STYLES */
+.navigation-wrapper{
+  justify-content: space-between;
+}
+.navigation-list{
+  gap:3rem;
+  position: absolute;
+  top:45px;
+  right:350px;
+}
+.logo-div{
+  position:absolute;
+  top:5px;
+  left:200px;
+  width:251px;
+  height:111px;
+}
+.logo{
+  z-index:100;
+  width:100%;
+  height:100%;
+}
