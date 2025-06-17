@@ -1,0 +1,45 @@
+
+#map-container{
+  height: 100vh;
+  width: 100%;
+  position:relative;
+  z-index:-1;
+}
+
+.map-info-card{
+  background-color: var(--background);
+  height:470px;
+  width:270px;
+  border-radius: 30px;
+  position:absolute;
+  top:200px;
+  left:80px;
+  z-index:1;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  flex-direction: column;
+  padding-top:50px;
+  padding-inline:20px;
+ 
+}
+.map-info{
+  background-color: var(--on-surface-1);
+  height:100px;
+  border-radius: inherit;
+  width:100%;
+  overflow: hidden;
+}
+.activity hr.horizontal{
+  width:100%;
+}
+.reset-button {
+    position: absolute;
+    bottom: 50px;
+    z-index: 1;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+ 
+  
