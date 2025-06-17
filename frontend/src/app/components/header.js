@@ -6,6 +6,7 @@
 
 import '../globals.css';
 import  '../styles/header.css';
+import Image from 'next/image';
 export default function Header(){
 
 
@@ -17,7 +18,7 @@ export default function Header(){
             </svg>
             <div className='navigation-wrapper flex'>
                 <div className='logo-div'>
-                    <img className='logo' src="logo.png" alt="logo" />
+                    <Image className='logo' src="/logo.png" alt="logo" width={100} height={100} />
                 </div>
                 <div className='navigation-item-container '>
                     <ul className='navigation-list flex'>

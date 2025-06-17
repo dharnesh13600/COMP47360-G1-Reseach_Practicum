@@ -48,7 +48,7 @@ export default function Map(){
     return () => {
       mapRef.current.remove()
     }
-  }, [])
+  }, [center, zoom])
 
   if (!useMapbox) {
     return (
@@ -69,7 +69,7 @@ export default function Map(){
 }
     return (
         <>
-          //defining reset button to adjust the map coordinates to its original state when clicked
+          {/* defining reset button to adjust the map coordinates to its original state when clicked */}
             <button className='reset-button' onClick={handleButtonClick}>
                 Reset
             </button>
