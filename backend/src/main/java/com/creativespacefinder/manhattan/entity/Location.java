@@ -3,6 +3,7 @@ package com.creativespacefinder.manhattan.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.locationtech.jts.geom.Point;
+
 import java.util.UUID;
 
 

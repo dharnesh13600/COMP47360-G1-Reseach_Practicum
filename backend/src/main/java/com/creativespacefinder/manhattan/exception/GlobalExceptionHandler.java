@@ -5,7 +5,9 @@ package com.creativespacefinder.manhattan.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -15,6 +17,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_GATEWAY)
                 .body(new ErrorResponse("API_ERROR", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("VALIDATION_ERROR", message));
     }
 
     @ExceptionHandler(Exception.class)
@@ -33,7 +43,12 @@ public class GlobalExceptionHandler {
             this.message = message;
         }
 
-        public String getError() { return error; }
-        public String getMessage() { return message; }
+        public String getError() {
+            return error;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }
