@@ -9,6 +9,6 @@ public class HomeController {
     // Where the root is inputted in the domain mapping, return index.html to the web page
     @RequestMapping("/")
     public String index(){
-        return "index.html";
+        return "index";
     }
 }
