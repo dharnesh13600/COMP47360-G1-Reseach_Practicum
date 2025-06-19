@@ -3,7 +3,7 @@
 // https://codepen.io/pen
 // https://www.nan.fyi/svg-paths/cubic-curves
 
-
+// demo
 import '../globals.css';
 import  '../styles/header.css';
 import Image from 'next/image';
