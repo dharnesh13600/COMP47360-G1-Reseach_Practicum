@@ -5,7 +5,7 @@ export default function Page(){
         <>
                <div className='hero-body flex'>
                 <div>
-                    <Image className='hero-image' src='/statue_of_liberty.jpg' width={400} height={400}/>
+                    <Image className='hero-image' src='/statue_of_liberty.jpg' alt='description' width={400} height={400}/>
                 </div>
                 <div className='hero-content'>
                     <h2>Welcome to Manhattan Muse! <br></br>
