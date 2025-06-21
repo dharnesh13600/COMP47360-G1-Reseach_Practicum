@@ -22,13 +22,13 @@ export default function Header(){
             </div>
             <div className='navigation-wrapper'>
                           <div className='logo-div-map'>
-                    <img className='logoMap' src='manhattan-muse-map.png'></img>
+                    <img className='logoMap' src='manhattan-muse-map.png' alt="description"></img>
                 </div>
                 <div className='logo-div-desktop'>
                     <img className='logo' src="manhattan-muse-home.png" alt="logo" />
                 </div>
                 <div className='logo-div-mobile'>
-                    <img className='logoMobile'src='logo-mobile.png'></img>
+                    <img className='logoMobile'src='logo-mobile.png' alt="description"></img>
                 </div>
       
                 <div className='navigation-item-container '>
@@ -41,7 +41,7 @@ export default function Header(){
 
                 </div>
                 <div className='menuIcon'>
-                    <img src='MenuButton.png'>
+                    <img src='MenuButton.png' alt="description">
                     </img>
                 </div>
             </div>

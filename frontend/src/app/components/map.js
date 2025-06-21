@@ -64,7 +64,7 @@ export default function Map(){
     };
 
   
-  }, [])
+  }, [center, zoom])
 
   if (!useMapbox) {
     return (
