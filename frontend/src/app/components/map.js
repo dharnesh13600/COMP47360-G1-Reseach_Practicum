@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import {useRef,useEffect,useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+
 import '../globals.css';
 
 
@@ -34,21 +35,36 @@ export default function Map(){
     
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
+      style:process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL,
       center: center,
       zoom: zoom,
     });
 
     mapRef.current.on('move', () => {
-      const mapCenter = mapRef.current.getCenter()
-      const mapZoom = mapRef.current.getZoom()
+      const mapCenter = mapRef.current.getCenter();
+      const mapZoom = mapRef.current.getZoom();
 
-      setCenter([ mapCenter.lng, mapCenter.lat ])
-      setZoom(mapZoom)
-    })
-    return () => {
-      mapRef.current.remove()
-    }
-  }, [center, zoom])
+       const newCenter = [mapCenter.lng, mapCenter.lat];
+  const newZoom = mapZoom;
+
+        if (
+    newCenter[0] !== center[0] ||
+    newCenter[1] !== center[1] ||
+    newZoom !== zoom
+  ) {
+    setCenter(newCenter);
+    setZoom(newZoom);
+  }
+})
+     return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null; 
+      }
+    };
+
+  
+  }, [])
 
   if (!useMapbox) {
     return (
@@ -67,24 +83,31 @@ export default function Map(){
     zoom: INITIAL_ZOOM
   })
 }
+
+      console.log("Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
     return (
         <>
-          {/* defining reset button to adjust the map coordinates to its original state when clicked */}
+          {/* //defining reset button to adjust the map coordinates to its original state when clicked */}
             <button className='reset-button' onClick={handleButtonClick}>
                 Reset
             </button>
             <div id='map-container' ref={mapContainerRef}>
-               <div className="map-info-card flex">
-                  <div className='map-info activity'>
-                  <hr />
-                  <div className='activity-container flex'>
-                  </div>
-                  </div>
-                  <div className='map-info time'>
-                  <hr></hr>
-                  </div>
-               </div>
+             
             </div>
         </>
     )
 }
+
+
+
+
+
+
+
+
+
+  
+
+
+
+   
