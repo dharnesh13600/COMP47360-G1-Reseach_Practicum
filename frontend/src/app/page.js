@@ -1,11 +1,11 @@
 import Button from './components/button.js';
-
+import Image from 'next/image';
 export default function Page(){
     return (
         <>
                <div className='hero-body flex'>
                 <div>
-                    <img className='hero-image' src='statue_of_liberty.jpg'></img>
+                    <Image className='hero-image' src='/statue_of_liberty.jpg' width={400} height={400}/>
                 </div>
                 <div className='hero-content'>
                     <h2>Welcome to Manhattan Muse! <br></br>

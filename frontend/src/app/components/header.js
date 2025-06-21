@@ -9,6 +9,7 @@ import '../globals.css';
 import Button from '../components/button';
 import Link from 'next/link';
 import '../styles/header.css';
+import Image from 'next/image';
 
 
 export default function Header(){
@@ -22,13 +23,16 @@ export default function Header(){
             </div>
             <div className='navigation-wrapper'>
                           <div className='logo-div-map'>
-                    <img className='logoMap' src='manhattan-muse-map.png' alt="description"></img>
+                    <Image className='logoMap' src='/manhattan-muse-map.png' alt="description"  width={340}              
+            height={120}/>
                 </div>
                 <div className='logo-div-desktop'>
-                    <img className='logo' src="manhattan-muse-home.png" alt="logo" />
+                    <Image className='logo' src="/manhattan-muse-home.png" alt="logo"   width={330}
+            height={150} />
                 </div>
                 <div className='logo-div-mobile'>
-                    <img className='logoMobile'src='logo-mobile.png' alt="description"></img>
+                    <Image className='logoMobile'src='/logo-mobile.png' alt="description"   width={50}
+            height={80}/>
                 </div>
       
                 <div className='navigation-item-container '>
@@ -41,8 +45,8 @@ export default function Header(){
 
                 </div>
                 <div className='menuIcon'>
-                    <img src='MenuButton.png' alt="description">
-                    </img>
+                    <Image src='/MenuButton.png' alt="description" width={24}
+            height={24} />
                 </div>
             </div>
          
