@@ -1,9 +1,8 @@
 import '../styles/about.css';
-import '../styles/header.css';
 import '../globals.css';
 import Link from 'next/link';
 import Image from'next/image';
-
+import Button from './button.js';
 const teams = [
   {
     name: "Front-End Team",
@@ -22,41 +21,6 @@ const teams = [
 export default function About(){
     return(
         <>
-            <div className='hero'>
-            <div className='header'>
-            </div>
-            <div className='navigation-wrapper flex'>
-                <div className='logo-div-desktop'>
-                    <img className='logo' src="manhattan-muse-home.png" alt="logo" />
-                </div>
-                <div className='logo-div-mobile'>
-                    <img className='logoMobile'src='logo-mobile.png'></img>
-                </div>
-                <div className='navigation-item-container '>
-                    <ul className='navigation-list flex'>
-                        {/* 
-                        <li><a className='navigation-item' href='#'>Home</a></li>
-                        <li><a className='navigation-item' href='#'>Map</a></li>
-                        <li><a className='navigation-item' href='#'>About</a></li>
-                        
-                        <li>
-                            <Link className="navigation-item" href="#">Home</Link>
-                        </li>
-                        <li>
-                            <Link className='navigation-item' href='#'>Map</Link>
-                        </li>
-                        <li>
-                            <Link className='navigation-item' href='#'>About</Link>
-                        </li>            
-                        */}      
-                    </ul>
-                </div>
-                <div className='menuIcon'>
-                    <img src='MenuButton.png'>
-                    </img>
-                </div>
-            </div>
-            </div>
             <div className='container'>
                 <aside className='split-left'>
                     <div className='photo-name'>
@@ -70,12 +34,12 @@ export default function About(){
                         ))}
                     </div>
                     <div className='team-photo'>
-                        <Image src='about-pic-diviyya.png'/>
-                        <Image src='about-pic-phirada.png'/>
-                        <Image src='about-pic-rahul.png'/>
-                        <Image src='about-pic-jaxton.png'/>
-                        <Image src='about-pic-mark.png'/>
-                        <Image src='about-pic-darnesh.png'/>
+                        <Image className='photo' src='/about-pic-diviyya.png' alt='d' width={150} height={150}/>
+                        <Image className='photo' src='/about-pic-phirada.png' alt='phi' width={150} height={150}/>
+                        <Image className='photo' src='/about-pic-rahul.png' alt='ra' width={150} height={150}/>
+                        <Image className='photo' src='/about-pic-jaxton.png' alt='j' width={150} height={150}/>
+                        <Image className='photo' src='/about-pic-mark.png' alt='m' width={150} height={150}/>
+                        <Image className='photo' src='/about-pic-darnesh.png' alt='dar' width={150} height={150}/>
                     </div>
                 </aside>
                 <aside className='split-right'>
@@ -95,13 +59,7 @@ export default function About(){
                         Ready to create something amazing? Try the map or follow us for new 
                         inspiration and spot to pick! 
                     </p>
-                    <div className='map-button'>
-                        {/* 
-                        <Link href="/map">
-                        <button className='button-style'>Go To Map</button>
-                        </Link>
-                        */}  
-                    </div>
+                    <Button/>
                 </aside>
             </div>
         </>
