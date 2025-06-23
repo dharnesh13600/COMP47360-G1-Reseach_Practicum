@@ -1,10 +1,12 @@
 import '../styles/button.css';
+import Link from 'next/link';
+
 export default function Button(){
     return(
     <>
-    {/* Insert Button code below  */}
-        <button>
-        </button>
+    <div className='map-button'>
+        <Link className='button-style' href="/map">Go To Map</Link>
+    </div>
     </>
     );
 }
