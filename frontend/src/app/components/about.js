@@ -2,6 +2,7 @@ import '../styles/about.css';
 import '../styles/header.css';
 import '../globals.css';
 import Link from 'next/link';
+import Image from'next/image';
 
 const teams = [
   {
@@ -37,7 +38,7 @@ export default function About(){
                         <li><a className='navigation-item' href='#'>Home</a></li>
                         <li><a className='navigation-item' href='#'>Map</a></li>
                         <li><a className='navigation-item' href='#'>About</a></li>
-                        */}
+                        
                         <li>
                             <Link className="navigation-item" href="#">Home</Link>
                         </li>
@@ -46,7 +47,8 @@ export default function About(){
                         </li>
                         <li>
                             <Link className='navigation-item' href='#'>About</Link>
-                        </li>                  
+                        </li>            
+                        */}      
                     </ul>
                 </div>
                 <div className='menuIcon'>
@@ -68,18 +70,18 @@ export default function About(){
                         ))}
                     </div>
                     <div className='team-photo'>
-                        <img src='about-pic-diviyya.png'></img>
-                        <img src='about-pic-phirada.png'></img>
-                        <img src='about-pic-rahul.png'></img>
-                        <img src='about-pic-jaxton.png'></img>
-                        <img src='about-pic-mark.png'></img>
-                        <img src='about-pic-darnesh.png'></img>
+                        <Image src='about-pic-diviyya.png'/>
+                        <Image src='about-pic-phirada.png'/>
+                        <Image src='about-pic-rahul.png'/>
+                        <Image src='about-pic-jaxton.png'/>
+                        <Image src='about-pic-mark.png'/>
+                        <Image src='about-pic-darnesh.png'/>
                     </div>
                 </aside>
                 <aside className='split-right'>
                     <p className='about-heading'> Meet the Muse Makers</p>
                     <p className='about-text'> 
-                        We’re a small team of artists, technologists, and coders—united by a love 
+                        We&#39;re a small team of artists, technologists, and coders—united by a love 
                         for NYC and the people who bring it to life. <br></br>
                         <br></br>
                         With Manhattan Muse, our mission is to empower artists, performers, and 
@@ -94,9 +96,11 @@ export default function About(){
                         inspiration and spot to pick! 
                     </p>
                     <div className='map-button'>
+                        {/* 
                         <Link href="/map">
                         <button className='button-style'>Go To Map</button>
                         </Link>
+                        */}  
                     </div>
                 </aside>
             </div>

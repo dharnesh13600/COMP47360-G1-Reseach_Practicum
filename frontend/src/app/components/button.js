@@ -4,7 +4,6 @@ export default function Button(){
     <>
     {/* Insert Button code below  */}
         <button>
-            <a>Go to Map</a>
         </button>
     </>
     );
