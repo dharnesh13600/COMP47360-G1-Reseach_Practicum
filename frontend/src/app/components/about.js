@@ -44,20 +44,20 @@ export default function About(){
                 </aside>
                 <aside className='split-right'>
                     <p className='about-heading'> Meet the Muse Makers</p>
-                    <p className='about-text'> 
-                        We&#39;re a small team of artists, technologists, and coders—united by a love 
-                        for NYC and the people who bring it to life. <br></br>
-                        <br></br>
-                        With Manhattan Muse, our mission is to empower artists, performers, and 
-                        creators by helping them find the perfect places in New York City to express 
-                        their craft—intuitively, creatively, and confidently. <br></br>
-                        <br></br>
-                        Using real-time data like crowd density, event history and weather, our 
-                        interactive map helps you choose the right location at the right time. 
-                        Just set your preferences, and we'll do the rest. <br></br>
-                        <br></br>
-                        Ready to create something amazing? Try the map or follow us for new 
-                        inspiration and spot to pick! 
+                    <p className="about-text">
+                      We&#39;re a small team of artists, technologists, and coders—united by a love 
+                      for NYC and the people who bring it to life. <br />
+                      <br />
+                      With Manhattan Muse, our mission is to empower artists, performers, and 
+                      creators by helping them find the perfect places in New York City to express 
+                      their craft—intuitively, creatively, and confidently. <br />
+                      <br />
+                      Using real-time data like crowd density, event history and weather, our 
+                      interactive map helps you choose the right location at the right time. 
+                      Just set your preferences, and we&#39;ll do the rest. <br />
+                      <br />
+                      Ready to create something amazing? Try the map or follow us for new 
+                      inspiration and spot to pick!
                     </p>
                     <Button/>
                 </aside>
