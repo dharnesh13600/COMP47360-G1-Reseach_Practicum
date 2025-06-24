@@ -1,9 +1,11 @@
 package com.creativespacefinder.manhattan.controller;
 
-import com.creativespacefinder.manhattan.model.ForecastResponse;
+import com.creativespacefinder.manhattan.dto.ForecastResponse;
 import com.creativespacefinder.manhattan.service.WeatherForecastService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/forecast")
@@ -18,6 +20,6 @@ public class WeatherForecastController {
 
     @GetMapping
     public ForecastResponse getForecast() {
-        return forecastService.get48HourForecast();
+        return forecastService.get96HourForecast();
     }
 }

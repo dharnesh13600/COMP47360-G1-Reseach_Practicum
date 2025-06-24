@@ -1,0 +1,161 @@
+/* @import "tailwindcss"; */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root{
+    /* ------------COLORS-------------- */
+    --background:#FFFBF6;
+    --surface-1:#FFF2E5;
+    --on-surface-1:#177371;
+    --on-surface-2:#D57B0E;
+    --on-surface-low-contrast:#A2B9A7;
+    --subway-bg:#52767E;
+    --subway-icon-1:#288FE4;
+    --subway-icon-2:#DB7477;
+    --subway-icon-3:#C78750;
+    --subway-icon-4:#BC78B3;
+    --subway-icon-5:#1BAA5E;
+    --subway-icon-6:#FFE87E;
+    --subway-text-low-contrast:#DFDFDF;
+
+    /* --------Font Sizes-------- */
+    --fs-900: 9.375rem;
+    --fs-800: 6.25rem;
+    --fs-700: 3.5rem;
+    --fs-650: 2.5rem;
+    --fs-600: 2rem;
+    --fs-500: 1.75rem;
+    --fs-400: 1.125rem;
+    --fs-300: 1rem;
+    --fs-200: 0.875rem;
+    --fs-100:0.7rem;
+    --fs-75:0.5rem;
+    --fs-50:0.3rem;
+
+    /* ------------FONT FAMILIES------------- */
+    --ff-playfair-display:"Playfair Display", serif;
+    --ff-crimson-text:"Crimson Text", serif;
+    --ff-inter:"Inter", sans-serif;
+}
+
+.logo-font-family {
+  font-family: var(--ff-playfair-display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.headings-font-family {
+  font-family: var(--ff-crimson-text);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.fs-900 { 
+    font-size: var(--fs-900); 
+}
+.fs-800 { 
+    font-size: var(--fs-800); }
+.fs-700 { 
+    font-size: var(--fs-700); 
+}
+.fs-600 { 
+    font-size: var(--fs-600); 
+}
+.fs-500 { 
+    font-size: var(--fs-500); 
+}
+.fs-400 { 
+    font-size: var(--fs-400); 
+}
+.fs-300 { 
+    font-size: var(--fs-300); 
+}
+.fs-200 { 
+    font-size: var(--fs-200); 
+}
+.fs-100{
+    font-size: var(--fs-100);
+}
+.fs-75{
+    font-size: var(--fs-75);
+}
+.fs-50{
+    font-size: var(--fs-50);
+}
+.fs-900,
+.fs-800,
+.fs-700,
+.fs-600 {
+    line-height: 1.1;
+}
+
+.flex{
+    display: flex;
+    gap: var(--gap,1rem);
+}
+
+.grid {
+    display:grid;
+    gap:var(--gap,1rem);
+}
+.container{
+    padding-right:var(--padding-inline, 2rem); 
+    padding-left:var(--padding-inline, 2rem); 
+    max-width: 1280px;
+    margin-top:0;
+    margin-bottom:0;
+    margin-right:auto;
+    margin-left: auto;
+}
+.container__gap{
+    margin-top: 4rem;
+}
+
+/* ----Images---- */
+img,
+picture{
+    max-width: 100%;
+    display: block;
+}
+a,li{
+    color:inherit;
+    list-style: none;
+    text-decoration: none;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+img,
+i,
+ul,
+picture,
+figure {
+    margin:0;
+    padding:0;
+    user-select: none;
+}
+
+*::before,
+*::after{
+    box-sizing: border-box;
+    padding: 0;
+    margin:0;
+}
+body{
+    color: #141414;
+    z-index:1;
+    background-color:#fbfbfb; 
+   
+}
+html{
+    scroll-behavior: smooth;
+}

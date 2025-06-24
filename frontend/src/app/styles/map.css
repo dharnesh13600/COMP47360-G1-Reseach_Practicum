@@ -1,0 +1,100 @@
+
+#map-container{
+  height: 100vh;
+  width: 100%;
+  position:relative;
+z-index:0 !important;
+
+
+}
+.mapboxgl-canvas {
+  pointer-events: all !important;
+}
+
+.reset-button {
+    position: absolute;
+    bottom: 50px;
+    z-index: 1;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+ .navigation-wrapper {
+ display: flex;
+  padding-inline: 120px;
+  justify-content: space-between;
+  align-items: center;
+  height:126px;
+  gap:0rem;
+   background-image: url('/waveMap.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  /* z-index:2000; */
+}
+
+ .logo-div-mobile{
+  display:none;
+}
+ .logo{
+  display: none;
+}
+ .logo-div-map{
+  display:block;
+  /* border: 1px solid red; */
+  width:150px;
+  margin-left: 100px;
+  margin-top: 1px;
+   flex: 0 0 auto;
+}
+ .navigation-item-container{
+  padding-inline: 5rem;
+}
+ .navigation-list{
+  gap:4rem;
+  text-transform: uppercase;
+  color:var(--on-surface-1);
+  font-weight: 700;
+  font-family: var(--ff-inter);
+  margin-top: 5px;
+} .menuIcon{
+  display:none;
+}
+
+@media (max-width:425px) {
+  
+ .navigation-wrapper{
+
+  background-image: none;
+  background-color: var(--background);
+  max-width:100%;
+  height:100px;
+  padding-inline: 2rem;
+ }
+ .navigation-list{
+  display:none;
+
+}
+ .navigation-item-container,.logo-div-desktop,.logo{
+  display:none;
+} .logo-div-mobile{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  width:50px;
+  height:80px;
+} .logoMobile{
+ width:100%;
+} .menuIcon{
+  display:block;
+}
+}
+
+
+
+  

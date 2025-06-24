@@ -1,0 +1,16 @@
+.activityLetter {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5px;
+  font-weight: bold; 
+  font-size: 15px;
+ font-family:var(--ff-inter);
+}
+.activityLetter:nth-child(2){
+  color:var(--subway-bg);
+}

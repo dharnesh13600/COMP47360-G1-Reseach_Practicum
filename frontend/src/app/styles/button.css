@@ -1,0 +1,26 @@
+/* INSERT BUTTON CSS HERE */
+.button-style{
+    font-family: var(--ff-inter);
+    font-size: 22px;
+    font-weight: bold;
+    padding: 3% 6%;
+    border-radius: 40px;
+    text-decoration: none;
+    border: none;
+    color: var(--on-surface-1);
+    background-color: var(--surface-1);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.button-style:hover{
+    font-family: var(--ff-inter);
+    font-size: 22px;
+    font-weight: bold;
+    padding: 3% 6%;
+    border-radius: 40px;
+    text-decoration: none;
+    border: none;
+    color: var(--background);
+    background-color: var(--on-surface-low-contrast);
+}

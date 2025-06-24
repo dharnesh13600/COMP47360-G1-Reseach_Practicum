@@ -1,9 +1,13 @@
 package com.creativespacefinder.manhattan.controller;
 
 import com.creativespacefinder.manhattan.entity.Location;
+import com.creativespacefinder.manhattan.exception.ApiException;
 import com.creativespacefinder.manhattan.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -27,6 +31,12 @@ public class LocationController {
     // It will return the list of all locations in the database
     @GetMapping
     public List<Location> getAllLocations() {
-        return locationRepository.findAll();
+        List<Location> locations = locationRepository.findTop5(PageRequest.of(0, 5)); // Query means I get top 5 locations as the team wanted in our manhattan muse application
+
+        if (locations.isEmpty()) {
+            throw new ApiException("No locations found in the database.");
+        }
+
+        return locations;
     }
 }
