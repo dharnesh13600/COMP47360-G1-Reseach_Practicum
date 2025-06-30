@@ -18,9 +18,10 @@
   display:none;
 }
 .logo{
-  height:150px;
-  width:330px;
-  margin-top: 50px;
+  height:170px;
+  width:410px;
+  margin-top: 7vh;
+  margin-left: 8vh;
 }
 .logo-div-map{
   display:none;

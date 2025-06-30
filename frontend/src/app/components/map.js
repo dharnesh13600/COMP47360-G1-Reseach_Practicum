@@ -1,4 +1,5 @@
 // https://docs.mapbox.com/help/tutorials/use-mapbox-gl-js-with-react/?step=3
+
 'use client';
 
 import mapboxgl from 'mapbox-gl';
@@ -84,10 +85,11 @@ export default function Map(){
   })
 }
 
+
       console.log("Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
     return (
         <>
-          {/* //defining reset button to adjust the map coordinates to its original state when clicked */}
+          { /*defining reset button to adjust the map coordinates to its original state when clicked */}
             <button className='reset-button' onClick={handleButtonClick}>
                 Reset
             </button>
@@ -97,17 +99,3 @@ export default function Map(){
         </>
     )
 }
-
-
-
-
-
-
-
-
-
-  
-
-
-
-   
