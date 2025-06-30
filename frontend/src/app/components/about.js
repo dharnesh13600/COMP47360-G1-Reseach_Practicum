@@ -59,7 +59,9 @@ export default function About(){
                       Ready to create something amazing? Try the map or follow us for new 
                       inspiration and spot to pick!
                     </p>
-                    <Button/>
+                    <div className='map-button'>
+                      <Button/>
+                    </div>
                 </aside>
             </div>
         </>
