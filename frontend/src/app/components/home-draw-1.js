@@ -1,12 +1,14 @@
 import '../styles/home-draw-1.css';
 import '../globals.css';
-import Link from 'next/link';
-import Image from'next/image';
-import Button from './button.js';
 
 export default function Draw01(){
     return(
         <>
+        <div className='draw'>
+
+            <svg height="400" width="450"></svg>
+            <path id="lineAB" d="M 100 350 l 150 -300" stroke="red" strokeWidth="4"/>
+        </div>
         </>
     );
 }
