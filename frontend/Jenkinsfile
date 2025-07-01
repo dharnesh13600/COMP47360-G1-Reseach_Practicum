@@ -1,0 +1,103 @@
+pipeline {
+  agent any
+
+  environment {
+    GCR_PROJECT     = "abstract-tract-383807"
+    IMAGE_TAG       = "${BRANCH_NAME}-${BUILD_ID}"
+    // Credentials
+    GCR_CREDS       = 'gcr-credentials'
+    GCP_SA_KEY      = 'gcp-sa-key'
+
+    PROJECT_ID      = "${GCR_PROJECT}"
+    CLUSTER_NAME    = "manhattan-cluster"
+    LOCATION        = "europe-west2-a"
+    GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCR_PROJECT}.iam.gserviceaccount.com"
+  }
+
+//   triggers { pollSCM('H/5 * * * *') }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Install & Lint') {
+      steps {
+        dir('frontend') {
+          sh 'npm ci'
+          sh 'npm run lint'
+        }
+      }
+    }
+
+    stage('Unit Tests') {
+      steps {
+        dir('frontend') {
+          sh 'npm test'
+        }
+      }
+    }
+
+    stage('Build & Export') {
+      steps {
+        dir('frontend') {
+          sh 'npm run build'
+          sh 'npm run export'
+        }
+      }
+    }
+
+    stage('Docker Build & Push') {
+      steps {
+        withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
+          sh '''
+            chmod +x gcp_docker.sh
+
+            export PROJECT_ID=${GCR_PROJECT}
+            export GCP_KEYFILE=${GCP_KEYFILE}
+            export REGION=europe-west2
+            export REPOSITORY=my-artifact-repo
+            export SERVICE=frontend
+            export IMAGE_TAG=${IMAGE_TAG}
+            export DOCKERFILE=gcp-docker.Dockerfile
+            export CONTEXT=frontend
+
+            ./gcp_docker.sh
+          '''
+        }
+      }
+    }
+
+    stage('Deploy to GKE') {
+      steps {
+        withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
+          sh '''
+            chmod +x gcp-kube-deploy.sh
+
+            export PROJECT_ID=${GCR_PROJECT}
+            export CLUSTER_NAME=${CLUSTER_NAME}
+            export LOCATION=${LOCATION}
+            export GCP_ACCOUNTNAME=${GCP_ACCOUNTNAME}
+            export GCP_KEYFILE=${GCP_KEYFILE}
+
+            # point at Artifact Registry, not gcr.io
+            export IMAGE="${LOCATION}-docker.pkg.dev/${PROJECT_ID}/my-artifact-repo/frontend:${IMAGE_TAG}"
+
+            ./gcp-kube-deploy.sh
+          '''
+        }
+      }
+    }
+
+    stage('Smoke Test') {
+      steps {
+        sh 'curl -f http://your.app.example.com/ || exit 1'
+      }
+    }
+  }
+
+  post {
+    success { echo "Frontend ${IMAGE_TAG} deployed" }
+    failure { echo "Frontend pipeline failed" }
+  }
+}
