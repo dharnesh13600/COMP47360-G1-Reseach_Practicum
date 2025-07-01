@@ -40,7 +40,6 @@
     --ff-crimson-text:"Crimson Text", serif;
     --ff-inter:"Inter", sans-serif;
 }
-
 .logo-font-family {
   font-family: var(--ff-playfair-display);
   font-optical-sizing: auto;
@@ -153,7 +152,7 @@ figure {
 body{
     color: #141414;
     z-index:1;
-    background-color:#fbfbfb; 
+    background-color: var(--background);
    
 }
 html{
