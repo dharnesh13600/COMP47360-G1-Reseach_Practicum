@@ -1,21 +1,125 @@
+// pipeline {
+//   agent any
+
+//   environment {
+//     GCP_PROJECT     = "abstract-tract-383807"
+//     IMAGE_TAG       = "${BRANCH_NAME}-${BUILD_ID}"
+   
+//     GCR_CREDS       = 'gcr-credentials'
+//     GCP_SA_KEY      = 'gcp-sa-key'
+
+//     AR_PROJECT    = "abstract-tract-383807"
+//     AR_REGION     = "europe-west2"
+//     AR_REPO_NAME  = "frontend-images"
+
+//     PROJECT_ID      = "${GCP_PROJECT}"
+//     CLUSTER_NAME    = "manhattan-cluster"
+//     LOCATION        = "europe-west2-a"
+//     GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCR_PROJECT}.iam.gserviceaccount.com"
+//   }
+
+//   stages {
+//     stage('Checkout') {
+//       steps {
+//         checkout scm
+//       }
+//     }
+
+//     stage('Frontend Build & Test') {
+//       steps {
+//         script {
+//           // Run all npm steps inside an official Node 18 container
+//           docker.image('node:18-bullseye').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
+//             dir('frontend') {
+//               sh 'npm ci'
+//               sh 'npm run lint'
+//               sh 'npm test'
+//               sh 'npm run build'
+//               sh 'npm run export'
+//             }
+//           }
+//         }
+//       }
+//     }
+
+//     stage('Docker Build & Push') {
+//       steps {
+//         // your existing gcp_docker.sh, running outside of the Node container
+//         withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
+//           sh '''
+//             chmod +x gcp_docker.sh
+
+//             export PROJECT_ID=${GCR_PROJECT}
+//             export GCP_KEYFILE=${GCP_KEYFILE}
+//             export REGION=europe-west2
+//             export REPOSITORY=my-artifact-repo
+//             export SERVICE=frontend
+//             export IMAGE_TAG=${IMAGE_TAG}
+//             export DOCKERFILE=gcp-docker.Dockerfile
+//             export CONTEXT=frontend
+
+//             ./gcp_docker.sh
+//           '''
+//         }
+//       }
+//     }
+
+//     stage('Deploy to GKE') {
+//       steps {
+//         withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
+//           sh '''
+//             chmod +x gcp-kube-deploy.sh
+
+//             export PROJECT_ID=${GCR_PROJECT}
+//             export CLUSTER_NAME=${CLUSTER_NAME}
+//             export LOCATION=${LOCATION}
+//             export GCP_ACCOUNTNAME=${GCP_ACCOUNTNAME}
+//             export GCP_KEYFILE=${GCP_KEYFILE}
+
+//             # point at Artifact Registry, not gcr.io
+//             export IMAGE="${LOCATION}-docker.pkg.dev/${PROJECT_ID}/my-artifact-repo/frontend:${IMAGE_TAG}"
+
+//             ./gcp-kube-deploy.sh
+//           '''
+//         }
+//       }
+//     }
+
+//     stage('Smoke Test') {
+//       steps {
+//         sh 'curl -f http://your.app.example.com/ || exit 1'
+//       }
+//     }
+//   }
+
+//   post {
+//     success {
+//       echo "Frontend ${IMAGE_TAG} deployed"
+//     }
+//     failure {
+//       echo "Frontend pipeline failed"
+//     }
+//   }
+// }
+
 pipeline {
   agent any
 
   environment {
     GCP_PROJECT     = "abstract-tract-383807"
     IMAGE_TAG       = "${BRANCH_NAME}-${BUILD_ID}"
-   
+
     GCR_CREDS       = 'gcr-credentials'
     GCP_SA_KEY      = 'gcp-sa-key'
 
-    AR_PROJECT    = "abstract-tract-383807"
-    AR_REGION     = "europe-west2"
-    AR_REPO_NAME  = "frontend-images"
+    AR_PROJECT      = "abstract-tract-383807"
+    AR_REGION       = "europe-west2"
+    AR_REPO_NAME    = "frontend-images"
 
     PROJECT_ID      = "${GCP_PROJECT}"
     CLUSTER_NAME    = "manhattan-cluster"
     LOCATION        = "europe-west2-a"
-    GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCR_PROJECT}.iam.gserviceaccount.com"
+    GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCP_PROJECT}.iam.gserviceaccount.com"
   }
 
   stages {
@@ -28,8 +132,9 @@ pipeline {
     stage('Frontend Build & Test') {
       steps {
         script {
-          // Run all npm steps inside an official Node 18 container
-          docker.image('node:18-bullseye').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
+          // Run inside Node 18 container with blank entrypoint and root user to avoid npm permission errors
+          docker.image('node:18-bullseye')
+                .inside('--entrypoint="" --user 0:0 -v /var/run/docker.sock:/var/run/docker.sock') {
             dir('frontend') {
               sh 'npm ci'
               sh 'npm run lint'
@@ -44,7 +149,6 @@ pipeline {
 
     stage('Docker Build & Push') {
       steps {
-        // your existing gcp_docker.sh, running outside of the Node container
         withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
           sh '''
             chmod +x gcp_docker.sh
@@ -76,7 +180,6 @@ pipeline {
             export GCP_ACCOUNTNAME=${GCP_ACCOUNTNAME}
             export GCP_KEYFILE=${GCP_KEYFILE}
 
-            # point at Artifact Registry, not gcr.io
             export IMAGE="${LOCATION}-docker.pkg.dev/${PROJECT_ID}/my-artifact-repo/frontend:${IMAGE_TAG}"
 
             ./gcp-kube-deploy.sh
