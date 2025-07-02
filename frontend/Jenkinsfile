@@ -4,6 +4,7 @@ pipeline {
       image 'jenkins/inbound-agent:latest'  
       args  '-v /var/run/docker.sock:/var/run/docker.sock'
     }
+  }
 
   environment {
     GCR_PROJECT     = "abstract-tract-383807"
