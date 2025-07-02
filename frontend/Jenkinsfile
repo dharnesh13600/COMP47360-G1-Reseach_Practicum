@@ -1,14 +1,18 @@
 pipeline {
-  agent any
+  agent 'Docker-enabled'
 
   environment {
-    GCR_PROJECT     = "abstract-tract-383807"
+    GCP_PROJECT     = "abstract-tract-383807"
     IMAGE_TAG       = "${BRANCH_NAME}-${BUILD_ID}"
    
     GCR_CREDS       = 'gcr-credentials'
     GCP_SA_KEY      = 'gcp-sa-key'
 
-    PROJECT_ID      = "${GCR_PROJECT}"
+    AR_PROJECT    = "abstract-tract-383807"
+    AR_REGION     = "europe-west2"
+    AR_REPO_NAME  = "frontend-images"
+
+    PROJECT_ID      = "${GCP_PROJECT}"
     CLUSTER_NAME    = "manhattan-cluster"
     LOCATION        = "europe-west2-a"
     GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCR_PROJECT}.iam.gserviceaccount.com"
