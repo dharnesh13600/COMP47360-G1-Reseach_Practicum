@@ -1,5 +1,5 @@
 pipeline {
-  agent 'Docker-enabled'
+  agent { label'Docker-enabled' }
 
   environment {
     GCP_PROJECT     = "abstract-tract-383807"
