@@ -14,41 +14,33 @@ pipeline {
     GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCR_PROJECT}.iam.gserviceaccount.com"
   }
 
-//   triggers { pollSCM('H/5 * * * *') }
-
   stages {
     stage('Checkout') {
-      steps { checkout scm }
-    }
-
-    stage('Install & Lint') {
       steps {
-        dir('frontend') {
-          sh 'npm ci'
-          sh 'npm run lint'
-        }
+        checkout scm
       }
     }
 
-    stage('Unit Tests') {
+    stage('Frontend Build & Test') {
       steps {
-        dir('frontend') {
-          sh 'npm test'
-        }
-      }
-    }
-
-    stage('Build & Export') {
-      steps {
-        dir('frontend') {
-          sh 'npm run build'
-          sh 'npm run export'
+        script {
+          // Run all npm steps inside an official Node 18 container
+          docker.image('node:18-bullseye').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
+            dir('frontend') {
+              sh 'npm ci'
+              sh 'npm run lint'
+              sh 'npm test'
+              sh 'npm run build'
+              sh 'npm run export'
+            }
+          }
         }
       }
     }
 
     stage('Docker Build & Push') {
       steps {
+        // your existing gcp_docker.sh, running outside of the Node container
         withCredentials([file(credentialsId: GCP_SA_KEY, variable: 'GCP_KEYFILE')]) {
           sh '''
             chmod +x gcp_docker.sh
@@ -97,7 +89,11 @@ pipeline {
   }
 
   post {
-    success { echo "Frontend ${IMAGE_TAG} deployed" }
-    failure { echo "Frontend pipeline failed" }
+    success {
+      echo "Frontend ${IMAGE_TAG} deployed"
+    }
+    failure {
+      echo "Frontend pipeline failed"
+    }
   }
 }
