@@ -147,7 +147,7 @@ pipeline {
 
                 npm ci
                 npm run lint
-                npm test
+                npm test --if-present test
                 npm run build
                 npm run export
               '''
