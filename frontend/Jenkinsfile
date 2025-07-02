@@ -129,18 +129,28 @@ pipeline {
       }
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       OPTION-2: run as the Jenkins UID/GID (112:119) but give npm a
+       writable cache inside the workspace so we never hit EACCES.
+       ──────────────────────────────────────────────────────────────── */
     stage('Frontend Build & Test') {
       steps {
         script {
-          // Run inside Node 18 container with blank entrypoint and root user to avoid npm permission errors
           docker.image('node:18-bullseye')
-                .inside('--entrypoint="" --user 0:0 -v /var/run/docker.sock:/var/run/docker.sock') {
+                // blank entrypoint so `sh` commands are executed as-is
+                .inside('--entrypoint=""') {
             dir('frontend') {
-              sh 'npm ci'
-              sh 'npm run lint'
-              sh 'npm test'
-              sh 'npm run build'
-              sh 'npm run export'
+              sh '''
+                # use a workspace-local cache to avoid root-owned /.npm
+                export NPM_CONFIG_CACHE=$PWD/.npm-cache
+                mkdir -p "$NPM_CONFIG_CACHE"
+
+                npm ci
+                npm run lint
+                npm test
+                npm run build
+                npm run export
+              '''
             }
           }
         }
