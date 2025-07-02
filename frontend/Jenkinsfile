@@ -1,6 +1,10 @@
 pipeline {
-  agent any
-
+  agent {
+    docker {
+      image 'jpetazzo/docker:18.09-dind'  // or your own image with docker+node
+      args  '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
+  }
   environment {
     GCR_PROJECT     = "abstract-tract-383807"
     IMAGE_TAG       = "${BRANCH_NAME}-${BUILD_ID}"
