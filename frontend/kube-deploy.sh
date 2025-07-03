@@ -12,7 +12,7 @@ set -e
 #configure kubernetes access
 echo "*** setting up kubernetes access based on service account token ***";
 
-gcloud auth activate-service-account ${GCP_ACCOUNTNAME} --key-file=${GCP_KEYFILE} --project=${GCP_PROJECT}
+gcloud auth activate-service-account --key-file=${GCP_KEYFILE} --project=${GCP_PROJECT}
 gcloud container clusters get-credentials ${CLUSTER_NAME} --region=${LOCATION}
 
 #kubernetes won't allow variables in the yaml files so using envsubst workaround so we can use them
