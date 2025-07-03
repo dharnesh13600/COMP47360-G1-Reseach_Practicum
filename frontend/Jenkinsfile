@@ -33,7 +33,7 @@ pipeline{
               
               npm ci
               npm run lint
-              // npm --if-present test
+              #npm --if-present test
               npm run build
             '''
           }
