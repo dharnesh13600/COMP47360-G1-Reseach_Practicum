@@ -7,7 +7,7 @@ set -e
 : "${GCP_ACCOUNTNAME:?GCP_ACCOUNTNAME must be set}"
 : "${CLUSTER_NAME:?CLUSTER_NAME must be set}"
 : "${LOCATION:?LOCATION (zone) must be set}"
-: "${IMAGE:?IMAGE (full repo URI) must be set}"
+: "${IMAGE_URI:?IMAGE_URI (full repo URI) must be set}"
 
 #configure kubernetes access
 echo "*** setting up kubernetes access based on service account token ***";
