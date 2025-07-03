@@ -57,7 +57,8 @@
     margin-top:0.5rem;
 
 }
-input:focus, textarea:focus {
+.sidebarContainer input:focus, 
+.sidebarContainer textarea:focus {
   outline: none;
   cursor:pointer;
 }
