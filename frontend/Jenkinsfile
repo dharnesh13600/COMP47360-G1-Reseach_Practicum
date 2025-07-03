@@ -5,6 +5,8 @@ pipeline{
 
         CLUSTER_NAME = "cluster-1"
         LOCATION = "europe-west2-a"
+        GCP_ACCOUNTNAME="${GCP_ACCOUNTNAME:-jenkins-gke-deployer@$PROJECT_ID.iam.gserviceaccount.com}"
+        
         // artifact registry components
         GCP_PROJECT = "abstract-tract-383807"
         AR_REGION = "europe-west2"
