@@ -12,15 +12,15 @@ set -e
 #configure kubernetes access
 echo "*** setting up kubernetes access based on service account token ***";
 
-gcloud auth activate-service-account ${GCP_ACCOUNTNAME} --key-file=${GCRCREDFILE} --project=${PROJECT_ID}
+gcloud auth activate-service-account ${GCP_ACCOUNTNAME} --key-file=${GCP_KEYFILE} --project=${PROJECT_ID}
 gcloud container clusters get-credentials ${CLUSTER_NAME} --region=${LOCATION}
 
 #kubernetes won't allow variables in the yaml files so using envsubst workaround so we can use them
 
 echo "*** creating deployment yaml files ***";
-env envsubst < k8s/frontend-deployment.tmpl > k8s/frontend-deployment.yaml;
-env envsubst < k8s/frontend-service.tmpl > k8s/frontend-service.yaml;
-env envsubst < k8s/ingress.tmpl > k8s/ingress.yaml;
+envsubst < k8s/frontend-deployment.tmpl > k8s/frontend-deployment.yaml;
+envsubst < k8s/frontend-service.tmpl > k8s/frontend-service.yaml;
+envsubst < k8s/ingress.tmpl > k8s/ingress.yaml;
 echo "*** deploying docker container and setting up the service and ingress  ***";
 
 #cat frontend-deployment.yaml;

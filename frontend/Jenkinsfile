@@ -3,6 +3,8 @@ pipeline{
 
     environment {
 
+        CLUSTER_NAME = "cluster-1"
+
         // artifact registry components
         GCP_PROJECT = "abstract-tract-383807"
         AR_REGION = "europe-west2"
@@ -55,7 +57,22 @@ pipeline{
           }
         }
       }
-  }
+      stage('Deploy to GKE') {
+        steps {
+    
+          withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GCP_KEYFILE')]) {
+
+            sh '''
+
+              chmod +x frontend/kube-deploy.sh
+              cd frontend
+              ./kube-deploy.sh
+            
+            '''
+          }
+        }
+      }
+    }
   post {
     success { echo "✅  Image pushed: ${IMAGE_URI}" }
     failure { echo "❌  Pipeline failed" }
