@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: frontend-svc
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
