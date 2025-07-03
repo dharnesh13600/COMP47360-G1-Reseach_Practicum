@@ -15,7 +15,7 @@ pipeline{
 
     // node.js plugin
     tools {
-      nodejs 'node18'
+      nodejs 'node22'
     }
 
     stages {
