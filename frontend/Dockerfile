@@ -1,14 +1,27 @@
-FROM node:18-alpine
-
-RUN npm install -g serve
-
-WORKDIR /usr/src/app
+FROM node:18-alpine AS builder
+WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production=false
+RUN npm install
 
 COPY . .
-RUN npm run build && npm run export
+RUN npm run build
 
-EXPOSE 80
-CMD ["serve", "-s", "out", "-l", "80"]
+# Use a smaller image for the final stage
+
+FROM node:18-alpine
+# Set the working directory
+
+WORKDIR /app
+
+# Copy built files from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+
+# Expose the port
+EXPOSE 3000
+
+# Start the app
+CMD ["npm", "start"]
