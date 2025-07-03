@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -9,7 +9,7 @@ RUN npm run build
 
 # Use a smaller image for the final stage
 
-FROM node:18-alpine
+FROM node:22-alpine
 # Set the working directory
 
 WORKDIR /app
