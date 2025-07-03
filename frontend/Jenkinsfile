@@ -69,8 +69,8 @@ pipeline{
             sh '''
 
               chmod +x frontend/kube-deploy.sh
-              cd frontend
-              ./kube-deploy.sh
+              
+              ./frontend/kube-deploy.sh
             
             '''
           }
