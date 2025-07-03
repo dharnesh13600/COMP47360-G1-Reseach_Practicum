@@ -2,7 +2,7 @@
 
 set -e
 
-: "${PROJECT_ID:?GCP_PROJECT must be set}"
+: "${GCP_PROJECT:?GCP_PROJECT must be set}"
 : "${GCP_KEYFILE:?GCP_KEYFILE (path to JSON key) must be set}"
 : "${GCP_ACCOUNTNAME:?GCP_ACCOUNTNAME must be set}"
 : "${CLUSTER_NAME:?CLUSTER_NAME must be set}"
