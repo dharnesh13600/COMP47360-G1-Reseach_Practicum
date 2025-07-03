@@ -3,19 +3,11 @@ kind: Ingress
 metadata:
   name: manhattan-ingress
   annotations:
-    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.class: "gce"  
 spec:
   rules:
-  - host: your.app.example.com
-    http:
+  - http:
       paths:
-      - path: /api/
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-svc
-            port:
-              number: 80
       - path: /
         pathType: Prefix
         backend:
