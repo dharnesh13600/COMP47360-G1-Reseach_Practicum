@@ -1,9 +1,9 @@
-.draw{
-    display:block;
+.draw01{
     position:absolute;
-    left: 1vh;
+    display: block;
+    left: 0vh;
     top: 10vh;
     width: 15%;
     z-index: 1000;
-    border: solid yellow;
+    overflow-x: hidden;
 }
