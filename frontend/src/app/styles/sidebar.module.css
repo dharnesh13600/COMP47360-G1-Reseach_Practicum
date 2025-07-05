@@ -237,7 +237,8 @@ div.vl{
   background-color: #FFFBF6;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
+  font-family: var(--ff-inter);
   color: var(--subway-bg);
   border: 1px solid #ddd;
   
