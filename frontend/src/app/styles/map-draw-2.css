@@ -1,0 +1,9 @@
+.draw-map02{
+    position: absolute;
+    left: 48vh;
+    left:52vh;
+    top: -2vh;
+    width: 10%;
+    overflow: hidden;
+    z-index: 10000;
+}

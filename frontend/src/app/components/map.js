@@ -21,6 +21,34 @@ const INITIAL_CENTER =[
     40.7822
 ]
 const INITIAL_ZOOM=11.25
+
+const locationsData = [
+  {
+    zoneName: "Washington Square Park: Arch Plaza",
+    latitude: 40.7312185,
+    longitude: -73.9970929,
+  },
+  {
+    zoneName: "Bryant Park: Stage Performance",
+    latitude: 40.7548472,
+    longitude: -73.9841117,
+  },
+  {
+    zoneName: "WEST END AVENUE between WEST 86 STREET and WEST 87 STREET",
+    latitude: 40.7883655,
+    longitude: -73.9745122,
+  },
+  {
+    zoneName: "8 AVENUE Manhattan, New York",
+    latitude: 40.8164207,
+    longitude: -73.9466177,
+  },
+  {
+    zoneName: "FREDERICK DOUGLASS BOULEVARD Manhattan, New York",
+    latitude: 40.8164207,
+    longitude: -73.9466177,
+  },
+];
 export default function Map(){
 
     const mapRef =useRef()
@@ -56,7 +84,16 @@ export default function Map(){
     setCenter(newCenter);
     setZoom(newZoom);
   }
-})
+});
+locationsData.forEach((location, index) => {
+      const el = document.createElement('div');
+      el.className = 'numbered-marker';
+      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
+
+      new mapboxgl.Marker(el)
+        .setLngLat([location.longitude, location.latitude])
+        .addTo(mapRef.current);
+    });
      return () => {
       if (mapRef.current) {
         mapRef.current.remove();
