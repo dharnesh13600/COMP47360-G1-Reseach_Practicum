@@ -11,9 +11,13 @@ import '../globals.css';
 import Dropdown from './dropdowns/actDropdown';
 import DropdownItem from "@/helper/activityItem.js";
 
+import DropdownDate from "./dropdowns/dateDropdown.js";
+import DateItem from "@/helper/dateItem.js";
 
+import DropdownTime from "./dropdowns/timeDropdown";
+import TimeItem from "@/helper/timeItem";
 
-
+import { getWeatherData } from "./weather";
 export default function SideBar(){
     const [selected, setSelected] = useState('2');
 
@@ -26,15 +30,181 @@ export default function SideBar(){
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
     const dropRef= useRef();
+ const [weatherItems, setweatherItems] = useState([]);
+    const [fullWeatherData, setFullWeatherData] = useState([]);
+
+    const [timeItems, settimeItems] = useState([]);
+    const [isTimeOpen, setIsTimeOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
 
 
-    // setting visibility for locations container
+
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const data = await getWeatherData();
+      setFullWeatherData(data.list); 
+
+      const seenDates = new Set();
+      const dates = data.list
+        .map((entry) => {
+          const dateObj = new Date(entry.readableTime);
+          const formatted = new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric'
+          }).format(dateObj);
+
+          if (seenDates.has(formatted)) return null;
+          seenDates.add(formatted);
+
+          return (
+            <DateItem key={formatted} onClick={() => setSelectedDate(formatted)}>
+              {formatted}
+            </DateItem>
+          );
+        })
+        .filter(Boolean);
+      setweatherItems(dates);
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  fetchData();
+}, []);
+useEffect(() => {
+  if (!selectedDate || !fullWeatherData.length) {
+    console.log("Missing selectedDate or weather data.");
+    return;
+  }
+
+  console.log(" Selected date:", selectedDate);
+
+  const times = fullWeatherData
+    .filter(entry => {
+      const dateObj = new Date(entry.readableTime);
+      const formatted = new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric'
+      }).format(dateObj);
+
+      const match = formatted === selectedDate;
+      if (match) console.log("⏰ Matched time entry:", entry.readableTime);
+      return match;
+    })
+    .map(entry => {
+      const dateObj = new Date(entry.readableTime);
+      const timeString = dateObj.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+
+      return (
+        <TimeItem key={entry.readableTime} onClick={() => {setSelectedTime(timeString);  }}>
+          {timeString}
+        </TimeItem>
+      );
+    });
+
+  console.log("🧾 Generated timeItems:", times);
+  settimeItems(times);
+}, [selectedDate, fullWeatherData]);
+
+let selectedWeather = null;
+if (selectedDate && selectedTime) {
+  selectedWeather = fullWeatherData.find(entry => {
+    const dateObj = new Date(entry.readableTime);
+    const dateMatch = new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      day: 'numeric'
+    }).format(dateObj) === selectedDate;
+
+    const timeMatch = dateObj.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit'
+    }) === selectedTime;
+
+    return dateMatch && timeMatch;
+  });
+}
+
+function getWeatherIconSrc(condition) {
+  switch (condition?.toLowerCase()) {
+    case 'clouds': return'/clouds_day.png';
+    case 'clear': return '/clear_day.png';
+    case 'rain': return '/rain_day.png';
+    default: return '/atmosphere_day.png';
+  }
+}
+
+
+useEffect(() => {
+  // Simulate loading JSON data
+  const locationJson = {
+    "locations": [
+      {
+        "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+        "zoneName": "Washington Square Park: Arch Plaza",
+        "latitude": 40.7312185,
+        "longitude": -73.9970929,
+        "combinedScore": 5.03,
+        "activityScore": 4.14,
+        "museScore": null,
+        "crowdScore": null
+      },
+      {
+        "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+        "zoneName": "Bryant Park: Stage Performance",
+        "latitude": 40.7548472,
+        "longitude": -73.9841117,
+        "combinedScore": 4.99,
+        "activityScore": 4.30,
+        "museScore": null,
+        "crowdScore": null
+      },
+      {
+        "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+        "zoneName": "WEST END AVENUE ",
+        "latitude": 40.7883655,
+        "longitude": -73.9745122,
+        "combinedScore": 5.69,
+        "activityScore": 4.36,
+        "museScore": null,
+        "crowdScore": null
+      },
+      {
+        "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+        "zoneName": "8 AVENUE Manhattan, New York",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.17,
+        "activityScore": 8.88,
+        "museScore": null,
+        "crowdScore": null
+      },
+      {
+        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+        "zoneName": "FREDERICK DOUGLASS BOULEVARD",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      }
+    ]
+  };
+
+  setLocations(locationJson.locations);
+}, []);
+
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
   console.log('Button clicked!');
   setIsVisible(prev => !prev);
 };
-
 // defining zones 
 const manhattanNeighborhoods = {
   "financial district": [
@@ -256,14 +426,29 @@ useEffect(() => {
                          <div className={`${styles.timeDiv}`}><TimeLetters/></div>
 
                     </div>
+                    <div className={`${styles.dropContainer} ${styles.dropdownWrapper}`}>
+                      <DropdownDate buttonText={ selectedDate || "Select Date"} content={<>{weatherItems}</>} />
+            <DropdownTime buttonText={selectedTime || "Select Time"} content={<>{timeItems}</>} />
                    
+                    </div>
                     </div>
                  
                     </div>
-                    <hr />
+                    
 
                 </div>
-
+                 {selectedWeather && (
+  <div className={styles.weatherDisplay}>
+    <img
+      src={getWeatherIconSrc(selectedWeather.condition)}
+      alt={selectedWeather.condition}
+      width={32}
+      height={32}
+      style={{ marginRight: '8px' }}
+    />
+    <span>{Math.round(selectedWeather.temp)}°C</span>
+  </div>
+)}
                     <div className={styles.locationHeader}>
                     <div className={`${styles.recArea} ${isVisible ? styles.active : styles.inactive}`}>
                       <p className={styles.recommendation}>Recommended</p>
