@@ -40,6 +40,7 @@ pipeline{
               npm ci
               npm run lint
               #npm --if-present test
+              npm install react-icons
               npm run build
             '''
           }
