@@ -3,7 +3,7 @@ export default function Draw02(){
     return(
         <>
             <div className='draw02'>
-                <svg height="450" width="1000">
+                <svg height="250" width="1000">
                     <path d='M50,0 
                     Q60,70 350,70
                     Q670,70 550,86
