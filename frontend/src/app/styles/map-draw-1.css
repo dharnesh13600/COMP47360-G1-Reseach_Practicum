@@ -1,10 +1,10 @@
 .draw-map01{
-    position: absolute;
-    /* left: 7vh; */
-    left:10vh;
-    /* top: 10vh; */
-    top:5vh;
-    width: 10%;
-    overflow-x: hidden;
+    position: relative;
     z-index: 10000;
+    top: 3vh;
+}
+@media (max-width:1200px){
+.draw-map01{
+    display: none;
+}
 }

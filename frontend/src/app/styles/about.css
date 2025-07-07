@@ -67,3 +67,43 @@ body {
     display: relative;
     padding-top: 3vh;
 }
+
+@media (max-width:900px){
+.container{
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    top: 10%;
+}
+.split-left{
+    order:2;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Full width to center properly */
+    padding-bottom: 30px;
+}
+.split-right{
+    order:1;
+    justify-content: center;
+    align-items: center;
+    width: 86%;
+}
+ .about-heading, .about-text, .map-button {
+    padding-right: 0; /* Remove padding on smaller screens */
+    text-align: center;
+  }
+  .map-button{
+    margin-top: 8%;
+  }
+  .photo-name{
+    padding: 0;
+    width: 20%;
+  }
+  .photo-name,
+  .team-photo {
+    margin-top: 0; /* Remove negative margin on mobile */
+    align-items: center;
+    text-align: center;
+  }
+}

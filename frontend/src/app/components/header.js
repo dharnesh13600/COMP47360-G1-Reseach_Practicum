@@ -8,6 +8,10 @@
 'use client';
 
 import '../globals.css';
+import MapDraw from '../components/map-draw-1.js'
+import MapDraw02 from '../components/map-draw-2.js'
+import '../styles/map-draw-1.css'
+import '../styles/map-draw-2.css'
 
 import Button from '../components/button';
 import Link from 'next/link';
@@ -30,8 +34,11 @@ export default function Header(){
                 </div>
                 <div className={wrapperClassName}>
                     {isMapPage ? (
+
                         <div className='logo-div-map'>
+                             <MapDraw />
                             <Image className='logoMap' src='/manhattan-muse-map.png' alt="Map Logo" width={360} height={120}/>
+                            <MapDraw02 />
                         </div>
                     ) : (
                         <div className='logo-div-desktop'>

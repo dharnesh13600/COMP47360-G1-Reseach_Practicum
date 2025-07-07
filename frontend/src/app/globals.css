@@ -143,6 +143,10 @@ figure {
     user-select: none;
 }
 
+body, html {
+  overflow-x: hidden;
+}
+
 *::before,
 *::after{
     box-sizing: border-box;
