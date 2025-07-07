@@ -1,6 +1,12 @@
 import Button from './components/button.js';
 import Image from 'next/image';
 import Draw01 from './components/home-draw-1.js';
+import Draw02 from './components/home-draw-2.js';
+import Draw03 from './components/home-draw-3.js';
+import './styles/home-draw-1.css'
+import './styles/home-draw-2.css'
+import './styles/home-draw-3.css'
+
 
 export default function Page(){
     return (
@@ -22,7 +28,9 @@ export default function Page(){
             </div>
 
         </div>
-        
+        <Draw01/>
+        <Draw02/>
+        <Draw03/>
         </div>
         </>
     );

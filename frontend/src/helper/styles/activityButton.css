@@ -1,0 +1,20 @@
+.dropdown-btn{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--subway-bg);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    overflow: hidden;
+     color:var(--subway-text-low-contrast);
+}
+
+.toggle-icon{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color:transparent;
+    display: none;
+}
+

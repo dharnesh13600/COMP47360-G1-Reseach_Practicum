@@ -95,5 +95,41 @@ z-index:0 !important;
 }
 
 
+/* https://codepen.io/katia-trifonova/pen/zwZgdx?editors=0110 */
+  .numbered-marker {
+ 
+  cursor: pointer;
+    position: relative;
+  width: 20px;
+  height: 20px;
+ 
+}
+.pinShape {
+  width: 100%;
+  height: 100%;
+  background:#52767E;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg) scaleY(1.2);
+  position: relative;
+ 
+}
+
+.number {
+  position: absolute;
+    top: 50%; 
+  left: 50%;
+   z-index: 2;
+  transform: translate(-50%, -50%) rotate(45deg);
+  color: #52767E;
+  font-size: 10px;
+  font-weight: bold;
+  width: 8px;
+  height: 8px;
+  padding:1px;
+  border-radius: 50%;
+  line-height: 10px;
+  text-align: center;
+  background: #FFF2E5;
+}
 
   
