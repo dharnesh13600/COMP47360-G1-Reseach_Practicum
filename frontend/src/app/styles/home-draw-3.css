@@ -2,3 +2,8 @@
     position: relative;
     z-index: 100000;
 }
+@media (max-width:425px) {
+.draw03{
+    display: none;
+    }
+}
