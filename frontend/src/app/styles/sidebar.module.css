@@ -1,6 +1,6 @@
 .sidebarContainer{
     width:310px;
-    height:560px;
+    height:605px;
     border-radius: 56px;
     background-color: var(--background);
     box-shadow: 0 4px 20.5px 3px #00000025;
@@ -11,7 +11,7 @@
     flex-direction: column;
     align-items: center;
     position:absolute;
-    top:150px;
+    top:113px;
     left:50px;
     z-index:10;
     margin-bottom: 10rem;
@@ -245,6 +245,64 @@ div.vl{
 
 }
 
-.active{
+.inactive{
     color:#A2B9A7;
+}
+
+.buttonTextWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.clearIcon {
+  cursor: pointer;
+  color: #999;
+  margin-left: 8px;
+  transition: color 0.2s ease;
+}
+
+.clearIcon:hover {
+  color: #333;
+}
+.buttonStyle{
+    font-family: var(--ff-inter);
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+    padding: 3% 6%;
+    border-radius: 40px;
+    text-decoration: none;
+    border: none;
+    color: var(--on-surface-low-contrast);
+    background-color: var(--subway-bg);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.buttonStyle:hover{
+    font-family: var(--ff-inter);
+    font-size: 18px;
+    font-weight: bold;
+
+    border-radius: 40px;
+    color: var(--background);
+    background-color: var(--on-surface-low-contrast);
+}
+
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease, transform 0.3s ease;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.noRecommendations{
+  color:var(--subway-bg);
+  margin-top: 2rem;
 }

@@ -6,6 +6,8 @@ import TimeLetters from '@/helper/time';
 import styles from '../styles/sidebar.module.css';
 import '../globals.css';
 
+import {format} from 'date-fns';
+import {AiOutlineClose} from 'react-icons/ai';
 
 // importing dropdown components
 import Dropdown from './dropdowns/actDropdown';
@@ -17,12 +19,16 @@ import DateItem from "@/helper/dateItem.js";
 import DropdownTime from "./dropdowns/timeDropdown";
 import TimeItem from "@/helper/timeItem";
 
-import { getWeatherData } from "./weather";
+import { GetWeatherData } from "./weather-data";
+
+
+
+import { useWeather } from "./useWeather";
 export default function SideBar(){
     const [selected, setSelected] = useState('2');
 
     // activity dropdown useState
-    const [activityChoice, setChoice]=useState("Select...");
+    const [activityChoice, setChoice]=useState(null);
 
     // activity items 
     const activities=["Portrait Photography","Street Photography","Landscape Painting","Portrait Painting","Art Sale","Busking","Filmmaking"];
@@ -34,110 +40,95 @@ export default function SideBar(){
     const [fullWeatherData, setFullWeatherData] = useState([]);
 
     const [timeItems, settimeItems] = useState([]);
+    const [isDateOpen,setIsDateOpen]=useState([]);
     const [isTimeOpen, setIsTimeOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
 
 
+const [dates,setDates]=useState([]);
+const [times,setTimes]=useState([]);
+const [weather,setWeather]=useState(null);
 
-useEffect(() => {
-  async function fetchData() {
-    try {
-      const data = await getWeatherData();
-      setFullWeatherData(data.list); 
 
-      const seenDates = new Set();
-      const dates = data.list
-        .map((entry) => {
-          const dateObj = new Date(entry.readableTime);
-          const formatted = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
-            day: 'numeric'
-          }).format(dateObj);
+useEffect(()=>{
+    async function weatherFetch(){
+    const dateSet=new Set();
+    const weatherResponse =await GetWeatherData();
+    setFullWeatherData(weatherResponse.list);
+    weatherResponse.list.forEach(entry=>{
+            const dateObj=new Date(entry.readableTime);
 
-          if (seenDates.has(formatted)) return null;
-          seenDates.add(formatted);
+            const formattedDate= format(dateObj,'MMMM d');
+            dateSet.add(formattedDate);
+            
 
-          return (
-            <DateItem key={formatted} onClick={() => setSelectedDate(formatted)}>
-              {formatted}
-            </DateItem>
-          );
-        })
-        .filter(Boolean);
-      setweatherItems(dates);
 
-    } catch (err) {
-      console.error(err);
+        });
+        const dates=Array.from(dateSet);
+        setDates(dates);
     }
-  }
+    weatherFetch();
+},[]);
 
-  fetchData();
-}, []);
-useEffect(() => {
-  if (!selectedDate || !fullWeatherData.length) {
-    console.log("Missing selectedDate or weather data.");
+// updating time when date changes
+useEffect(()=>{
+  if(!selectedDate){
+    setTimes([]);
     return;
   }
 
-  console.log(" Selected date:", selectedDate);
+  const matchingTimes=new Set();
 
-  const times = fullWeatherData
-    .filter(entry => {
-      const dateObj = new Date(entry.readableTime);
-      const formatted = new Intl.DateTimeFormat('en-US', {
-        month: 'long',
-        day: 'numeric'
-      }).format(dateObj);
+  fullWeatherData.forEach(entry=>{
+    const readableDate= new Date(entry.readableTime);
+    const dateStr=format(readableDate,'MMMM d');
+    const timeStr=format(readableDate,'h:mm a');
 
-      const match = formatted === selectedDate;
-      if (match) console.log("⏰ Matched time entry:", entry.readableTime);
-      return match;
-    })
-    .map(entry => {
-      const dateObj = new Date(entry.readableTime);
-      const timeString = dateObj.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-
-      return (
-        <TimeItem key={entry.readableTime} onClick={() => {setSelectedTime(timeString);  }}>
-          {timeString}
-        </TimeItem>
-      );
-    });
-
-  console.log("🧾 Generated timeItems:", times);
-  settimeItems(times);
-}, [selectedDate, fullWeatherData]);
-
-let selectedWeather = null;
-if (selectedDate && selectedTime) {
-  selectedWeather = fullWeatherData.find(entry => {
-    const dateObj = new Date(entry.readableTime);
-    const dateMatch = new Intl.DateTimeFormat('en-US', {
-      month: 'long',
-      day: 'numeric'
-    }).format(dateObj) === selectedDate;
-
-    const timeMatch = dateObj.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit'
-    }) === selectedTime;
-
-    return dateMatch && timeMatch;
+    if (dateStr==selectedDate){
+      const timeStr=format(readableDate, 'h:mm a');
+      matchingTimes.add(timeStr);
+    }
   });
-}
-
-function getWeatherIconSrc(condition) {
-  switch (condition?.toLowerCase()) {
-    case 'clouds': return'/clouds_day.png';
-    case 'clear': return '/clear_day.png';
-    case 'rain': return '/rain_day.png';
-    default: return '/atmosphere_day.png';
+  const times=Array.from(matchingTimes);
+  setTimes(times);
+},[selectedDate,fullWeatherData]);
+useEffect(()=>{
+    if(!submitted){
+      setWeather(null);
+      return;
+    }
+    if(!selectedDate || !selectedTime){
+    setWeather(null);
+    return;
   }
-}
+
+  const matches= fullWeatherData.find(entry=>{
+    const readableObj=new Date(entry.readableTime);
+    const dateStr=format(readableObj,'MMMM d');
+    const timeStr=format(readableObj,'h:mm a');
+
+    return dateStr== selectedDate && timeStr==selectedTime;
+  });
+  if(matches){
+    setWeather({
+      condition:matches.condition,
+      temp:matches.temp
+    });
+  }
+  else{
+    setWeather(null);
+  }
+
+ 
+  
+},[submitted,selectedDate,selectedTime,fullWeatherData]);
+
+const {icon,temp}=useWeather(setWeather || {});
+
+
+
 
 
 useEffect(() => {
@@ -316,6 +307,30 @@ const manhattanNeighborhoods = {
 // creating areas with only area names
 const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
+async function handleSubmit(){
+  if(!activityChoice || !selectedTime){
+    alert("Please select both activity and time");
+    return;
+  }
+  setSubmitted(true);
+  const res=await fetch('/api/location',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({activity:activityChoice,readableTime:selectedTime})
+  });
+
+  const data=await res.json();
+
+  if(res.ok){
+    console.log("Success:",data);
+  }
+  else{
+    console.error("Error:",data.error);
+  }
+
+};
 const [locations, setLocations] = useState([]);
 useEffect(() => {
   // Simulate loading JSON data
@@ -396,7 +411,25 @@ useEffect(() => {
                     </div>
                     
                       <div className={styles.dropdownWrapper}>
-                      <Dropdown ref={dropRef} buttonText={activityChoice} content={ (close)=>(   
+                      <Dropdown ref={dropRef} 
+                      buttonText={<span>
+                          {activityChoice ||'Select...'}
+                      
+                      {
+                        activityChoice &&(
+                          <AiOutlineClose
+                          size={16}
+                          onClick={(e)=>{
+                            e.stopPropagation();
+                            setChoice(null);
+                          }}
+                          className={styles.clearIcon}
+                          />
+                        )}
+                        </span>
+                   
+                      }
+                        content={ (close)=>(   
                         <>
                           {
                           activities.map((activity) => (
@@ -404,7 +437,7 @@ useEffect(() => {
                           key={activity}
                           onClick={()=>{setChoice(activity); close();}}>
                           {activity}
-                          </DropdownItem>
+                          </DropdownItem> 
                           ))
                           }
                         </>
@@ -427,8 +460,44 @@ useEffect(() => {
 
                     </div>
                     <div className={`${styles.dropContainer} ${styles.dropdownWrapper}`}>
-                      <DropdownDate buttonText={ selectedDate || "Select Date"} content={<>{weatherItems}</>} />
-            <DropdownTime buttonText={selectedTime || "Select Time"} content={<>{timeItems}</>} />
+                      <DropdownDate buttonText={ <span className={styles.buttonTextWrapper}>{selectedDate || "Select Date"}
+                      {selectedDate && (
+                        <AiOutlineClose
+                          size={16}
+                          onClick={(e)=>{
+                            e.stopPropagation();
+                            setSelectedDate(null);
+                          }}
+                          className={styles.clearIcon}
+                          />
+                      )}
+                      </span>}
+                      content={<>
+                        {dates.map(date=>(
+                          <DateItem key={date} onClick={()=>{setSelectedDate(date);close();}}>
+                            {date}
+                            </DateItem>
+                        )
+
+                        )}
+                        </>} />
+            <DropdownTime buttonText={<span className={styles.buttonTextWrapper}>{selectedTime || "Select Time"}{selectedTime && (
+                        <AiOutlineClose
+                          size={16}
+                          onClick={(e)=>{
+                            e.stopPropagation();
+                            setSelectedTime(null);
+                          }}
+                          className={styles.clearIcon}
+                          />
+                      )}</span>} content={<>
+              {times.length === 0 && <div>Please select a date first</div>}
+              {times.map(time=>(
+                <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
+                  {time}
+                </TimeItem>
+              ))}
+              </>} />
                    
                     </div>
                     </div>
@@ -437,18 +506,21 @@ useEffect(() => {
                     
 
                 </div>
-                 {selectedWeather && (
-  <div className={styles.weatherDisplay}>
+                <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
+                {submitted && weather && (
+  <div className={`${styles.weatherDisplay}  ${submitted ? 'fade-enter-active' : 'fade-enter'}`}>
     <img
-      src={getWeatherIconSrc(selectedWeather.condition)}
-      alt={selectedWeather.condition}
+      src={icon}
+      alt={weather.condition}
       width={32}
       height={32}
       style={{ marginRight: '8px' }}
     />
-    <span>{Math.round(selectedWeather.temp)}°C</span>
+    <span>{temp}°F</span>
   </div>
 )}
+                
+                  
                     <div className={styles.locationHeader}>
                     <div className={`${styles.recArea} ${isVisible ? styles.active : styles.inactive}`}>
                       <p className={styles.recommendation}>Recommended</p>
@@ -472,7 +544,12 @@ useEffect(() => {
                       </button> 
 <span className={`${styles.manualSelection} ${isVisible ? styles.inactive  :styles.active}`}>Select Area</span>
                   </div>
-                 {!isVisible && (
+                {!submitted && isVisible && (
+                     <div className={styles.noRecommendations}>
+  Please select an activity, date and time to view the recommended areas
+</div>
+                )}
+                 {submitted && isVisible && (
                    <div className={styles.locationListContainer}>
   {locations.map((location,index) => (
     <div key={location.id} className={styles.locationItem}>
@@ -481,7 +558,7 @@ useEffect(() => {
   ))}
 </div>
                  )} 
-                 {isVisible && (
+                 {!isVisible && (
                   <div className={styles.suggestedLocations}>
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
@@ -496,6 +573,8 @@ useEffect(() => {
              
                     </div>
                  )}
+                  
+                    
           </div>
     </>
     );
