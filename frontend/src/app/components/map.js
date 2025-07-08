@@ -10,6 +10,7 @@ import '../styles/map.css';
 import '../globals.css';
 
 
+
 const useMapbox = process.env.NEXT_PUBLIC_USE_MAPBOX==='true';
 
 if (useMapbox) {
@@ -50,6 +51,8 @@ const locationsData = [
   },
 ];
 export default function Map(){
+const popupRef = useRef();
+const [showMarkers, setShowMarkers] = useState(false);
 
     const mapRef =useRef()
     const mapContainerRef= useRef()
@@ -85,6 +88,11 @@ export default function Map(){
     setZoom(newZoom);
   }
 });
+  // create the popup DOM element
+const popupEl = document.createElement('div');
+popupEl.className = 'custom-popup';
+popupRef.current = popupEl;
+mapContainerRef.current.appendChild(popupEl);
 locationsData.forEach((location, index) => {
       const el = document.createElement('div');
       el.className = 'numbered-marker';
@@ -93,6 +101,18 @@ locationsData.forEach((location, index) => {
       new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
         .addTo(mapRef.current);
+        el.addEventListener('mouseenter', () => {
+    if (popupRef.current) {
+      popupRef.current.innerText = location.zoneName; // or HTML
+      popupRef.current.style.display = 'block';
+    }
+  });
+
+  el.addEventListener('mouseleave', () => {
+    if (popupRef.current) {
+      popupRef.current.style.display = 'none';
+    }
+  });
     });
      return () => {
       if (mapRef.current) {
@@ -101,8 +121,9 @@ locationsData.forEach((location, index) => {
       }
     };
 
-  
-  }, [center, zoom])
+
+
+  }, [])
 
   if (!useMapbox) {
     return (
