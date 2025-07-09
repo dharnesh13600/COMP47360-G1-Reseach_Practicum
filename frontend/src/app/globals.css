@@ -141,6 +141,7 @@ figure {
     margin:0;
     padding:0;
     user-select: none;
+    height:100%;
 }
 
 *::before,
@@ -153,8 +154,45 @@ body{
     color: #141414;
     z-index:1;
     background-color: var(--background);
+    min-height:100vh;
    
 }
 html{
     scroll-behavior: smooth;
 }
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1;
+  display: flex;        /* optional: enables children to arrange horizontally if needed */
+  overflow: hidden;     /* prevents unwanted scrollbars */
+}
+
+
+/* Ensure html and body fill viewport */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Layout fills the viewport */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+
+/* Main fills remaining space */
+main {
+  flex: 1;
+  display: flex;        /* optional: enables children to arrange horizontally if needed */
+  overflow: hidden;     /* prevents unwanted scrollbars */
+}
+
