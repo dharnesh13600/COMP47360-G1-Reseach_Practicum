@@ -529,15 +529,16 @@ useEffect(() => {
                       
                      <button onClick={handleToggleClick} className="areaToggleBtn">
                      {!isVisible && (
-                      <svg width="40" height="25" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M32 9.99902H16C8.26801 9.99902 2 16.267 2 23.999C2 31.731 8.26801 37.999 16 37.999H32C39.732 37.999 46 31.731 46 23.999C46 16.267 39.732 9.99902 32 9.99902Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
                      )} 
                      {isVisible && (
-                      <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 9.99902H16C8.26801 9.99902 2 16.267 2 23.999C2 31.731 8.26801 37.999 16 37.999H32C39.732 37.999 46 31.731 46 23.999C46 16.267 39.732 9.99902 32 9.99902Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                   
+ <svg width="40" height="25" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 
                      )}
@@ -546,7 +547,7 @@ useEffect(() => {
                   </div>
                 {!submitted && isVisible && (
                      <div className={styles.noRecommendations}>
-  Please select an activity, date and time to view the recommended areas
+  Please submit your choices to view the recommended areas
 </div>
                 )}
                  {submitted && isVisible && (

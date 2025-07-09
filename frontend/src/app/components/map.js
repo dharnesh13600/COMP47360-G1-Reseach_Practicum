@@ -88,11 +88,17 @@ const [showMarkers, setShowMarkers] = useState(false);
     setZoom(newZoom);
   }
 });
-  // create the popup DOM element
-const popupEl = document.createElement('div');
-popupEl.className = 'custom-popup';
-popupRef.current = popupEl;
-mapContainerRef.current.appendChild(popupEl);
+
+const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+    <div class="popup-card">
+    <div class="muse-score">Muse Score</div>
+    <div class="muse-value">${location.museScore ?? '--'}</div>
+    <div class="estimate-crowd-label">Estimate Crowd</div>
+    <div class="estimate-crowd">--</div>
+    <div class="crowd-label">Crowd</div>
+    <div class="crowd-status">--</div>
+  </div>
+`);
 locationsData.forEach((location, index) => {
       const el = document.createElement('div');
       el.className = 'numbered-marker';
@@ -100,19 +106,10 @@ locationsData.forEach((location, index) => {
 
       new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
+         .setPopup(popup)
         .addTo(mapRef.current);
-        el.addEventListener('mouseenter', () => {
-    if (popupRef.current) {
-      popupRef.current.innerText = location.zoneName; // or HTML
-      popupRef.current.style.display = 'block';
-    }
-  });
+       
 
-  el.addEventListener('mouseleave', () => {
-    if (popupRef.current) {
-      popupRef.current.style.display = 'none';
-    }
-  });
     });
      return () => {
       if (mapRef.current) {
