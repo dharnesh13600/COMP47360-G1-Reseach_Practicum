@@ -5,6 +5,9 @@
 z-index:0 !important;
 
 }
+.map-layout{
+  position: relative;
+}
 .mapboxgl-canvas {
   pointer-events: all !important;
 }
@@ -24,7 +27,7 @@ z-index:0 !important;
   padding-inline: 130px;
   justify-content: space-between;
   align-items: center;
-  height:126px;
+  height:126 px;
   gap:0rem;
   background-image: url('/waveMap.svg');
   background-repeat: no-repeat;
@@ -99,9 +102,10 @@ z-index:0 !important;
   .numbered-marker {
  
   cursor: pointer;
-    position: relative;
+  position: relative;
   width: 20px;
   height: 20px;
+  z-index:9999;
  
 }
 .pinShape {
@@ -132,4 +136,101 @@ z-index:0 !important;
   background: #FFF2E5;
 }
 
+.custom-popup {
+  position: absolute;
+  width:103px;
+  padding:8px 8px;
+  height:140px;
+  bottom: 80px;
+  right: 10px;
+  border-radius: 15px;
+  background: #FEFAF6;
+  border: 1px solid #ccc;
+  z-index: 10000;
+  display: none; 
+  pointer-events: none; 
+}
+
+/* .popup-card .muse-score {
+  font-weight: bold;
+  margin-bottom: 4px;
+  z-index:100;
+}
+
+.popup-card .muse-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.popup-card .estimate-crowd,
+.popup-card .crowd-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.popup-card .crowd-number,
+.popup-card .crowd-status {
+  font-weight: bold;
+} */
+
+
+.mapboxgl-popup {
+  top: auto !important;
+  left: auto !important;
+  bottom: 80px !important;
+  right: 10px !important;
+  transform: none !important;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 8px;
+  background: #fff;
+   width:103px;
+   padding-top: 15px;
+  padding-inline:15px;
+  height:140px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  color: #2c6d6e;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 180px;
+display: flex;
+justify-content: center;
+
+}
+
+.popup-card .muse-score {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.popup-card .muse-value {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  padding-inline: 2rem;
+}
+
+.popup-card .estimate-crowd-label,
+.popup-card .estimate-crowd,
+.popup-card .crowd-label {
+  margin-top: 8px;
+  font-size: 10px;
+  color: #2c6d6e;
+  font-weight: bold;
+  display: flex;
+justify-content: center;
+font-weight: bold;
   
+}
+
+.popup-card .crowd-status {
+font-size: 10px;
+    color: #2c6d6e;
+  padding-inline: 2rem;
+  display: flex;
+justify-content: center;font-weight: bold;
+}

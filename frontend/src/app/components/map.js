@@ -10,6 +10,7 @@ import '../styles/map.css';
 import '../globals.css';
 
 
+
 const useMapbox = process.env.NEXT_PUBLIC_USE_MAPBOX==='true';
 
 if (useMapbox) {
@@ -50,6 +51,8 @@ const locationsData = [
   },
 ];
 export default function Map(){
+const popupRef = useRef();
+const [showMarkers, setShowMarkers] = useState(false);
 
     const mapRef =useRef()
     const mapContainerRef= useRef()
@@ -85,6 +88,17 @@ export default function Map(){
     setZoom(newZoom);
   }
 });
+
+const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+    <div class="popup-card">
+    <div class="muse-score">Muse Score</div>
+    <div class="muse-value">${location.museScore ?? '--'}</div>
+    <div class="estimate-crowd-label">Estimate Crowd</div>
+    <div class="estimate-crowd">--</div>
+    <div class="crowd-label">Crowd</div>
+    <div class="crowd-status">--</div>
+  </div>
+`);
 locationsData.forEach((location, index) => {
       const el = document.createElement('div');
       el.className = 'numbered-marker';
@@ -92,7 +106,10 @@ locationsData.forEach((location, index) => {
 
       new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
+         .setPopup(popup)
         .addTo(mapRef.current);
+       
+
     });
      return () => {
       if (mapRef.current) {
@@ -101,8 +118,9 @@ locationsData.forEach((location, index) => {
       }
     };
 
-  
-  }, [center, zoom])
+
+
+  }, [])
 
   if (!useMapbox) {
     return (
