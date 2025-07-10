@@ -1,4 +1,4 @@
-'use client';
+use client';
 import dynamic from 'next/dynamic';
 import MapDraw from '../components/map-draw-1.js'
 import MapDraw02 from '../components/map-draw-2.js'
@@ -12,10 +12,10 @@ export default function MapPage() {
   return (
     
     <main className="map-layout">
-      {/* <MapDraw /> */}
+      <MapDraw />
       <MapDraw02 />
       <SideBar />
       <Map />
-    </main>
-  );
+    </main>
+  );
 }

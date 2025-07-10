@@ -144,6 +144,10 @@ figure {
     height:100%;
 }
 
+body, html {
+  overflow-x: hidden;
+}
+
 *::before,
 *::after{
     box-sizing: border-box;
