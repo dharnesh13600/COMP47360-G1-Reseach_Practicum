@@ -10,7 +10,8 @@ export async function POST(req){
                 {status:400}
             );
         }
-
+        console.log(activity);
+        console.log(readableTime);
         return Response.json(
             {
                 activity,

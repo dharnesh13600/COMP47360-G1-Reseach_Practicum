@@ -6,7 +6,7 @@ import TimeLetters from '@/helper/time';
 import styles from '../styles/sidebar.module.css';
 import '../globals.css';
 
-import {format} from 'date-fns';
+import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
 
 // importing dropdown components
@@ -313,12 +313,15 @@ async function handleSubmit(){
     return;
   }
   setSubmitted(true);
+
+  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
   const res=await fetch('/api/location',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({activity:activityChoice,readableTime:selectedTime})
+    body:JSON.stringify({activity:activityChoice,readableTime:readableTimeJson})
   });
 
   const data=await res.json();
