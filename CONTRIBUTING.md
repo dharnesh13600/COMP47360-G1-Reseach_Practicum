@@ -21,7 +21,7 @@ git push -u origin feature/FE-login-UI
 **Base Branch:** your team branch (frontend, backend or data-analytics)
 **Title Format:**
 ```text
-feature(frontend): add login UI
+feature-frontend: add login UI
 ```
 ## ✅ Pull Request Review and Approval
 Code owners are auto-requested for review via `.github/CODEOWNERS`
