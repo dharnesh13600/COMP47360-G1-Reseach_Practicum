@@ -12,8 +12,6 @@ export default function MapPage() {
   return (
     
     <main className="map-layout">
-      <MapDraw />
-      <MapDraw02 />
       <SideBar />
       <Map />
     </main>

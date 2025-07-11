@@ -11,6 +11,9 @@ const DropdownDate=({buttonText,content})=>{
         console.log("Dropdown toggle clicked");
         setDateOpen(prev => !prev);
     }
+      const close = () => {
+    setDateOpen(false);
+  };
      useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -28,7 +31,9 @@ console.log("Rendering DateDropdown");
         <>
         <div   ref={dropdownRef} className={styles.datedropdown}>
             <DateDropdown toggle={toggleDate} open={Dateopen}>{buttonText}</DateDropdown>
-            <DropdownContent open={Dateopen}>{content}</DropdownContent>
+            <DropdownContent open={Dateopen}>{  typeof content === 'function'
+              ? content(close)  
+              : content}</DropdownContent>
         </div>
         </>
     );

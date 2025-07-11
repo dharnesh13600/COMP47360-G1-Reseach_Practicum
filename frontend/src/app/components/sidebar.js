@@ -1,11 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from "react";
-import ActivityLetters from '@/helper/activity';
-import DateLetters from "@/helper/date";
-import TimeLetters from '@/helper/time';
 import styles from '../styles/sidebar.module.css';
-import '../globals.css';
-
+import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
 
@@ -25,6 +21,11 @@ import { GetWeatherData } from "./weather-data";
 
 import { useWeather } from "./useWeather";
 export default function SideBar(){
+  console.log('🎈 SideBar mounted');
+useEffect(() => {
+  return () => console.log('💨 SideBar unmounted');
+}, []);
+
     const [selected, setSelected] = useState('2');
 
     // activity dropdown useState
@@ -68,6 +69,9 @@ useEffect(()=>{
         });
         const dates=Array.from(dateSet);
         setDates(dates);
+        console.log("weatherResponse", weatherResponse);
+console.log("weatherResponse.list", weatherResponse.list);
+
     }
     weatherFetch();
 },[]);
@@ -137,7 +141,7 @@ useEffect(() => {
     "locations": [
       {
         "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park: Arch Plaza",
+        "zoneName": "Washington Square Park",
         "latitude": 40.7312185,
         "longitude": -73.9970929,
         "combinedScore": 5.03,
@@ -147,7 +151,7 @@ useEffect(() => {
       },
       {
         "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park: Stage Performance",
+        "zoneName": "Bryant Park",
         "latitude": 40.7548472,
         "longitude": -73.9841117,
         "combinedScore": 4.99,
@@ -157,7 +161,7 @@ useEffect(() => {
       },
       {
         "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-        "zoneName": "WEST END AVENUE ",
+        "zoneName": "WEST END AVENUE",
         "latitude": 40.7883655,
         "longitude": -73.9745122,
         "combinedScore": 5.69,
@@ -167,7 +171,7 @@ useEffect(() => {
       },
       {
         "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE Manhattan, New York",
+        "zoneName": "8 AVENUE",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.17,
@@ -177,7 +181,7 @@ useEffect(() => {
       },
       {
         "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS BOULEVARD",
+        "zoneName": "FREDERICK DOUGLASS",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.10,
@@ -341,7 +345,7 @@ useEffect(() => {
     "locations": [
       {
         "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park: Arch Plaza",
+        "zoneName": "Washington Square Park",
         "latitude": 40.7312185,
         "longitude": -73.9970929,
         "combinedScore": 5.03,
@@ -351,7 +355,7 @@ useEffect(() => {
       },
       {
         "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park: Stage Performance",
+        "zoneName": "Bryant Park",
         "latitude": 40.7548472,
         "longitude": -73.9841117,
         "combinedScore": 4.99,
@@ -371,7 +375,7 @@ useEffect(() => {
       },
       {
         "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE Manhattan, New York",
+        "zoneName": "8 AVENUE",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.17,
@@ -381,7 +385,7 @@ useEffect(() => {
       },
       {
         "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS BOULEVARD",
+        "zoneName": "FREDERICK DOUGLASS ",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.10,
@@ -394,6 +398,12 @@ useEffect(() => {
 
   setLocations(locationJson.locations);
 }, []);
+useEffect(() => {
+  console.log("selectedDate updated:", selectedDate);
+}, [selectedDate]);
+useEffect(() => {
+  console.log("Dates available:", dates);
+}, [dates]);
 
     return(
           <>
@@ -402,21 +412,12 @@ useEffect(() => {
           >
 
                 <div
-                className={`${styles.sidebarInner} ${styles.activity}`}
-                >
-                    <hr/>
-                    <div className={`${styles.innerPosition}`}>
-                    <div>
-                    <p>Choose Your</p>
-                    <p><ActivityLetters/></p>
-                    </div>
-                    
-                    </div>
-                    
-                      <div className={styles.dropdownWrapper}>
+                className={styles.activityWrapper}
+                > 
+                   
                       <Dropdown ref={dropRef} 
                       buttonText={<span>
-                          {activityChoice ||'Select...'}
+                          {activityChoice ||'Select Activity'}
                       
                       {
                         activityChoice &&(
@@ -445,25 +446,21 @@ useEffect(() => {
                           }
                         </>
     )}/>
-                    </div>
+                   
                     
                
                 </div>
-                <div
-                className={`${styles.sidebarInner} ${styles.time}`}
+                <div className={`${styles.readableTimeContainer}`}>
+                        <div
+                className={styles.dateWrapper}
                 >
-                     <hr/>
                     <div className={`${styles.innerPosition}`}>
                     <div>
-                    <p>Choose Your</p>
-                     <div className={`${styles.dateContainer}`}>
-                        <div><DateLetters/></div>
-                        <div className={`${styles.vl}`}></div>
-                         <div className={`${styles.timeDiv}`}><TimeLetters/></div>
-
-                    </div>
-                    <div className={`${styles.dropContainer} ${styles.dropdownWrapper}`}>
-                      <DropdownDate buttonText={ <span className={styles.buttonTextWrapper}>{selectedDate || "Select Date"}
+                    
+                     
+                    
+                     
+                      <DropdownDate buttonText={ <span className={styles.buttonTextWrapper}>{selectedDate || "Date"}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -471,20 +468,38 @@ useEffect(() => {
                             e.stopPropagation();
                             setSelectedDate(null);
                           }}
-                          className={styles.clearIcon}
+                          className={`${styles.clearIcon} `}
                           />
                       )}
                       </span>}
-                      content={<>
-                        {dates.map(date=>(
-                          <DateItem key={date} onClick={()=>{setSelectedDate(date);close();}}>
+                      content={(close)=>(<>
+                        {dates.map(date=>{
+                          console.log("Rendering DateItem:", {
+    date,
+    selectedDate,
+    isSelected: date === selectedDate
+  });
+  return(
+<DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close);}} className={date === selectedDate ? styles.selectedItem : ''}>
                             {date}
                             </DateItem>
-                        )
+  );
+                          
+                        }
 
                         )}
-                        </>} />
-            <DropdownTime buttonText={<span className={styles.buttonTextWrapper}>{selectedTime || "Select Time"}{selectedTime && (
+                        </>)} />
+           
+                   
+                    
+                    </div>
+                 
+                    </div>
+                    
+
+                </div>
+                <div  className={styles.timeWrapper}>
+                             <DropdownTime buttonText={<span className={styles.buttonTextWrapper}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
                           onClick={(e)=>{
@@ -494,21 +509,16 @@ useEffect(() => {
                           className={styles.clearIcon}
                           />
                       )}</span>} content={<>
-              {times.length === 0 && <div>Please select a date first</div>}
+              {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
                 <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
                   {time}
                 </TimeItem>
               ))}
-              </>} />
-                   
-                    </div>
-                    </div>
-                 
-                    </div>
-                    
-
+              </>} /> 
                 </div>
+                </div>
+                
                 <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
                 {submitted && weather && (
   <div className={`${styles.weatherDisplay}  ${submitted ? 'fade-enter-active' : 'fade-enter'}`}>
@@ -558,6 +568,7 @@ useEffect(() => {
   {locations.map((location,index) => (
     <div key={location.id} className={styles.locationItem}>
       <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
+      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
 </div>

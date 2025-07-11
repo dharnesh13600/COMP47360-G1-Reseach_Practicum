@@ -6,4 +6,6 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
+   font-family: var(--ff-overpass);
+  font-size: 12px;
 }

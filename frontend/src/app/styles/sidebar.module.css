@@ -1,49 +1,70 @@
 .sidebarContainer{
-    width:310px;
-    height:605px;
+    width:280px;
+    height:530px;
     border-radius: 56px;
     background-color: var(--background);
     box-shadow: 0 4px 20.5px 3px #00000025;
-    padding-inline:25px;
+    padding-inline:20px;
     padding-top: 35px;
     font-family:var(--ff-inter);
     display: flex;
     flex-direction: column;
     align-items: center;
     position:absolute;
-    top:113px;
+    top:160px;
     left:50px;
     z-index:10;
     margin-bottom: 10rem;
 }
 
-.sidebarInner{
-    padding-top: 0.2px;
-    width:300px;
-    min-height:105px;
-    background-color: var( --subway-bg);
-    border-radius: 14.52px;
-
-   position: relative; 
- 
-    
-}
-.innerPosition{
-    padding-inline: 6px;
-}
-.sidebarInner p{
-    font-size: 18px;
-    color:var(--subway-text-low-contrast);
+.activityWrapper{
+    width:220px;
+    min-height: 30px;
+    position: relative; 
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ padding-bottom: 0.1rem;
+ padding-top: 0.2rem;
+ padding-inline: 0.1rem;
+     font-size: 18px;
+    text-transform: uppercase;
+    background-color: #FFFBF6;
+    margin-top: 25px;
     font-weight: 700;
-    font-family:var(--ff-inter);
+    border:5px solid #4B8382;
+    border-radius: 8px;
+    margin-bottom: 12px;
+     font-family: var(--ff-overpass);
 }
+.readableTimeContainer{
+  display:flex;
+  width:230px;
+  justify-content: space-between;
+
+}
+
+.dateWrapper,.timeWrapper{
+  background-color: #FFFBF6;
+ padding-inline: 0.1rem;
+ min-height: 30px;
+ border:5px solid #4B8382;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    font-size: 18px;
+    display: flex;
+ justify-content: center;
+ align-items: center;
+ padding-top: 0.1rem;
+ padding-bottom: 0.1rem;
+  font-family: var(--ff-overpass);
+}
+
 .sidebarInner img{
     width:45px;
 } 
-.activity{
-    margin-bottom: 30px;
-    position: relative;
-}
+
 
 .dateContainer{
     display:flex;
@@ -70,25 +91,10 @@ div.vl{
       
 }
 
-.dropContainer{
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    padding-inline: 20px;
-  }
 
 
-.dropdownWrapper{
-    position: relative;
-    
-    font-weight: 700;
-    border-top-style: solid;
-    border-top-color: #FFFFFF;
-    border-top-width:1.1px;
-    margin-top: 0.5rem;
-    padding-top: 0.2rem;
-}
+
+
 
 .weatherDisplay {
   margin-top: 1rem;
@@ -104,7 +110,7 @@ div.vl{
     display:flex;
     align-items: center;
     margin-top: 1rem;
-    padding-inline: 2rem;
+    padding-inline: 1rem;
      color: var(--subway-bg);
      font-weight: 700;
      font-family: var(--ff-inter);
@@ -128,9 +134,7 @@ div.vl{
     width: 100%;
     text-align: center;
 }
-/* .manualSelection{
-    color:#A2B9A7;
-} */
+
 .locationListContainer {
     margin-top:1rem;
   padding-inline: 16px;
@@ -147,38 +151,41 @@ div.vl{
   padding-inline: 0.2rem;
   width:100%;
   margin-bottom: 4px;
-  background-color: var( --surface-1);
+  background-color: #F4F5F2;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--subway-bg);
+  color: #697F6E;
   border: 1px solid #ddd;
-  background-color: var(--subway-bg);
   display:flex;
   gap:0.2rem;
-
+  box-shadow: 3px 4px 4px 0 #00000040;
+  font-family: var(--ff-overpass);
+  font-weight: 600;
 }
 
 .index{
     border-radius: 50%;
-    width:28px;
+    width:30px;
     height:25px;
-    background-color: var(--surface-1);
+    background-color: #697F6E;
+    color:#F4F5F2;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .locationName{
- background-color: var(--surface-1);
  border-radius: inherit;
  padding-inline:10px;
  width:100%;
  padding-top:5px;
  padding-bottom:5px;
  text-transform: lowercase;
- text-transform: capitalize;
  display: flex;
  justify-content: center;
+   font-family: var(--ff-overpass);
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .suggestedLocations{
@@ -203,7 +210,7 @@ div.vl{
 .suggestedItems{
     text-transform: capitalize;
      padding-inline: 1rem;
-     max-height: calc(140px - 0.5rem); /* subtract padding if needed */
+     max-height: calc(140px - 0.5rem);
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -268,14 +275,16 @@ div.vl{
 }
 .buttonStyle{
     font-family: var(--ff-inter);
-    font-size: 18px;
-    margin-top: 10px;
+    font-size: 15px;
+    margin-top:2px;
     font-weight: bold;
-    padding: 3% 6%;
-    border-radius: 40px;
+   padding-inline:1rem;
+   padding-top: 0.5rem;
+   padding-bottom:0.5rem;
+    border-radius: 10px;
     text-decoration: none;
     border: none;
-    color: var(--on-surface-low-contrast);
+    color: #FEFAF6;
     background-color: var(--subway-bg);
     transition: 0.3s;
     cursor: pointer;
@@ -283,7 +292,7 @@ div.vl{
 
 .buttonStyle:hover{
     font-family: var(--ff-inter);
-    font-size: 18px;
+    font-size: 13px;
     font-weight: bold;
 
     border-radius: 40px;
@@ -309,3 +318,10 @@ div.vl{
   justify-content: center;
   align-items: center;
 }
+.dateEmptyText{
+  font-size: 12px;
+}
+.selectedItem{
+  font-size: 8px;
+}
+
