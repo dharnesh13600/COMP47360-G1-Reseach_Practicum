@@ -14,7 +14,7 @@ body{
   padding-inline: 130px;
   justify-content: space-between;
   align-items: center;
-  height:126px;
+  height:144px;
   gap:9rem;
    background-image: url('/wave.svg');
   background-repeat: no-repeat;
@@ -25,10 +25,12 @@ body{
   display:none;
 }
 .logo{
-  height:170px;
+  height:auto;
   width:410px;
+  min-width: 270px;
   margin-top: 7vh;
   margin-left: 8vh;
+  display: block;
 }
 .logo-div-map{
   display:none;
@@ -51,8 +53,8 @@ body{
 
 /* HERO STYLING */
 .hero-body{
-  
-  margin-top: 70px;
+  position: relative;
+  margin-top: 0px;
   justify-content: space-between;
   padding-inline: 150px;
   align-items: center;
@@ -63,9 +65,12 @@ body{
    /* border:1px solid red; */
   flex: 1 1 300px;
   display: flex;
+  height: 695px;
+  gap: 30px;
 }
 .split-left-home{
     flex-basis: 45%;
+    position: relative;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -79,7 +84,7 @@ body{
 .motto-text{
   position:absolute;
   font-family: var(--ff-playfair-display);
-  font-size: 35px;
+  font-size: 32px;
   color: var(--on-surface-2);
   font-style: italic;
 }
@@ -88,6 +93,7 @@ body{
    font-weight: 600;
    font-size: clamp(1.5rem, 1vw + 0.5rem, 1rem); 
    line-height: 30px;
+  
 }
 .hero-content{
   width:600px;
@@ -97,7 +103,9 @@ body{
   font-size: 15px;
   font-weight: 300;
   line-height: 25px;
+  top:40px;
   color: var(--subway-bg);
+  position: relative;
 }
 .home-map-button{
   margin-top: 30px;
@@ -105,8 +113,25 @@ body{
   align-items: center;
 }
 
+@media (max-width:1200px){
+.hero-body{
+align-items: center;
+justify-content: center;
+}
+.motto-text{
+  font-size: 30px;
+}
+.hero-image{
+  min-width: 400px;
+}
+}
+
 @media (max-width:425px) {
-  
+.home-map-button{
+  order: 1;
+  margin: 0;
+  margin-top: -5vw;
+}
  .navigation-wrapper{
 
   background-image: none;
@@ -137,32 +162,47 @@ body{
   display:block;
 }
 
-
 .hero-body{
   margin-top: 10px;
-  justify-content: space-between;
+  justify-content: center;
   padding-inline: 10px;
   align-items: center;
    flex-wrap: wrap;
   flex: 1 1 300px;
+  max-width: 100%;
 }
-
+.split-left-home{
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+}
 .hero-image{
   width:400px;
   height:400px;
-   flex: 1 1 300px;
-  max-width: 400px;
+  flex: 1 1 300px;
   width: 100%;
   height: auto;
+}
+.motto-text{
+  font-size: 25px;
 }
 .hero-content h2{
    font-weight: 600;
    font-size: clamp(1.2rem, 2vw + 0.5rem, 2rem); 
+   order: 2;
+   margin-top: 6vw;
 }
 .hero-content{
-  width:600px;
-  flex: 1 1 300px;
-  max-width: 600px;
-  padding-inline: 50px;
+  max-width: 80%;
+  justify-content: center;
+  text-align: center;
+  float: right;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 15%;
+}
+.hero-content p{
+  order: 3;
+  margin-top: 4vw;
 }
 }

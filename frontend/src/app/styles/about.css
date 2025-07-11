@@ -7,9 +7,9 @@ body {
 }
 .container{
     display: flex;
+    align-items: flex-start;
 }
 .split-left, .split-right{
-    height: 75vh;
     box-sizing: border-box;
     margin: 3px;
     margin-top: 8vh;
@@ -19,10 +19,12 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    margin-top: 10%;
 }
-.split-right{
-    flex-basis: 55%;
-    padding: 2%;
+
+.split-right {
+  flex-basis: 55%;
+  padding: 2%;
 }
 .photo-name{
     display: flex;
@@ -32,10 +34,9 @@ body {
     text-align: right;
     flex-direction: column;
     justify-content: center;
-    gap: 13vh;
-    margin-top: -10vh;
+    gap: 7vw;
     font-family: var(--ff-inter);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--subway-bg);
 }
 .team-photo{
@@ -43,7 +44,6 @@ body {
     grid-template-columns: repeat(2, 1fr);
     grid-gap:10px;
     row-gap: 2px;
-    margin-top: -10vh;
 }
 .photo{
     object-fit: cover;
@@ -53,17 +53,90 @@ body {
     font-size: 50px;
     color: var(--subway-bg);
     font-weight: 800;
+      margin-bottom: 2%; 
 }
 .about-text{
-    margin-top: 2%;
     padding-right: 20%;
     font-family: var(--ff-inter);
     font-size: 15px;
     font-weight: 400;
     line-height: 25px;
     color: var(--subway-bg);
+    margin-bottom: 2%;
 }
 .map-button{
     display: relative;
     padding-top: 3vh;
+}
+
+@media (max-width:800px){
+.container{
+  flex-direction: column;
+  align-items: center;
+  gap: 0; /* ✅ remove any vertical gap */
+  margin: 0;
+  padding: 0;
+}
+.split-left{
+    order:2;
+    justify-content: center;
+    align-items: center;
+    width: 90%; /* Full width to center properly */
+    padding-bottom: 30px;
+    gap:20px;
+    display: flex;
+    flex-direction: column;
+}
+.split-right{
+    order:1;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 86%;
+}
+ .about-heading, .about-text, .map-button {
+    padding-right: 0; /* Remove padding on smaller screens */
+    text-align: center;
+  }
+  .about-heading{
+    margin: 0;
+    padding: 0;
+    height: auto;
+    margin-bottom: 2%;
+  }
+  .about-text{
+    height: auto;
+  }
+  .map-button{
+    margin-top: 8%;
+  }
+.photo-name{
+    margin-top: -5%;
+    align-items: center;
+    text-align: center;
+    line-height: 55%;
+}
+.team-photo{
+    margin-top: 5%;
+}
+.photo{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  vertical-align: middle;
+  max-height: 150px; 
+
+}
+}
+
+@media (max-width:480px){
+    .photo-name{
+    align-items: center;
+    text-align: center;
+    line-height: 50%;
+    font-size: 10px;
+    width: 100%;
+    gap:15vw;
+}
 }
