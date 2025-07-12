@@ -2,7 +2,7 @@
     display:flex;
     align-items: center;
     justify-content: center;
-   
+   min-width: 175px;
     background-color: #4B8382;
     padding-top: 0.1rem;
     padding-inline: 1rem;

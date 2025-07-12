@@ -22,8 +22,8 @@
     min-height: 30px;
     position: relative; 
  display: flex;
- justify-content: center;
  align-items: center;
+ justify-content: space-between;
  padding-bottom: 0.1rem;
  padding-top: 0.2rem;
  padding-inline: 0.1rem;
@@ -54,8 +54,9 @@
     text-transform: uppercase;
     font-size: 18px;
     display: flex;
- justify-content: center;
+ justify-content: space-between;
  align-items: center;
+ width:90px;
  padding-top: 0.1rem;
  padding-bottom: 0.1rem;
   font-family: var(--ff-overpass);
@@ -166,7 +167,7 @@ div.vl{
 
 .index{
     border-radius: 50%;
-    width:30px;
+    width:32px;
     height:25px;
     background-color: #697F6E;
     color:#F4F5F2;
@@ -259,14 +260,19 @@ div.vl{
 .buttonTextWrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  justify-content: center;
 }
 
 .clearIcon {
   cursor: pointer;
-  color: #999;
-  margin-left: 8px;
+ display:flex;
+    align-items: center;
+    justify-content: center;
+     width:13px;
+    height:15px;
+    color:#FEFAF6;
+    margin-left: 0.4rem;
+    opacity:60%;
   transition: color 0.2s ease;
 }
 
@@ -321,7 +327,14 @@ div.vl{
 .dateEmptyText{
   font-size: 12px;
 }
-.selectedItem{
-  font-size: 8px;
+
+
+
+
+
+.selectedItem {
+  font-size: 12px;
+  
 }
+
 

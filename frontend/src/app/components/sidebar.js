@@ -412,7 +412,8 @@ useEffect(() => {
                 > 
                    
                       <Dropdown ref={dropRef} 
-                      buttonText={<span>
+                      buttonText={<span className={`${styles.buttonTextWrapper} ${activityChoice ? styles.selectedItem : ''}`} >
+              
                           {activityChoice ||'Select Activity'}
                       
                       {
@@ -436,7 +437,7 @@ useEffect(() => {
                           activities.map((activity) => (
                           <DropdownItem 
                           key={activity}
-                          onClick={()=>{setChoice(activity); close();}}>
+                          onClick={()=>{setChoice(activity); close(); } } className={activity === activityChoice ? styles.selectedItem : ''}>
                           {activity}
                           </DropdownItem> 
                           ))
@@ -457,7 +458,7 @@ useEffect(() => {
                      
                     
                      
-                      <DropdownDate buttonText={ <span className={styles.buttonTextWrapper}>{selectedDate || "Date"}
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''}`}>{selectedDate || "Date"}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -471,19 +472,15 @@ useEffect(() => {
                       </span>}
                       selectedDate={selectedDate}
                       content={(close)=>(<>
-                        {dates.map(date=>{
-                          console.log("Rendering DateItem:", {
-    date,
-    selectedDate,
-    isSelected: date === selectedDate
-  });
-  return(
+                        {dates.map(date=>(
+                          
+ 
 <DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close);}} className={date === selectedDate ? styles.selectedItem : ''}>
                             {date}
                             </DateItem>
-  );
+
                           
-                        }
+                        )
 
                         )}
                         </>)} />
@@ -497,7 +494,7 @@ useEffect(() => {
 
                 </div>
                 <div  className={styles.timeWrapper}>
-                             <DropdownTime buttonText={<span className={styles.buttonTextWrapper}>{selectedTime || "Time"}{selectedTime && (
+                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
                           onClick={(e)=>{

@@ -1,19 +1,19 @@
 .time-dropdown-btn{
     display:flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: var(--subway-bg);
     border-radius: 8px;
     cursor: pointer;
     overflow: hidden;
        pointer-events: auto;
        position: relative;
-
+       width:70px;
     height:31px;
     color:#FEFAF6;
     font-weight: 700;
     padding-top: 0.1rem;
-    padding-inline: 1rem;
+    padding-inline: 0.6rem;
     height:31px;
     color:#FEFAF6;
 }
