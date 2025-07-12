@@ -7,6 +7,8 @@
   display: flex;
   justify-content: center;
   padding-inline: 1rem;
+  font-family: var(--ff-overpass);
+  font-size: 12px;
 }
 
 .dropdown-item:hover {

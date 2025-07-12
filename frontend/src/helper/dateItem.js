@@ -1,8 +1,9 @@
 import './styles/dateItem.css';
-const DateItem=({children,onClick})=>{
+import styles from '@/app/styles/sidebar.module.css';
+const DateItem=({children,onClick, className=''})=>{
     
     return (
-        <div className='date-dropdown-item' onClick={onClick}>{children}</div>
+        <div className={` ${className} date-dropdown-item`} onClick={onClick}>{children}</div>
     );
 }
 
