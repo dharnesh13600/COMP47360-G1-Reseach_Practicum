@@ -43,7 +43,7 @@ export default function SideBar(){
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [submitted, setSubmitted] = useState(false);
-
+  const [showAllLocations,setShowAllLocations]=useState(false);
 
 const [dates,setDates]=useState([]);
 const [times,setTimes]=useState([]);
@@ -126,7 +126,7 @@ useEffect(()=>{
   
 },[submitted,selectedDate,selectedTime,fullWeatherData]);
 
-const {icon,temp}=useWeather(setWeather || {});
+const {icon,temp}=useWeather(weather || {});
 
 
 
@@ -177,6 +177,26 @@ useEffect(() => {
         "crowdScore": null
       },
       {
+        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+        "zoneName": "FREDERICK DOUGLASS",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+        {
+        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+        "zoneName": "FREDERICK DOUGLASS",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+        {
         "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
         "zoneName": "FREDERICK DOUGLASS",
         "latitude": 40.8164207,
@@ -388,7 +408,38 @@ useEffect(() => {
         "activityScore": 8.74,
         "museScore": null,
         "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390fa",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390da",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390ba",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
       }
+
     ]
   };
 
@@ -404,7 +455,7 @@ useEffect(() => {
     return(
           <>
           <div 
-          className={styles['sidebarContainer']}
+          className={styles.sidebarContainer}
           >
 
                 <div
@@ -448,7 +499,7 @@ useEffect(() => {
                     
                
                 </div>
-                <div className={`${styles.readableTimeContainer}`}>
+                <div className={styles.readableTimeContainer}>
                         <div
                 className={styles.dateWrapper}
                 >
@@ -458,7 +509,7 @@ useEffect(() => {
                      
                     
                      
-                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''}`}>{selectedDate || "Date"}
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate || "Date"}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -494,7 +545,7 @@ useEffect(() => {
 
                 </div>
                 <div  className={styles.timeWrapper}>
-                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
+                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}${styles.otherContent}}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
                           onClick={(e)=>{
@@ -505,14 +556,14 @@ useEffect(() => {
                           />
                       )}</span>} 
                       selectedTime={selectedTime}
-                      content={<>
+                      content={(close)=>(<>
               {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
                 <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
                   {time}
                 </TimeItem>
               ))}
-              </>} /> 
+              </>)} /> 
                 </div>
                 </div>
                 
@@ -562,13 +613,32 @@ useEffect(() => {
                 )}
                  {submitted && isVisible && (
                    <div className={styles.locationListContainer}>
-  {locations.map((location,index) => (
+  {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
     <div key={location.id} className={styles.locationItem}>
       <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
       <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
+  {
+    locations.length>5 && (
+      <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
+        {showAllLocations ?  
+         (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg>)
+         :
+
+(<span><svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M3 2.93237L13.1739 10.0677L22.5 2.93237" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg></span>)
+}
+      </button>
+    )
+  }
+
 </div>
+
+ 
                  )} 
                  {!isVisible && (
                   <div className={styles.suggestedLocations}>
