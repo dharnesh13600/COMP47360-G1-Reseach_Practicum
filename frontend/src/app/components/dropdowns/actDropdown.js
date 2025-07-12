@@ -6,7 +6,7 @@ import DropdownItem from "@/helper/activityItem";
 import styles from '@/app/styles/dropdown.module.css';
 
 
-const Dropdown=({buttonText,content})=>{
+const Dropdown=({buttonText,content,activityChoice})=>{
     const [open,setOpen]=useState(false);
      const dropdownRef = useRef(null);
     const toggleDropdown=()=>{
@@ -26,7 +26,7 @@ const Dropdown=({buttonText,content})=>{
     return(
         <>
         <div  ref={dropdownRef} className={styles.dropdown}>
-            <ActivityDropdown toggle={toggleDropdown} open={open}>{buttonText}</ActivityDropdown>
+            <ActivityDropdown toggle={toggleDropdown} open={open} activityChoice={activityChoice}>{buttonText}</ActivityDropdown>
             <DropdownContent open={open}>{typeof content==='function'?content(() => setOpen(false)):content}</DropdownContent>
         </div>
         </>

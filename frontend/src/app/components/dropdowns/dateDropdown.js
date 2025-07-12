@@ -4,7 +4,7 @@ import DateDropdown from '@/helper/dateButton';
 import DropdownContent from '@/helper/dateDropContent';
 import DropdownItem from '@/helper/dateItem';
 import styles from '@/app/styles/dateDrop.module.css';
-const DropdownDate=({buttonText,content})=>{
+const DropdownDate=({buttonText,content,selectedDate})=>{
      const [Dateopen,setDateOpen]=useState(false);
       const dropdownRef = useRef(null);
     const toggleDate=()=>{
@@ -30,7 +30,7 @@ console.log("Rendering DateDropdown");
     return(
         <>
         <div   ref={dropdownRef} className={styles.datedropdown}>
-            <DateDropdown toggle={toggleDate} open={Dateopen}>{buttonText}</DateDropdown>
+            <DateDropdown toggle={toggleDate} open={Dateopen} selectedDate={selectedDate}>{buttonText}</DateDropdown>
             <DropdownContent open={Dateopen}>{  typeof content === 'function'
               ? content(close)  
               : content}</DropdownContent>

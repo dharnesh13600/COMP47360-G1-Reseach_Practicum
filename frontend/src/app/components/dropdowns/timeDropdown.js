@@ -7,7 +7,7 @@ import TimeItem from '@/helper/timeItem';
 import styles from '@/app/styles/timeDrop.module.css';
 
 
-const DropdownTime=({buttonText,content})=>{
+const DropdownTime=({buttonText,content,selectedTime})=>{
      const [Timeopen,setDateOpen]=useState(false);
       const dropdownRef = useRef(null);
     const toggleTime=()=>{
@@ -30,7 +30,7 @@ console.log("Rendering DateDropdown");
     return(
         <>
         <div  ref={dropdownRef}  className={styles.timedropdown}>
-            <TimeDropdown toggle={toggleTime} open={Timeopen}>{buttonText}</TimeDropdown>
+            <TimeDropdown toggle={toggleTime} open={Timeopen} selectedTime={selectedTime}>{buttonText}</TimeDropdown>
             <DropdownContent open={Timeopen}>{content}</DropdownContent>
         </div>
         </>

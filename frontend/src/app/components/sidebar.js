@@ -21,10 +21,7 @@ import { GetWeatherData } from "./weather-data";
 
 import { useWeather } from "./useWeather";
 export default function SideBar(){
-  console.log('🎈 SideBar mounted');
-useEffect(() => {
-  return () => console.log('💨 SideBar unmounted');
-}, []);
+
 
     const [selected, setSelected] = useState('2');
 
@@ -197,7 +194,6 @@ useEffect(() => {
 
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
-  console.log('Button clicked!');
   setIsVisible(prev => !prev);
 };
 // defining zones 
@@ -433,6 +429,7 @@ useEffect(() => {
                         </span>
                    
                       }
+                      activityChoice={activityChoice}
                         content={ (close)=>(   
                         <>
                           {
@@ -472,6 +469,7 @@ useEffect(() => {
                           />
                       )}
                       </span>}
+                      selectedDate={selectedDate}
                       content={(close)=>(<>
                         {dates.map(date=>{
                           console.log("Rendering DateItem:", {
@@ -508,7 +506,9 @@ useEffect(() => {
                           }}
                           className={styles.clearIcon}
                           />
-                      )}</span>} content={<>
+                      )}</span>} 
+                      selectedTime={selectedTime}
+                      content={<>
               {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
                 <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
