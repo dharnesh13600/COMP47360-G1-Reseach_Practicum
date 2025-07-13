@@ -5,7 +5,6 @@
   width: 12vw;
   aspect-ratio: 200 / 350;  
   z-index: 10;
-  pointer-events: none;
 }
 
 .draw01 svg {
@@ -14,7 +13,7 @@
   display: block;
 }
 
-@media (max-width:950px){
+@media (max-width:1150px) {
     .draw01{
         display: none;
     }
