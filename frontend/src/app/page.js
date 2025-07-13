@@ -11,12 +11,12 @@ import './styles/home-draw-3.css'
 export default function Page(){
     return (
         <>
-        
         <div className='hero-body'>
         <div className='split-left-home'>
             <Image className='hero-image' src='/statue_of_liberty.jpg' alt="description" width={700} height={700}/>
             <p className='motto-text'>Turn the City Into Your Studio</p>
         </div>
+        <Draw02/>
         <div className='hero-content'>
             <h2>Welcome to Manhattan Muse! <br></br>
             Your creative guide to New York City.
@@ -26,11 +26,10 @@ export default function Page(){
             <div className='home-map-button'>
                 <Button />
             </div>
-
+            <Draw03/>
         </div>
         <Draw01/>
-        <Draw02/>
-        <Draw03/>
+        
         </div>
         </>
     );

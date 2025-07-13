@@ -14,7 +14,7 @@
   display: block;
 }
 
-@media (max-width:950px){
+@media (max-width:900px){
     .draw02{
         display: none;
     }
