@@ -36,7 +36,7 @@ describe('<Navbar> buttons', () => {
   });
 
   it('adds wrapper modifier when pathname = /map', () => {
-    // ⚡ override the hook for THIS render
+    // override the hook for THIS render
     jest
       .spyOn(require('next/navigation'), 'usePathname')
       .mockReturnValueOnce('/map');
@@ -44,7 +44,7 @@ describe('<Navbar> buttons', () => {
     /* render with /map */
     const { container } = render(<Navbar />);
 
-    // ⚡ Query the wrapper by its class (no role attribute on the <div>)
+    // Query the wrapper by its class (no role attribute on the <div>)
     const wrapper = container.querySelector('.navigation-wrapper-map');
     expect(wrapper).toBeInTheDocument();               // sanity-check
     expect(wrapper).toHaveClass('navigation-wrapper-map');

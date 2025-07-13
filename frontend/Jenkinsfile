@@ -30,17 +30,24 @@ pipeline{
           checkout scm
         }
       }
+      stage('Unit Tests') {
+      steps {
+        dir('frontend') {
+          sh '''
+            export NPM_CONFIG_CACHE=$PWD/.npm-cache
+            mkdir -p "$NPM_CONFIG_CACHE"
+            [ -d node_modules ] || npm ci --prefer-offline
+            npm run test:ci
+          '''
+        }
+        junit 'frontend/junit.xml'
+      }
+    }
       stage('Build'){
         steps{
           dir('frontend'){
-            sh '''
-              export NPM_CONFIG_CACHE=$PWD/.npm-cache
-              mkdir -p "$NPM_CONFIG_CACHE"
-              
-              npm ci
+            sh '''          
               npm run lint
-              #npm --if-present test
-              npm install react-icons
               npm run build
             '''
           }

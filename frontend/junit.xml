@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="1.228">
+  <testsuite name="&lt;Navbar&gt; buttons" errors="0" failures="0" skipped="0" timestamp="2025-07-13T22:05:54" time="0.752" tests="3">
+    <testcase classname="&lt;Navbar&gt; buttons renders HOME · MAP · ABOUT with correct hrefs" name="&lt;Navbar&gt; buttons renders HOME · MAP · ABOUT with correct hrefs" time="0.075">
+    </testcase>
+    <testcase classname="&lt;Navbar&gt; buttons adds wrapper modifier when pathname = /map" name="&lt;Navbar&gt; buttons adds wrapper modifier when pathname = /map" time="0.009">
+    </testcase>
+    <testcase classname="&lt;Navbar&gt; buttons “MAP” link points to /map and is clickable" name="&lt;Navbar&gt; buttons “MAP” link points to /map and is clickable" time="0.065">
+    </testcase>
+  </testsuite>
+</testsuites>

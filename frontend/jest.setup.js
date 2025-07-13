@@ -1,5 +1,3 @@
-/* ──────────────── jest.setup.js ──────────────── */
-
 import '@testing-library/jest-dom';   // adds .toBeInTheDocument(), .toHaveClass(), etc.
 
 /* ---- 1. global router mock ---- */
