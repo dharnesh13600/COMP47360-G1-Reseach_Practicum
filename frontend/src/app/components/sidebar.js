@@ -545,7 +545,7 @@ useEffect(() => {
 
                 </div>
                 <div  className={styles.timeWrapper}>
-                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}${styles.otherContent}}`}>{selectedTime || "Time"}{selectedTime && (
+                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
                           onClick={(e)=>{

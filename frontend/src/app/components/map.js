@@ -77,6 +77,16 @@ const [showMarkers, setShowMarkers] = useState(false);
     const [center, setCenter]=useState(INITIAL_CENTER)
     const [zoom,setZoom]=useState(INITIAL_ZOOM)
 
+   const markersRef = useRef([]);
+
+  const activePopupRef = useRef(null);
+
+
+
+ 
+
+
+
     useEffect(() => {
     if (!useMapbox) return;
 
@@ -88,6 +98,12 @@ const [showMarkers, setShowMarkers] = useState(false);
       center: center,
       zoom: zoom,
     });
+   
+
+
+
+   
+
 
     mapRef.current.on('move', () => {
       const mapCenter = mapRef.current.getCenter();
@@ -104,9 +120,27 @@ const [showMarkers, setShowMarkers] = useState(false);
     setCenter(newCenter);
     setZoom(newZoom);
   }
+      markersRef.current.forEach(marker => {
+        const el = marker.getElement();
+      if (mapZoom < 14) {
+    el.style.opacity = '0.5';
+    el.title = 'Zoom in to interact';
+  } else {
+    el.style.opacity = '1';
+    el.title = '';
+  }
+      });
+
+   
 });
 
-const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+
+locationsData.forEach((location, index) => {
+      const el = document.createElement('div');
+      el.className = 'numbered-marker';
+      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
+
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="popup-card">
     <div class="muse-score">Muse Score</div>
     <div class="muse-value">${location.museScore ?? '--'}</div>
@@ -116,23 +150,54 @@ const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="crowd-status">--</div>
   </div>
 `);
-locationsData.forEach((location, index) => {
-      const el = document.createElement('div');
-      el.className = 'numbered-marker';
-      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
 
-      new mapboxgl.Marker(el)
+      const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
-         .setPopup(popup)
+        .setPopup(popup)
         .addTo(mapRef.current);
-       
+          markersRef.current.push(marker);
+          
+ el.addEventListener('click', () => {
+        const currentBearing = mapRef.current.getBearing();
+      const currentZoom = mapRef.current.getZoom();
 
-    });
+    
+        
+  if (activePopupRef.current) {
+    activePopupRef.current.remove();
+    activePopupRef.current = null;
+  }
+
+        mapRef.current.easeTo({
+          center: [location.longitude, location.latitude],
+          zoom: 18,          
+          pitch: 60,        
+          bearing: currentBearing + 360,
+          duration: 3000,   
+          easing: t => t    
+        });
+marker.getPopup().addTo(mapRef.current);
+  activePopupRef.current = marker.getPopup();
+
+      });
+ 
+      const pinShapeEl = el.querySelector('.pinShape');
+  pinShapeEl.classList.add('pulse-marker');
+
+ 
+
+  });
+
+
+      
+    
      return () => {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null; 
       }
+       markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
     };
 
 
@@ -151,9 +216,16 @@ locationsData.forEach((location, index) => {
   }
 
   const handleButtonClick = () => {
+     if (activePopupRef.current) {
+    activePopupRef.current.remove();
+    activePopupRef.current = null;
+  }
   mapRef.current.flyTo({
     center: INITIAL_CENTER,
-    zoom: INITIAL_ZOOM
+    zoom: INITIAL_ZOOM,
+    pitch: 0,
+    bearing: 0,
+    duration: 3000
   })
 }
 
