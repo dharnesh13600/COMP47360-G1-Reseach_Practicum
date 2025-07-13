@@ -25,31 +25,48 @@ const INITIAL_ZOOM=11.25
 
 const locationsData = [
   {
-    zoneName: "Washington Square Park: Arch Plaza",
-    latitude: 40.7312185,
-    longitude: -73.9970929,
+    zoneName: "Battery Park: South Tip",
+    latitude: 40.703277,   // southern tip
+    longitude: -74.017028,
   },
   {
-    zoneName: "Bryant Park: Stage Performance",
-    latitude: 40.7548472,
-    longitude: -73.9841117,
+    zoneName: "Wall Street: Financial District",
+    latitude: 40.707491,
+    longitude: -74.011276,
   },
   {
-    zoneName: "WEST END AVENUE between WEST 86 STREET and WEST 87 STREET",
-    latitude: 40.7883655,
-    longitude: -73.9745122,
+    zoneName: "Union Square Park",
+    latitude: 40.735863,
+    longitude: -73.991084,
   },
   {
-    zoneName: "8 AVENUE Manhattan, New York",
-    latitude: 40.8164207,
-    longitude: -73.9466177,
+    zoneName: "Times Square: 7th Ave & 42nd",
+    latitude: 40.758896,
+    longitude: -73.985130,
   },
   {
-    zoneName: "FREDERICK DOUGLASS BOULEVARD Manhattan, New York",
-    latitude: 40.8164207,
-    longitude: -73.9466177,
+    zoneName: "Central Park: Bethesda Terrace",
+    latitude: 40.774036,
+    longitude: -73.970913,
   },
+  {
+    zoneName: "Upper West Side: 96th Street",
+    latitude: 40.793919,
+    longitude: -73.972323,
+  },
+  {
+    zoneName: "Harlem: 125th Street",
+    latitude: 40.807536,
+    longitude: -73.945713,
+  },
+  {
+    zoneName: "Inwood Hill Park: Northern Tip",
+    latitude: 40.872028,
+    longitude: -73.923790,
+  }
 ];
+
+
 export default function Map(){
 const popupRef = useRef();
 const [showMarkers, setShowMarkers] = useState(false);
@@ -59,6 +76,16 @@ const [showMarkers, setShowMarkers] = useState(false);
 
     const [center, setCenter]=useState(INITIAL_CENTER)
     const [zoom,setZoom]=useState(INITIAL_ZOOM)
+
+   const markersRef = useRef([]);
+
+  const activePopupRef = useRef(null);
+
+
+
+ 
+
+
 
     useEffect(() => {
     if (!useMapbox) return;
@@ -71,6 +98,12 @@ const [showMarkers, setShowMarkers] = useState(false);
       center: center,
       zoom: zoom,
     });
+   
+
+
+
+   
+
 
     mapRef.current.on('move', () => {
       const mapCenter = mapRef.current.getCenter();
@@ -87,9 +120,27 @@ const [showMarkers, setShowMarkers] = useState(false);
     setCenter(newCenter);
     setZoom(newZoom);
   }
+      markersRef.current.forEach(marker => {
+        const el = marker.getElement();
+      if (mapZoom < 14) {
+    el.style.opacity = '0.5';
+    el.title = 'Zoom in to interact';
+  } else {
+    el.style.opacity = '1';
+    el.title = '';
+  }
+      });
+
+   
 });
 
-const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+
+locationsData.forEach((location, index) => {
+      const el = document.createElement('div');
+      el.className = 'numbered-marker';
+      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
+
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="popup-card">
     <div class="muse-score">Muse Score</div>
     <div class="muse-value">${location.museScore ?? '--'}</div>
@@ -99,23 +150,54 @@ const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="crowd-status">--</div>
   </div>
 `);
-locationsData.forEach((location, index) => {
-      const el = document.createElement('div');
-      el.className = 'numbered-marker';
-      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
 
-      new mapboxgl.Marker(el)
+      const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
-         .setPopup(popup)
+        .setPopup(popup)
         .addTo(mapRef.current);
-       
+          markersRef.current.push(marker);
+          
+ el.addEventListener('click', () => {
+        const currentBearing = mapRef.current.getBearing();
+      const currentZoom = mapRef.current.getZoom();
 
-    });
+    
+        
+  if (activePopupRef.current) {
+    activePopupRef.current.remove();
+    activePopupRef.current = null;
+  }
+
+        mapRef.current.easeTo({
+          center: [location.longitude, location.latitude],
+          zoom: 18,          
+          pitch: 60,        
+          bearing: currentBearing + 360,
+          duration: 3000,   
+          easing: t => t    
+        });
+marker.getPopup().addTo(mapRef.current);
+  activePopupRef.current = marker.getPopup();
+
+      });
+ 
+      const pinShapeEl = el.querySelector('.pinShape');
+  pinShapeEl.classList.add('pulse-marker');
+
+ 
+
+  });
+
+
+      
+    
      return () => {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null; 
       }
+       markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
     };
 
 
@@ -134,9 +216,16 @@ locationsData.forEach((location, index) => {
   }
 
   const handleButtonClick = () => {
+     if (activePopupRef.current) {
+    activePopupRef.current.remove();
+    activePopupRef.current = null;
+  }
   mapRef.current.flyTo({
     center: INITIAL_CENTER,
-    zoom: INITIAL_ZOOM
+    zoom: INITIAL_ZOOM,
+    pitch: 0,
+    bearing: 0,
+    duration: 3000
   })
 }
 

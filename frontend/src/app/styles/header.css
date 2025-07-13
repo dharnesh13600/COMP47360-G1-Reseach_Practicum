@@ -65,8 +65,8 @@ body{
    /* border:1px solid red; */
   flex: 1 1 300px;
   display: flex;
-  height: 695px;
   gap: 30px;
+  justify-content: center;
 }
 .split-left-home{
     flex-basis: 45%;
@@ -74,12 +74,14 @@ body{
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    text-align: center;
 }
 .hero-image{
   display: flex;
   max-width: 460px;
   width: 100%;
   height: auto;
+  min-width: 400px;
 }
 .motto-text{
   position:absolute;
@@ -87,13 +89,13 @@ body{
   font-size: 32px;
   color: var(--on-surface-2);
   font-style: italic;
+  height: auto;
 }
 .hero-content h2{
   font-family: var(--ff-crimson-text);
    font-weight: 600;
    font-size: clamp(1.5rem, 1vw + 0.5rem, 1rem); 
    line-height: 30px;
-  
 }
 .hero-content{
   width:600px;
@@ -113,37 +115,61 @@ body{
   align-items: center;
 }
 
-@media (max-width:1200px){
+@media (max-width:900px) and (min-width:491px) {
 .hero-body{
-align-items: center;
-justify-content: center;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: auto;
+   display: flex;
+  margin-bottom: 5vw;
 }
-.motto-text{
-  font-size: 30px;
+.hero-content {
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: -20vw;
+  margin-bottom: 5vw;
 }
-.hero-image{
-  min-width: 400px;
-}
-}
-
-@media (max-width:425px) {
 .home-map-button{
   order: 1;
-  margin: 0;
-  margin-top: -5vw;
 }
- .navigation-wrapper{
+.hero-content h2,
+.hero-content p {
+  order: 2;  /* show after button */
+}
+.hero-content h2{
+  font-size: 20px;
+}
+.hero-content p{
+  font-size: 12px;
+}
+.hero-image {
+    position: relative;
+    min-width: 400px;
+  }
+.motto-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 100%;
+}
+}
 
+@media (max-width:490px) {
+ .navigation-wrapper{
   background-image: none;
   background-color: var(--background);
   max-width:100%;
   height:100px;
   padding-inline: 2rem;
  }
-
  .navigation-list{
   display:none;
-
 }
 .navigation-item-container,.logo-div-desktop,.logo{
   display:none;
@@ -161,48 +187,59 @@ justify-content: center;
 .menuIcon{
   display:block;
 }
-
 .hero-body{
-  margin-top: 10px;
-  justify-content: center;
-  padding-inline: 10px;
-  align-items: center;
-   flex-wrap: wrap;
-  flex: 1 1 300px;
-  max-width: 100%;
-}
-.split-left-home{
-  max-width: 100%;
+  padding:8vw;
   align-items: center;
   justify-content: center;
-}
-.hero-image{
-  width:400px;
-  height:400px;
-  flex: 1 1 300px;
-  width: 100%;
+  box-sizing: border-box;
   height: auto;
+   display: flex;
+  margin-bottom: 5vw;
 }
-.motto-text{
-  font-size: 25px;
-}
-.hero-content h2{
-   font-weight: 600;
-   font-size: clamp(1.2rem, 2vw + 0.5rem, 2rem); 
-   order: 2;
-   margin-top: 6vw;
-}
-.hero-content{
-  max-width: 80%;
-  justify-content: center;
+.hero-content {
+  width: 100%;
+  max-width: 100%;
   text-align: center;
-  float: right;
   display: flex;
   flex-direction: column;
-  padding-bottom: 15%;
+  margin-top: -20vw;
+  margin-bottom: 5vw;
+}
+.home-map-button{
+  order: 1;
+}
+.hero-content h2,
+.hero-content p {
+  order: 2;  /* show after button */
+}
+.hero-content h2{
+  font-size: 20px;
 }
 .hero-content p{
-  order: 3;
-  margin-top: 4vw;
+  font-size: 12px;
+}
+.split-left-home{
+  width: 100%;
+  flex-basis: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+.hero-image {
+    max-width: 100%;
+    position: relative;
+    min-width: 200px;
+  }
+.motto-text{
+  font-size: 25px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 100%;
 }
 }

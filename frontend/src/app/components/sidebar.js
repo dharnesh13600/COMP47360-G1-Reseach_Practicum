@@ -1,11 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from "react";
-import ActivityLetters from '@/helper/activity';
-import DateLetters from "@/helper/date";
-import TimeLetters from '@/helper/time';
 import styles from '../styles/sidebar.module.css';
-import '../globals.css';
-
+import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
 
@@ -25,6 +21,8 @@ import { GetWeatherData } from "./weather-data";
 
 import { useWeather } from "./useWeather";
 export default function SideBar(){
+
+
     const [selected, setSelected] = useState('2');
 
     // activity dropdown useState
@@ -45,7 +43,7 @@ export default function SideBar(){
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [submitted, setSubmitted] = useState(false);
-
+  const [showAllLocations,setShowAllLocations]=useState(false);
 
 const [dates,setDates]=useState([]);
 const [times,setTimes]=useState([]);
@@ -68,6 +66,9 @@ useEffect(()=>{
         });
         const dates=Array.from(dateSet);
         setDates(dates);
+        console.log("weatherResponse", weatherResponse);
+console.log("weatherResponse.list", weatherResponse.list);
+
     }
     weatherFetch();
 },[]);
@@ -125,7 +126,7 @@ useEffect(()=>{
   
 },[submitted,selectedDate,selectedTime,fullWeatherData]);
 
-const {icon,temp}=useWeather(setWeather || {});
+const {icon,temp}=useWeather(weather || {});
 
 
 
@@ -137,7 +138,7 @@ useEffect(() => {
     "locations": [
       {
         "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park: Arch Plaza",
+        "zoneName": "Washington Square Park",
         "latitude": 40.7312185,
         "longitude": -73.9970929,
         "combinedScore": 5.03,
@@ -147,7 +148,7 @@ useEffect(() => {
       },
       {
         "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park: Stage Performance",
+        "zoneName": "Bryant Park",
         "latitude": 40.7548472,
         "longitude": -73.9841117,
         "combinedScore": 4.99,
@@ -157,7 +158,7 @@ useEffect(() => {
       },
       {
         "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-        "zoneName": "WEST END AVENUE ",
+        "zoneName": "WEST END AVENUE",
         "latitude": 40.7883655,
         "longitude": -73.9745122,
         "combinedScore": 5.69,
@@ -167,7 +168,7 @@ useEffect(() => {
       },
       {
         "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE Manhattan, New York",
+        "zoneName": "8 AVENUE",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.17,
@@ -177,7 +178,27 @@ useEffect(() => {
       },
       {
         "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS BOULEVARD",
+        "zoneName": "FREDERICK DOUGLASS",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+        {
+        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+        "zoneName": "FREDERICK DOUGLASS",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+        {
+        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+        "zoneName": "FREDERICK DOUGLASS",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.10,
@@ -193,7 +214,6 @@ useEffect(() => {
 
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
-  console.log('Button clicked!');
   setIsVisible(prev => !prev);
 };
 // defining zones 
@@ -341,7 +361,7 @@ useEffect(() => {
     "locations": [
       {
         "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park: Arch Plaza",
+        "zoneName": "Washington Square Park",
         "latitude": 40.7312185,
         "longitude": -73.9970929,
         "combinedScore": 5.03,
@@ -351,7 +371,7 @@ useEffect(() => {
       },
       {
         "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park: Stage Performance",
+        "zoneName": "Bryant Park",
         "latitude": 40.7548472,
         "longitude": -73.9841117,
         "combinedScore": 4.99,
@@ -371,7 +391,7 @@ useEffect(() => {
       },
       {
         "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE Manhattan, New York",
+        "zoneName": "8 AVENUE",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.17,
@@ -381,7 +401,37 @@ useEffect(() => {
       },
       {
         "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS BOULEVARD",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390fa",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390da",
+        "zoneName": "FREDERICK DOUGLASS ",
+        "latitude": 40.8164207,
+        "longitude": -73.9466177,
+        "combinedScore": 9.10,
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null
+      },
+         {
+        "id": "afb93f10-2dec-4acb-a048-ab5f849390ba",
+        "zoneName": "FREDERICK DOUGLASS ",
         "latitude": 40.8164207,
         "longitude": -73.9466177,
         "combinedScore": 9.10,
@@ -389,34 +439,33 @@ useEffect(() => {
         "museScore": null,
         "crowdScore": null
       }
+
     ]
   };
 
   setLocations(locationJson.locations);
 }, []);
+useEffect(() => {
+  console.log("selectedDate updated:", selectedDate);
+}, [selectedDate]);
+useEffect(() => {
+  console.log("Dates available:", dates);
+}, [dates]);
 
     return(
           <>
           <div 
-          className={styles['sidebarContainer']}
+          className={styles.sidebarContainer}
           >
 
                 <div
-                className={`${styles.sidebarInner} ${styles.activity}`}
-                >
-                    <hr/>
-                    <div className={`${styles.innerPosition}`}>
-                    <div>
-                    <p>Choose Your</p>
-                    <p><ActivityLetters/></p>
-                    </div>
-                    
-                    </div>
-                    
-                      <div className={styles.dropdownWrapper}>
+                className={styles.activityWrapper}
+                > 
+                   
                       <Dropdown ref={dropRef} 
-                      buttonText={<span>
-                          {activityChoice ||'Select...'}
+                      buttonText={<span className={`${styles.buttonTextWrapper} ${activityChoice ? styles.selectedItem : ''}`} >
+              
+                          {activityChoice ||'Select Activity'}
                       
                       {
                         activityChoice &&(
@@ -432,38 +481,35 @@ useEffect(() => {
                         </span>
                    
                       }
+                      activityChoice={activityChoice}
                         content={ (close)=>(   
                         <>
                           {
                           activities.map((activity) => (
                           <DropdownItem 
                           key={activity}
-                          onClick={()=>{setChoice(activity); close();}}>
+                          onClick={()=>{setChoice(activity); close(); } } className={activity === activityChoice ? styles.selectedItem : ''}>
                           {activity}
                           </DropdownItem> 
                           ))
                           }
                         </>
     )}/>
-                    </div>
+                   
                     
                
                 </div>
-                <div
-                className={`${styles.sidebarInner} ${styles.time}`}
+                <div className={styles.readableTimeContainer}>
+                        <div
+                className={styles.dateWrapper}
                 >
-                     <hr/>
                     <div className={`${styles.innerPosition}`}>
                     <div>
-                    <p>Choose Your</p>
-                     <div className={`${styles.dateContainer}`}>
-                        <div><DateLetters/></div>
-                        <div className={`${styles.vl}`}></div>
-                         <div className={`${styles.timeDiv}`}><TimeLetters/></div>
-
-                    </div>
-                    <div className={`${styles.dropContainer} ${styles.dropdownWrapper}`}>
-                      <DropdownDate buttonText={ <span className={styles.buttonTextWrapper}>{selectedDate || "Select Date"}
+                    
+                     
+                    
+                     
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate || "Date"}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -471,20 +517,35 @@ useEffect(() => {
                             e.stopPropagation();
                             setSelectedDate(null);
                           }}
-                          className={styles.clearIcon}
+                          className={`${styles.clearIcon} `}
                           />
                       )}
                       </span>}
-                      content={<>
+                      selectedDate={selectedDate}
+                      content={(close)=>(<>
                         {dates.map(date=>(
-                          <DateItem key={date} onClick={()=>{setSelectedDate(date);close();}}>
+                          
+ 
+<DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close);}} className={date === selectedDate ? styles.selectedItem : ''}>
                             {date}
                             </DateItem>
+
+                          
                         )
 
                         )}
-                        </>} />
-            <DropdownTime buttonText={<span className={styles.buttonTextWrapper}>{selectedTime || "Select Time"}{selectedTime && (
+                        </>)} />
+           
+                   
+                    
+                    </div>
+                 
+                    </div>
+                    
+
+                </div>
+                <div  className={styles.timeWrapper}>
+                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
                           onClick={(e)=>{
@@ -493,22 +554,19 @@ useEffect(() => {
                           }}
                           className={styles.clearIcon}
                           />
-                      )}</span>} content={<>
-              {times.length === 0 && <div>Please select a date first</div>}
+                      )}</span>} 
+                      selectedTime={selectedTime}
+                      content={(close)=>(<>
+              {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
                 <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
                   {time}
                 </TimeItem>
               ))}
-              </>} />
-                   
-                    </div>
-                    </div>
-                 
-                    </div>
-                    
-
+              </>)} /> 
                 </div>
+                </div>
+                
                 <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
                 {submitted && weather && (
   <div className={`${styles.weatherDisplay}  ${submitted ? 'fade-enter-active' : 'fade-enter'}`}>
@@ -555,12 +613,32 @@ useEffect(() => {
                 )}
                  {submitted && isVisible && (
                    <div className={styles.locationListContainer}>
-  {locations.map((location,index) => (
+  {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
     <div key={location.id} className={styles.locationItem}>
       <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
+      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
+  {
+    locations.length>5 && (
+      <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
+        {showAllLocations ?  
+         (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg>)
+         :
+
+(<span><svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M3 2.93237L13.1739 10.0677L22.5 2.93237" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg></span>)
+}
+      </button>
+    )
+  }
+
 </div>
+
+ 
                  )} 
                  {!isVisible && (
                   <div className={styles.suggestedLocations}>
