@@ -36,7 +36,7 @@ pipeline{
           sh '''
             export NPM_CONFIG_CACHE=$PWD/.npm-cache
             mkdir -p "$NPM_CONFIG_CACHE"
-            [ -d node_modules ] || npm ci --prefer-offline
+            npm ci --prefer-offline
             npm run test:ci
           '''
         }
