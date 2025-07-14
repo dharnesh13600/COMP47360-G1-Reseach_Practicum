@@ -67,7 +67,7 @@ const locationsData = [
 ];
 
 
-export default function Map(){
+export default function Map({ submitted, locations, selectedLocation }){
 const popupRef = useRef();
 const [showMarkers, setShowMarkers] = useState(false);
 
@@ -91,6 +91,8 @@ const [showMarkers, setShowMarkers] = useState(false);
     if (!useMapbox) return;
 
     if (mapRef.current) return;
+
+     
     
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -203,6 +205,44 @@ marker.getPopup().addTo(mapRef.current);
 
 
   }, [])
+
+  useEffect(() => {
+    if (!selectedLocation || !mapRef.current) return;
+
+    const map = mapRef.current;
+
+    if (selectedLocation.longitude == null || selectedLocation.latitude == null) return;
+
+    // fly to the selected location
+    map.flyTo({
+      center: [selectedLocation.longitude, selectedLocation.latitude],
+      zoom: 18,
+      pitch: 60,
+      bearing: 0,
+      duration: 3000,
+      easing: t => t,
+    });
+
+    if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    }
+
+    // find and open its popup
+    const marker = markersRef.current.find(m => {
+      const lngLat = m.getLngLat();
+      return (
+        Math.abs(lngLat.lng - selectedLocation.longitude) < 0.0001 &&
+        Math.abs(lngLat.lat - selectedLocation.latitude) < 0.0001
+      );
+    });
+
+    if (marker) {
+      marker.getPopup().addTo(map);
+      activePopupRef.current = marker.getPopup();
+    }
+
+  }, [selectedLocation]);
 
   if (!useMapbox) {
     return (

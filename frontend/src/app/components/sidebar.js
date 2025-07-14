@@ -20,7 +20,7 @@ import { GetWeatherData } from "./weather-data";
 
 
 import { useWeather } from "./useWeather";
-export default function SideBar(){
+export default function SideBar({onLocationSelect}){
 
 
     const [selected, setSelected] = useState('2');
@@ -48,6 +48,9 @@ export default function SideBar(){
 const [dates,setDates]=useState([]);
 const [times,setTimes]=useState([]);
 const [weather,setWeather]=useState(null);
+
+const [visibleIndexes, setVisibleIndexes] = useState([]);
+
 
 
 useEffect(()=>{
@@ -348,6 +351,7 @@ const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
 
   if(res.ok){
     console.log("Success:",data);
+    onSubmit(data.locations);
   }
   else{
     console.error("Error:",data.error);
@@ -446,6 +450,20 @@ useEffect(() => {
   setLocations(locationJson.locations);
 }, []);
 useEffect(() => {
+  if (submitted) {
+    setVisibleIndexes([]);
+
+    locations.forEach((_, i) => {
+      let delay=200 +i*200;
+      setTimeout(() => {
+        setVisibleIndexes(prev => [...prev, i]);
+      }, delay);
+    });
+  }
+}, [submitted, locations]);
+
+
+useEffect(() => {
   console.log("selectedDate updated:", selectedDate);
 }, [selectedDate]);
 useEffect(() => {
@@ -474,6 +492,8 @@ useEffect(() => {
                           onClick={(e)=>{
                             e.stopPropagation();
                             setChoice(null);
+                            setSubmitted(false);
+                            
                           }}
                           className={styles.clearIcon}
                           />
@@ -488,7 +508,7 @@ useEffect(() => {
                           activities.map((activity) => (
                           <DropdownItem 
                           key={activity}
-                          onClick={()=>{setChoice(activity); close(); } } className={activity === activityChoice ? styles.selectedItem : ''}>
+                          onClick={()=>{setChoice(activity); setSubmitted(false); close(); } } className={activity === activityChoice ? styles.selectedItem : ''}>
                           {activity}
                           </DropdownItem> 
                           ))
@@ -516,6 +536,8 @@ useEffect(() => {
                           onClick={(e)=>{
                             e.stopPropagation();
                             setSelectedDate(null);
+                            setSubmitted(false);
+                            setWeather(null);
                           }}
                           className={`${styles.clearIcon} `}
                           />
@@ -526,7 +548,7 @@ useEffect(() => {
                         {dates.map(date=>(
                           
  
-<DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close);}} className={date === selectedDate ? styles.selectedItem : ''}>
+<DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close); setSubmitted(false);}} className={date === selectedDate ? styles.selectedItem : ''}>
                             {date}
                             </DateItem>
 
@@ -551,6 +573,8 @@ useEffect(() => {
                           onClick={(e)=>{
                             e.stopPropagation();
                             setSelectedTime(null);
+                            setSubmitted(false);
+                            setWeather(null);
                           }}
                           className={styles.clearIcon}
                           />
@@ -559,7 +583,7 @@ useEffect(() => {
                       content={(close)=>(<>
               {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
-                <TimeItem key={time} onClick={()=>{setSelectedTime(time);close();}}>
+                <TimeItem key={time} onClick={()=>{setSelectedTime(time);setSubmitted(false);close();}}>
                   {time}
                 </TimeItem>
               ))}
@@ -568,8 +592,11 @@ useEffect(() => {
                 </div>
                 
                 <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
-                {submitted && weather && (
-  <div className={`${styles.weatherDisplay}  ${submitted ? 'fade-enter-active' : 'fade-enter'}`}>
+                 
+  <div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
+    {weather && (
+      <>
+     
     <img
       src={icon}
       alt={weather.condition}
@@ -578,8 +605,10 @@ useEffect(() => {
       style={{ marginRight: '8px' }}
     />
     <span>{temp}°F</span>
+     </>
+    )}
   </div>
-)}
+
                 
                   
                     <div className={styles.locationHeader}>
@@ -589,13 +618,13 @@ useEffect(() => {
                     </div>
                       
                      <button onClick={handleToggleClick} className="areaToggleBtn">
-                     {!isVisible && (
+                     {isVisible && (
                         <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M32 9.99902H16C8.26801 9.99902 2 16.267 2 23.999C2 31.731 8.26801 37.999 16 37.999H32C39.732 37.999 46 31.731 46 23.999C46 16.267 39.732 9.99902 32 9.99902Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 <path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
                      )} 
-                     {isVisible && (
+                     {!isVisible && (
                    
  <svg width="40" height="25" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
@@ -606,15 +635,17 @@ useEffect(() => {
                       </button> 
 <span className={`${styles.manualSelection} ${isVisible ? styles.inactive  :styles.active}`}>Select Area</span>
                   </div>
-                {!submitted && isVisible && (
+                {!submitted && !isVisible && (
                      <div className={styles.noRecommendations}>
   Please submit your choices to view the recommended areas
 </div>
                 )}
-                 {submitted && isVisible && (
+                 {submitted && !isVisible && (
                    <div className={styles.locationListContainer}>
   {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
-    <div key={location.id} className={styles.locationItem}>
+    <div key={location.id} className={`${styles.locationItem} ${
+      visibleIndexes.includes(index) ? styles.show : ''
+    }`} onClick={()=>onLocationSelect(location)}>
       <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
       <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
@@ -640,7 +671,7 @@ useEffect(() => {
 
  
                  )} 
-                 {!isVisible && (
+                 {isVisible && (
                   <div className={styles.suggestedLocations}>
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
