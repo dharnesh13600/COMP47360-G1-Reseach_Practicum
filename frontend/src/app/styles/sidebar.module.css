@@ -27,7 +27,7 @@
  justify-content: space-between;
  padding-bottom: 0.1rem;
  padding-top: 0.2rem;
- padding-inline: 0.1rem;
+ padding-inline: 0.3rem;
      font-size: 18px;
     text-transform: uppercase;
     background-color: #FFFBF6;
@@ -106,6 +106,14 @@ div.vl{
   align-items: center;
   justify-content: center;
   gap: 8px;
+  opacity:0;
+  transform: translateY(-10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .locationHeader{
@@ -164,9 +172,14 @@ div.vl{
   box-shadow: 3px 4px 4px 0 #00000040;
   font-family: var(--ff-overpass);
   font-weight: 600;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity:0;
+  transform:translateY(-10px);
+  transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.locationItem.show {
+  opacity: 1;
+  transform: translateY(-1px);
+}
 .locationItem:hover{
   cursor:pointer;
    transform: translateY(-3px);
@@ -330,6 +343,7 @@ div.vl{
   display:flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 .dateEmptyText{
   font-size: 12px;
@@ -340,8 +354,10 @@ div.vl{
 
 
 .selectedItem {
-  font-size: 10px;
+  font-size: 11px;
   
+  display:flex;
+  width:100%;
 }
 
 .locationListContainer>button{
