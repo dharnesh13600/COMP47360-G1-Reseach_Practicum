@@ -9,3 +9,6 @@
    font-family: var(--ff-overpass);
   font-size: 12px;
 }
+.time-dropdown-item:hover {
+  background-color: #dfe9e1;
+}
