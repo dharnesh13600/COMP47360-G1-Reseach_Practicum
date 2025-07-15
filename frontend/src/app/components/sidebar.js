@@ -20,7 +20,7 @@ import { GetWeatherData } from "./weather-data";
 
 
 import { useWeather } from "./useWeather";
-export default function SideBar({onLocationSelect}){
+export default function SideBar({ onLocationSelect, onSubmit }){
 
 
     const [selected, setSelected] = useState('2');
@@ -137,80 +137,83 @@ const {icon,temp}=useWeather(weather || {});
 
 useEffect(() => {
   // Simulate loading JSON data
+  
+
   const locationJson = {
-    "locations": [
-      {
-        "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park",
-        "latitude": 40.7312185,
-        "longitude": -73.9970929,
-        "combinedScore": 5.03,
-        "activityScore": 4.14,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park",
-        "latitude": 40.7548472,
-        "longitude": -73.9841117,
-        "combinedScore": 4.99,
-        "activityScore": 4.30,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-        "zoneName": "WEST END AVENUE",
-        "latitude": 40.7883655,
-        "longitude": -73.9745122,
-        "combinedScore": 5.69,
-        "activityScore": 4.36,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.17,
-        "activityScore": 8.88,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      },
-        {
-        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      },
-        {
-        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      }
-    ]
-  };
+  "locations": [
+    {
+      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+      "zoneName": "Washington Square Park",
+      "latitude": 40.7312185,
+      "longitude": -73.9970929,
+      "combinedScore": 5.03,
+      "activityScore": 4.14,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+      "zoneName": "Bryant Park",
+      "latitude": 40.7548472,
+      "longitude": -73.9841117,
+      "combinedScore": 4.99,
+      "activityScore": 4.30,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+      "zoneName": "West End Avenue",
+      "latitude": 40.7883655,
+      "longitude": -73.9745122,
+      "combinedScore": 5.69,
+      "activityScore": 4.36,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+      "zoneName": "8th Avenue",
+      "latitude": 40.763826,
+      "longitude": -73.982222,
+      "combinedScore": 9.17,
+      "activityScore": 8.88,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+      "zoneName": "Frederick Douglass",
+      "latitude": 40.810000,
+      "longitude": -73.950000,
+      "combinedScore": 9.10,
+      "activityScore": 8.74,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+      "zoneName": "Central Park North",
+      "latitude": 40.800679,
+      "longitude": -73.958248,
+      "combinedScore": 7.85,
+      "activityScore": 7.12,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+      "zoneName": "South Street Seaport",
+      "latitude": 40.706917,
+      "longitude": -74.003638,
+      "combinedScore": 6.42,
+      "activityScore": 6.00,
+      "museScore": null,
+      "crowdScore": null
+    }
+  ]
+};
+
 
   setLocations(locationJson.locations);
 }, []);
@@ -351,102 +354,91 @@ const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
 
   if(res.ok){
     console.log("Success:",data);
-    onSubmit(data.locations);
   }
   else{
     console.error("Error:",data.error);
   }
 
+   onSubmit(locations);
 };
 const [locations, setLocations] = useState([]);
 useEffect(() => {
   // Simulate loading JSON data
-  const locationJson = {
-    "locations": [
-      {
-        "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-        "zoneName": "Washington Square Park",
-        "latitude": 40.7312185,
-        "longitude": -73.9970929,
-        "combinedScore": 5.03,
-        "activityScore": 4.14,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-        "zoneName": "Bryant Park",
-        "latitude": 40.7548472,
-        "longitude": -73.9841117,
-        "combinedScore": 4.99,
-        "activityScore": 4.30,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-        "zoneName": "WEST END AVENUE ",
-        "latitude": 40.7883655,
-        "longitude": -73.9745122,
-        "combinedScore": 5.69,
-        "activityScore": 4.36,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-        "zoneName": "8 AVENUE",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.17,
-        "activityScore": 8.88,
-        "museScore": null,
-        "crowdScore": null
-      },
-      {
-        "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-        "zoneName": "FREDERICK DOUGLASS ",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      },
-         {
-        "id": "afb93f10-2dec-4acb-a048-ab5f849390fa",
-        "zoneName": "FREDERICK DOUGLASS ",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      },
-         {
-        "id": "afb93f10-2dec-4acb-a048-ab5f849390da",
-        "zoneName": "FREDERICK DOUGLASS ",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      },
-         {
-        "id": "afb93f10-2dec-4acb-a048-ab5f849390ba",
-        "zoneName": "FREDERICK DOUGLASS ",
-        "latitude": 40.8164207,
-        "longitude": -73.9466177,
-        "combinedScore": 9.10,
-        "activityScore": 8.74,
-        "museScore": null,
-        "crowdScore": null
-      }
+   const locationJson = {
+  "locations": [
+    {
+      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+      "zoneName": "Washington Square Park",
+      "latitude": 40.7312185,
+      "longitude": -73.9970929,
+      "combinedScore": 5.03,
+      "activityScore": 4.14,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+      "zoneName": "Bryant Park",
+      "latitude": 40.7548472,
+      "longitude": -73.9841117,
+      "combinedScore": 4.99,
+      "activityScore": 4.30,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+      "zoneName": "West End Avenue",
+      "latitude": 40.7883655,
+      "longitude": -73.9745122,
+      "combinedScore": 5.69,
+      "activityScore": 4.36,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+      "zoneName": "8th Avenue",
+      "latitude": 40.763826,
+      "longitude": -73.982222,
+      "combinedScore": 9.17,
+      "activityScore": 8.88,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+      "zoneName": "Frederick Douglass",
+      "latitude": 40.810000,
+      "longitude": -73.950000,
+      "combinedScore": 9.10,
+      "activityScore": 8.74,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+      "zoneName": "Central Park North",
+      "latitude": 40.800679,
+      "longitude": -73.958248,
+      "combinedScore": 7.85,
+      "activityScore": 7.12,
+      "museScore": null,
+      "crowdScore": null
+    },
+    {
+      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+      "zoneName": "South Street Seaport",
+      "latitude": 40.706917,
+      "longitude": -74.003638,
+      "combinedScore": 6.42,
+      "activityScore": 6.00,
+      "museScore": null,
+      "crowdScore": null
+    }
 
-    ]
-  };
-
+  ]
+};
   setLocations(locationJson.locations);
 }, []);
 useEffect(() => {
