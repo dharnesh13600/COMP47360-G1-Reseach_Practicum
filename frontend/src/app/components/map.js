@@ -182,13 +182,14 @@ const [showMarkers, setShowMarkers] = useState(false);
     <div class="crowd-status">Busy</div>
 
     <div class="tooltip">
-    <p><strong>Muse Score: <strong>Purpose:</strong> Measures cultural vibrancy of events based on location and context.<br>
-    <strong>Key Factors:</strong><br>
-    Frequency — How often<br>
-    Type — Event kind<br>
-    Nearby Orgs — Venues nearby</p>
-    <p><strong>Crowd Estimate:</strong> Approx. number of people.</p>
-    <p><strong>Status:</strong> How busy it feels now.</p>
+    <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
+    the most suitable location for your activity according to busyness 
+    and past events in each location. <br><br>
+
+    Don't want to use our Muse Score? Use our predicted <b> Estimate Crowd</b> and <b> Crowd Status </b> the best time to be your best self,
+    whether in the crowd or in a peaceful corner.
+
+    </p>
   </div>
   </div>
 `);
@@ -284,7 +285,7 @@ popup.on('open', () => {
         <>
         
             <button className='reset-button' onClick={handleButtonClick}>
-                Reset
+                Reset View
             </button>
             <div id='map-container' ref={mapContainerRef}>
              
