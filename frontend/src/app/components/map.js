@@ -23,51 +23,10 @@ const INITIAL_CENTER =[
 ]
 const INITIAL_ZOOM=11.25
 
-const locationsData = [
-  {
-    zoneName: "Battery Park: South Tip",
-    latitude: 40.703277,   // southern tip
-    longitude: -74.017028,
-  },
-  {
-    zoneName: "Wall Street: Financial District",
-    latitude: 40.707491,
-    longitude: -74.011276,
-  },
-  {
-    zoneName: "Union Square Park",
-    latitude: 40.735863,
-    longitude: -73.991084,
-  },
-  {
-    zoneName: "Times Square: 7th Ave & 42nd",
-    latitude: 40.758896,
-    longitude: -73.985130,
-  },
-  {
-    zoneName: "Central Park: Bethesda Terrace",
-    latitude: 40.774036,
-    longitude: -73.970913,
-  },
-  {
-    zoneName: "Upper West Side: 96th Street",
-    latitude: 40.793919,
-    longitude: -73.972323,
-  },
-  {
-    zoneName: "Harlem: 125th Street",
-    latitude: 40.807536,
-    longitude: -73.945713,
-  },
-  {
-    zoneName: "Inwood Hill Park: Northern Tip",
-    latitude: 40.872028,
-    longitude: -73.923790,
-  }
-];
 
 
-export default function Map(){
+
+export default function Map({ submitted, locations, selectedLocation }){
 const popupRef = useRef();
 const [showMarkers, setShowMarkers] = useState(false);
 
@@ -91,6 +50,8 @@ const [showMarkers, setShowMarkers] = useState(false);
     if (!useMapbox) return;
 
     if (mapRef.current) return;
+
+     
     
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -135,23 +96,104 @@ const [showMarkers, setShowMarkers] = useState(false);
 });
 
 
-locationsData.forEach((location, index) => {
+
+
+
+
+      
+    
+     return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null; 
+      }
+       markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+    };
+
+
+
+  }, [])
+
+  useEffect(() => {
+    if (!selectedLocation || !mapRef.current) return;
+
+    const map = mapRef.current;
+
+    if (selectedLocation.longitude == null || selectedLocation.latitude == null) return;
+
+  
+ 
+    map.flyTo({
+      center: [selectedLocation.longitude, selectedLocation.latitude],
+      zoom: 18,
+      pitch: 60,
+      bearing: 0,
+      duration: 3000,
+      easing: t => t,
+    });
+
+    if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    }
+
+  
+    const marker = markersRef.current.find(m => {
+      const lngLat = m.getLngLat();
+      return (
+        Math.abs(lngLat.lng - selectedLocation.longitude) < 0.0001 &&
+        Math.abs(lngLat.lat - selectedLocation.latitude) < 0.0001
+      );
+    });
+
+    if (marker) {
+      marker.getPopup().addTo(map);
+      activePopupRef.current = marker.getPopup();
+    }
+
+  }, [selectedLocation]);
+
+
+  useEffect(() => {
+  // if (!mapRef.current || !locations.length) return;
+  if (!mapRef.current || !(locations?.length > 0)) return;
+
+
+  // Remove existing markers
+  markersRef.current.forEach(m => m.remove());
+  markersRef.current = [];
+
+   locations.forEach((location, index) => {
       const el = document.createElement('div');
       el.className = 'numbered-marker';
       el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
 
       const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="popup-card">
-    <div class="muse-score">Muse Score</div>
-    <div class="muse-value">${location.museScore ?? '--'}</div>
-    <div class="estimate-crowd-label">Estimate Crowd</div>
-    <div class="estimate-crowd">--</div>
-    <div class="crowd-label">Crowd</div>
-    <div class="crowd-status">--</div>
+    <div class="popup-header">
+    <span class="info-icon" title="Muse Score: visitor rating. Crowd Estimate: number of visitors. Status: how busy it feels.">i</span>
+  </div>
+    <div class="muse-score ">Muse Score</div>
+    <div class="muse-value">8/10</div>
+    <div class="estimate-crowd-label ">Estimate Crowd  </div>
+    <div class="estimate-crowd">4537</div>
+    <div class="crowd-label ">Crowd Status </div>
+    <div class="crowd-status">Busy</div>
+
+    <div class="tooltip">
+    <p><strong>Muse Score: <strong>Purpose:</strong> Measures cultural vibrancy of events based on location and context.<br>
+    <strong>Key Factors:</strong><br>
+    Frequency — How often<br>
+    Type — Event kind<br>
+    Nearby Orgs — Venues nearby</p>
+    <p><strong>Crowd Estimate:</strong> Approx. number of people.</p>
+    <p><strong>Status:</strong> How busy it feels now.</p>
+  </div>
   </div>
 `);
 
-      const marker=new mapboxgl.Marker(el)
+ const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
         .setPopup(popup)
         .addTo(mapRef.current);
@@ -178,6 +220,24 @@ locationsData.forEach((location, index) => {
         });
 marker.getPopup().addTo(mapRef.current);
   activePopupRef.current = marker.getPopup();
+  
+});
+popup.on('open', () => {
+    const popupEl = popup.getElement();
+    const icon = popupEl.querySelector('.info-icon');
+    const tooltip = popupEl.querySelector('.tooltip');
+
+    if (!icon || !tooltip) return;
+
+    icon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = tooltip.style.display === 'block';
+      tooltip.style.display = isVisible ? 'none' : 'block';
+    });
+   
+
+      
+
 
       });
  
@@ -186,23 +246,12 @@ marker.getPopup().addTo(mapRef.current);
 
  
 
-  });
+  
 
-
-      
     
-     return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null; 
-      }
-       markersRef.current.forEach(marker => marker.remove());
-      markersRef.current = [];
-    };
+  });
+}, [locations]);
 
-
-
-  }, [])
 
   if (!useMapbox) {
     return (
@@ -233,7 +282,7 @@ marker.getPopup().addTo(mapRef.current);
       console.log("Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
     return (
         <>
-          { /*defining reset button to adjust the map coordinates to its original state when clicked */}
+        
             <button className='reset-button' onClick={handleButtonClick}>
                 Reset
             </button>
@@ -243,3 +292,5 @@ marker.getPopup().addTo(mapRef.current);
         </>
     )
 }
+
+
