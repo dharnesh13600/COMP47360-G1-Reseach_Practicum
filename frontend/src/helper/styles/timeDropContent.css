@@ -7,7 +7,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
     margin-top: 0.5rem;
     background-color:#FFFAF5;
     color:#52767E;
@@ -37,5 +37,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3)
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-5px);
+animation: fadeSlideIn 0.3s forwards ease;
+}
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

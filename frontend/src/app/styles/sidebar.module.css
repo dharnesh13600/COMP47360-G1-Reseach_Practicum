@@ -31,7 +31,7 @@
      font-size: 18px;
     text-transform: uppercase;
     background-color: #FFFBF6;
-    margin-top: 25px;
+    margin-top: 13px;
     font-weight: 700;
     border:5px solid #4B8382;
     border-radius: 8px;
@@ -65,7 +65,6 @@
     width:45px;
 } 
 
-
 .dateContainer{
     display:flex;
     justify-content: space-between;
@@ -77,21 +76,12 @@ div.vl{
     all:unset;
     border-left: 1px solid #FFFFFF;
     height:60px;
-   
 }
 
-
-
-
-
-.userdateContainer{
-      
+.userdateContainer{  
       z-index:20000;
-      display: flex;
-      
+      display: flex;  
 }
-
-
 
 .weatherDisplay {
   margin-top: 1rem;
@@ -128,6 +118,7 @@ div.vl{
     border:0;
     z-index:10;
     cursor: pointer;
+    transition: opacity 0.3s ease, color 0.4s ease;
 }
 
 .recArea{
@@ -146,9 +137,6 @@ div.vl{
   padding-inline: 16px;
  
   border-radius: 12px;
- 
-  
-  
 }
 
 .locationItem {
@@ -216,7 +204,15 @@ div.vl{
     padding-bottom: 1rem;
     margin-bottom: 2rem;
     width:100%;
-
+    opacity: 0;
+    transform: translateY(10px);
+animation: fadeSlideIn 0.4s forwards ease;
+}
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .suggestedLocations>span{
     display: flex;
@@ -265,12 +261,12 @@ div.vl{
   font-family: var(--ff-inter);
   color: var(--subway-bg);
   border: 1px solid #ddd;
-  
 
 }
 
-.inactive{
+.active{
     color:#A2B9A7;
+    transition: color 0.275s ease;
 }
 
 .buttonTextWrapper {
@@ -309,16 +305,16 @@ div.vl{
     border: none;
     color: #FEFAF6;
     background-color:#4B8382;
-    transition: 0.3s;
+    transition: 0.2s;
     cursor: pointer;
+    height: 35px;
 }
 
 .buttonStyle:hover{
     font-family: var(--ff-inter);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
-
-    border-radius: 40px;
+    border-radius: 50px;
     color: var(--background);
     background-color: var(--on-surface-low-contrast);
 }
@@ -336,12 +332,23 @@ div.vl{
 
 .noRecommendations{
   color:var(--subway-bg);
-  margin-top: 2rem;
+  margin-top: 1.75rem;
   display:flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.6s forwards ease;
 }
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .dateEmptyText{
   font-size: 12px;
 }
@@ -351,22 +358,22 @@ div.vl{
 
 
 .selectedItem {
-  font-size: clamp(12px, 4vw, 14px);
+  font-size: clamp(12px, 4vw, 13.6px);
   display:flex;
   width:100%;
 }
 
-.locationListContainer>button{
-  background-color: transparent;
-  border:0;
-   width:100%;
-  display: flex;
+.locationListContainer>button {
+  border: red solid;
+  width:100%;
   justify-content: center;
+  display: block;
+align-items: center;
+justify-content: center;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+  transition: color 0.3s ease, transform 0.1s ease;
 }
-
-
 
 .locationListContainer>button:hover{
 cursor: pointer;

@@ -72,9 +72,9 @@ body{
     flex-basis: 45%;
     position: relative;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     text-align: center;
+    justify-content: center;
 }
 .hero-image{
   display: flex;
@@ -111,18 +111,42 @@ body{
 }
 .home-map-button{
   margin-top: 30px;
+  margin-bottom: 2vw;
   height: 50px;
   align-items: center;
+  display: block;
+  width: 20vw;
 }
-
+@media (min-width:1500px){
+  .split-left-home{
+    max-width: 30vw;
+    justify-content: center;
+  }
+  .hero-image{
+    max-width: 30vw;
+    width: 100%;
+  }
+  .motto-text{
+    font-size: 40px;
+  }
+  .hero-content p{
+    font-size: 19px;
+    line-height: 30px;
+  }
+    .hero-content h2{
+    font-size: 30px;
+    line-height: 35px;
+  }
+}
 @media (max-width:900px) and (min-width:491px) {
 .hero-body{
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   height: auto;
-   display: flex;
+  display: flex;
   margin-bottom: 5vw;
+  gap: 80px;
 }
 .hero-content {
   width: 100%;
@@ -132,19 +156,22 @@ body{
   flex-direction: column;
   margin-top: -20vw;
   margin-bottom: 5vw;
+  gap: 20px;
 }
 .home-map-button{
   order: 1;
+  justify-content: center;
+  width: 100%;
 }
 .hero-content h2,
 .hero-content p {
   order: 2;  /* show after button */
 }
 .hero-content h2{
-  font-size: 20px;
+  font-size: 25px;
 }
 .hero-content p{
-  font-size: 12px;
+  font-size: 16px;
 }
 .hero-image {
     position: relative;
