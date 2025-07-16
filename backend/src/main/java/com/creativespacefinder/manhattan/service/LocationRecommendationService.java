@@ -1,19 +1,27 @@
 package com.creativespacefinder.manhattan.service;
 
-import com.creativespacefinder.manhattan.dto.*;
+import com.creativespacefinder.manhattan.dto.LocationRecommendationResponse;
+import com.creativespacefinder.manhattan.dto.PredictionResponse;
+import com.creativespacefinder.manhattan.dto.RecommendationRequest;
+import com.creativespacefinder.manhattan.dto.RecommendationResponse;
 import com.creativespacefinder.manhattan.entity.Activity;
 import com.creativespacefinder.manhattan.entity.LocationActivityScore;
+import com.creativespacefinder.manhattan.entity.MLPredictionLog;
 import com.creativespacefinder.manhattan.repository.ActivityRepository;
 import com.creativespacefinder.manhattan.repository.LocationActivityScoreRepository;
+import com.creativespacefinder.manhattan.repository.MLPredictionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,83 +35,111 @@ public class LocationRecommendationService {
     private ActivityRepository activityRepository;
 
     @Autowired
-    private WeatherForecastService weatherForecastService;
+    private MLPredictionLogRepository mlPredictionLogRepository;
 
+    @Transactional
     public RecommendationResponse getLocationRecommendations(RecommendationRequest request) {
         LocalDateTime requestDateTime = request.getDateTime();
-        LocalDate eventDate = requestDateTime.toLocalDate();
-        LocalTime eventTime = requestDateTime.toLocalTime();
+        String activityName = request.getActivity();
 
-        List<LocationActivityScore> topLocations = locationActivityScoreRepository
-                .findTop5ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
-                        request.getActivity(), eventDate, eventTime
-                );
+        Activity activity = activityRepository.findByName(activityName)
+                .orElseThrow(() -> new RuntimeException("Activity not found: " + activityName));
 
-        // Fallback logic to ensure 5 results
-        if (topLocations.size() < 5) {
-            int needed = 5 - topLocations.size();
+        List<LocationActivityScore> universe =
+                locationActivityScoreRepository
+                        .findDistinctLocationsByActivityName(
+                                activityName,
+                                PageRequest.of(0, 500)
+                        );
 
-            List<LocationActivityScore> fallbackLocations = locationActivityScoreRepository
-                    .findTopByActivityNameIgnoreDateTime(request.getActivity(), PageRequest.of(0, needed));
-
-            Set<UUID> existingIds = topLocations.stream()
-                    .map(score -> score.getLocation().getId())
-                    .collect(Collectors.toSet());
-
-            fallbackLocations.stream()
-                    .filter(score -> !existingIds.contains(score.getLocation().getId()))
-                    .forEach(topLocations::add);
+        if (universe.isEmpty()) {
+            return new RecommendationResponse(Collections.emptyList(), activityName, requestDateTime.toString());
         }
 
-        List<LocationRecommendationResponse> locationResponses = topLocations.stream()
-                .map(this::convertToLocationResponse)
+        Collections.shuffle(universe);
+        List<LocationActivityScore> sample = universe.stream()
+                .limit(20)
                 .collect(Collectors.toList());
 
-        WeatherData weatherData = weatherForecastService.getWeatherForDateTime(requestDateTime);
+        List<Map<String,Object>> mlPayload = sample.stream().map(s -> {
+            Map<String,Object> m = new HashMap<>();
+            m.put("latitude",  s.getLocation().getLatitude().doubleValue());
+            m.put("longitude", s.getLocation().getLongitude().doubleValue());
+            m.put("hour",      requestDateTime.getHour());
+            m.put("month",     requestDateTime.getMonthValue());
+            m.put("day",       requestDateTime.getDayOfMonth());
+            m.put("cultural_activity_prefered", activityName);
+            return m;
+        }).collect(Collectors.toList());
 
-        return new RecommendationResponse(
-                locationResponses,
-                weatherData,
-                request.getActivity(),
-                requestDateTime.toString()
-        );
-    }
+        PredictionResponse[] predictions = callMLModelBatch(mlPayload);
 
-    private LocationRecommendationResponse convertToLocationResponse(LocationActivityScore score) {
-        BigDecimal combinedScore = calculateCombinedScore(score);
+        int limit = Math.min(predictions.length, sample.size());
+        Map<UUID, BigDecimal> mlScores = new HashMap<>();
+        for (int i = 0; i < limit; i++) {
+            LocationActivityScore las = sample.get(i);
+            PredictionResponse p    = predictions[i];
+            BigDecimal cult = BigDecimal.valueOf(p.getCreativeActivityScore());
+            BigDecimal crowd = BigDecimal.valueOf(p.getCrowdScore());
+            BigDecimal muse = cult.multiply(BigDecimal.valueOf(0.6))
+                    .add(crowd.multiply(BigDecimal.valueOf(0.4)));
+            las.setCulturalActivityScore(cult);
+            las.setCrowdScore(crowd);
+            las.setEstimatedCrowdNumber(p.getEstimatedCrowdNumber());
+            las.setMuseScore(muse);
+            mlScores.put(las.getLocation().getId(), cult);
+        }
+        List<LocationActivityScore> processed = sample.subList(0, limit);
+        locationActivityScoreRepository.saveAll(processed);
 
-        return new LocationRecommendationResponse(
-                score.getLocation().getId(),
-                score.getLocation().getLocationName(),
-                score.getLocation().getLatitude(),
-                score.getLocation().getLongitude(),
-                combinedScore,
-                score.getHistoricalActivityScore(),
-                score.getMuseScore(),
-                score.getCrowdScore(),
-                score.getEstimatedCrowdNumber()
-        );
-    }
+        MLPredictionLog log = new MLPredictionLog();
+        log.setId(UUID.randomUUID());
+        log.setModelVersion("1.0");
+        log.setPredictionType("location_recommendation");
+        log.setRecordsProcessed(processed.size());
+        log.setRecordsUpdated(processed.size());
+        log.setPredictionDate(OffsetDateTime.now());
+        mlPredictionLogRepository.save(log);
 
-    private BigDecimal calculateCombinedScore(LocationActivityScore score) {
-        if (score.getMuseScore() != null) {
-            return score.getMuseScore();
+        List<LocationRecommendationResponse> mapped = processed.stream()
+                .sorted(Comparator.comparing(LocationActivityScore::getMuseScore).reversed())
+                .map(las -> new LocationRecommendationResponse(
+                        las.getLocation().getId(),
+                        las.getLocation().getLocationName(),
+                        las.getLocation().getLatitude(),
+                        las.getLocation().getLongitude(),
+                        mlScores.get(las.getLocation().getId()),
+                        las.getMuseScore(),
+                        las.getCrowdScore(),
+                        las.getEstimatedCrowdNumber()
+                ))
+                .collect(Collectors.toList());
+
+        System.out.println("Mapped entries: " + mapped.size());
+        for (LocationRecommendationResponse lr : mapped) {
+            System.out.println(lr.getLatitude() + ", " + lr.getLongitude());
         }
 
-        if (score.getHistoricalActivityScore() != null) {
-            BigDecimal activityWeight = new BigDecimal("0.7");
-            BigDecimal crowdWeight = new BigDecimal("0.3");
-
-            BigDecimal activityComponent = score.getHistoricalActivityScore().multiply(activityWeight);
-            BigDecimal crowdComponent = BigDecimal.TEN
-                    .subtract(score.getHistoricalTaxiZoneCrowdScore() != null ?
-                            score.getHistoricalTaxiZoneCrowdScore() : BigDecimal.valueOf(5))
-                    .multiply(crowdWeight);
-
-            return activityComponent.add(crowdComponent).setScale(2, RoundingMode.HALF_UP);
+        Map<String,LocationRecommendationResponse> best = new HashMap<>();
+        for (LocationRecommendationResponse lr : mapped) {
+            String key = lr.getLatitude().toPlainString() + ":" + lr.getLongitude().toPlainString();
+            best.merge(key, lr, (oldV, newV) ->
+                    newV.getMuseScore().compareTo(oldV.getMuseScore()) > 0 ? newV : oldV
+            );
         }
 
-        return new BigDecimal("5.0");
+        List<LocationRecommendationResponse> top10 = best.values().stream()
+                .sorted(Comparator.comparing(LocationRecommendationResponse::getMuseScore).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        return new RecommendationResponse(top10, activityName, requestDateTime.toString());
+    }
+
+    @Cacheable(cacheNames = "mlPredictions", key = "#bodies.hashCode()")
+    protected PredictionResponse[] callMLModelBatch(List<Map<String,Object>> bodies) {
+        RestTemplate r = new RestTemplate();
+        return r.postForObject("http://localhost:8000/predict_batch", bodies, PredictionResponse[].class);
     }
 
     public List<Activity> getAllActivities() {
@@ -116,50 +152,5 @@ public class LocationRecommendationService {
 
     public List<LocalTime> getAvailableTimes(String activityName, LocalDate date) {
         return locationActivityScoreRepository.findAvailableTimesByActivityAndDate(activityName, date);
-    }
-
-    public MLPredictionStats getMLPredictionStats() {
-        Long totalRecords = locationActivityScoreRepository.count();
-        Long recordsWithMLPredictions = locationActivityScoreRepository.countRecordsWithMLPredictions();
-        Long recordsWithHistoricalData = locationActivityScoreRepository.countRecordsWithHistoricalData();
-
-        return new MLPredictionStats(
-                totalRecords,
-                recordsWithMLPredictions,
-                recordsWithHistoricalData,
-                calculateCoveragePercentage(recordsWithMLPredictions, totalRecords),
-                calculateCoveragePercentage(recordsWithHistoricalData, totalRecords)
-        );
-    }
-
-    private BigDecimal calculateCoveragePercentage(Long covered, Long total) {
-        if (total == 0) return BigDecimal.ZERO;
-        return BigDecimal.valueOf(covered)
-                .multiply(BigDecimal.valueOf(100))
-                .divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_UP);
-    }
-
-    public static class MLPredictionStats {
-        private final Long totalRecords;
-        private final Long recordsWithMLPredictions;
-        private final Long recordsWithHistoricalData;
-        private final BigDecimal mlCoveragePercentage;
-        private final BigDecimal historicalCoveragePercentage;
-
-        public MLPredictionStats(Long totalRecords, Long recordsWithMLPredictions,
-                                 Long recordsWithHistoricalData, BigDecimal mlCoveragePercentage,
-                                 BigDecimal historicalCoveragePercentage) {
-            this.totalRecords = totalRecords;
-            this.recordsWithMLPredictions = recordsWithMLPredictions;
-            this.recordsWithHistoricalData = recordsWithHistoricalData;
-            this.mlCoveragePercentage = mlCoveragePercentage;
-            this.historicalCoveragePercentage = historicalCoveragePercentage;
-        }
-
-        public Long getTotalRecords() { return totalRecords; }
-        public Long getRecordsWithMLPredictions() { return recordsWithMLPredictions; }
-        public Long getRecordsWithHistoricalData() { return recordsWithHistoricalData; }
-        public BigDecimal getMlCoveragePercentage() { return mlCoveragePercentage; }
-        public BigDecimal getHistoricalCoveragePercentage() { return historicalCoveragePercentage; }
     }
 }
