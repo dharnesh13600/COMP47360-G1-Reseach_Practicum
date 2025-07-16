@@ -13,7 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "location_activity_scores")
 public class LocationActivityScore {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -83,7 +83,7 @@ public class LocationActivityScore {
     // Constructors
     public LocationActivityScore() {}
 
-    public LocationActivityScore(Integer eventId, EventLocation location, Activity activity, 
+    public LocationActivityScore(Integer eventId, EventLocation location, Activity activity,
                                TaxiZone taxiZone, LocalDate eventDate, LocalTime eventTime,
                                BigDecimal historicalTaxiZoneCrowdScore, BigDecimal historicalActivityScore) {
         this.eventId = eventId;
@@ -119,18 +119,18 @@ public class LocationActivityScore {
     public void setEventTime(LocalTime eventTime) { this.eventTime = eventTime; }
 
     public BigDecimal getHistoricalTaxiZoneCrowdScore() { return historicalTaxiZoneCrowdScore; }
-    public void setHistoricalTaxiZoneCrowdScore(BigDecimal historicalTaxiZoneCrowdScore) { 
-        this.historicalTaxiZoneCrowdScore = historicalTaxiZoneCrowdScore; 
+    public void setHistoricalTaxiZoneCrowdScore(BigDecimal historicalTaxiZoneCrowdScore) {
+        this.historicalTaxiZoneCrowdScore = historicalTaxiZoneCrowdScore;
     }
 
     public BigDecimal getHistoricalActivityScore() { return historicalActivityScore; }
-    public void setHistoricalActivityScore(BigDecimal historicalActivityScore) { 
-        this.historicalActivityScore = historicalActivityScore; 
+    public void setHistoricalActivityScore(BigDecimal historicalActivityScore) {
+        this.historicalActivityScore = historicalActivityScore;
     }
 
     public BigDecimal getCulturalActivityScore() { return culturalActivityScore; }
-    public void setCulturalActivityScore(BigDecimal culturalActivityScore) { 
-        this.culturalActivityScore = culturalActivityScore; 
+    public void setCulturalActivityScore(BigDecimal culturalActivityScore) {
+        this.culturalActivityScore = culturalActivityScore;
     }
 
     public BigDecimal getCrowdScore() { return crowdScore; }
@@ -140,8 +140,8 @@ public class LocationActivityScore {
     public void setMuseScore(BigDecimal museScore) { this.museScore = museScore; }
 
     public LocalDateTime getMlPredictionDate() { return mlPredictionDate; }
-    public void setMlPredictionDate(LocalDateTime mlPredictionDate) { 
-        this.mlPredictionDate = mlPredictionDate; 
+    public void setMlPredictionDate(LocalDateTime mlPredictionDate) {
+        this.mlPredictionDate = mlPredictionDate;
     }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
@@ -169,4 +169,5 @@ public class LocationActivityScore {
         }
     }
 }
+
 

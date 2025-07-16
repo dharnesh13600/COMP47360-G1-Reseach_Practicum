@@ -2,141 +2,114 @@ package com.creativespacefinder.manhattan.service;
 
 import com.creativespacefinder.manhattan.dto.ForecastResponse;
 import com.creativespacefinder.manhattan.dto.WeatherData;
-import com.creativespacefinder.manhattan.entity.WeatherCache;
 import com.creativespacefinder.manhattan.exception.ApiException;
-import com.creativespacefinder.manhattan.repository.WeatherCacheRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class WeatherForecastService {
 
-    // Pulls the open weather api key from the .yaml which gets it from the .env file
     @Value("${openweather.api-key}")
     private String apiKey;
 
-    private final String BASE_URL = "https://pro.openweathermap.org/data/2.5/forecast/hourly";
+    private static final String BASE_URL = "https://pro.openweathermap.org/data/2.5/forecast/hourly";
+    private static final double LAT = 40.7831;
+    private static final double LON = -73.9662;
 
-    // Manhattan coordinates
-    private final double LAT = 40.7831;
-    private final double LON = -73.9662;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final RestTemplate rest = new RestTemplate();
 
-    @Autowired
-    private WeatherCacheRepository weatherCacheRepository;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    // Call the free OpenWeather api key using the given URL to get the 96hr forecast
+    /* ------------------------------------------------------------------ */
+    /*  1. 96-hour forecast (whole JSON mapped to ForecastResponse)       */
+    /* ------------------------------------------------------------------ */
     public ForecastResponse get96HourForecast() {
-        String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=imperial",
-                BASE_URL, LAT, LON, apiKey);
-
-        RestTemplate restTemplate = new RestTemplate();
-
+        String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=imperial", BASE_URL, LAT, LON, apiKey);
         try {
-            return restTemplate.getForObject(url, ForecastResponse.class);
+            return rest.getForObject(url, ForecastResponse.class);
         } catch (HttpClientErrorException e) {
-            // Wrap the API failure into the exception
-            throw new ApiException("OpenWeather API call failed: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw new ApiException("OpenWeather API call failed: " + e.getStatusCode()
+                    + " - " + e.getResponseBodyAsString());
         } catch (Exception e) {
-            // Catch other unexpected issues maybe forgotten
             throw new ApiException("Unexpected error while calling OpenWeather API: " + e.getMessage());
         }
     }
 
-    /**
-     * Get weather forecast for a specific datetime with caching
-     */
-    public WeatherData getWeatherForDateTime(LocalDateTime dateTime) {
-        // Check cache first
-        Optional<WeatherCache> cachedWeather = weatherCacheRepository
-                .findValidCacheByDateTime(dateTime, LocalDateTime.now());
-
-        if (cachedWeather.isPresent()) {
-            return convertCacheToWeatherData(cachedWeather.get());
+    /* ------------------------------------------------------------------ */
+    /*  2. List of available forecast LocalDateTime values                */
+    /* ------------------------------------------------------------------ */
+    public List<LocalDateTime> getAvailableForecastDateTimes() {
+        String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=imperial", BASE_URL, LAT, LON, apiKey);
+        try {
+            String raw = rest.getForObject(url, String.class);
+            JsonNode root = mapper.readTree(raw);
+            JsonNode listNode = root.get("list");
+            if (listNode == null || !listNode.isArray()) {
+                throw new ApiException("Invalid response format from OpenWeather API");
+            }
+            return StreamSupport.stream(listNode.spliterator(), false)
+                    .map(node -> node.get("dt").asLong())
+                    .map(epoch -> Instant.ofEpochSecond(epoch)
+                            .atZone(ZoneId.of("America/New_York"))
+                            .toLocalDateTime())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ApiException("Failed to extract forecast datetimes: " + e.getMessage());
         }
+    }
 
-        // Fetch from OpenWeather API
+    /* ------------------------------------------------------------------ */
+    /*  3. Get weather for one exact LocalDateTime                         */
+    /* ------------------------------------------------------------------ */
+    public WeatherData getWeatherForDateTime(LocalDateTime target) {
         try {
             ForecastResponse forecast = get96HourForecast();
-            WeatherData weatherData = findWeatherForDateTime(forecast, dateTime);
-
-            // Cache the result
-            cacheWeatherData(weatherData);
-
-            return weatherData;
-
+            return findWeatherForDateTime(forecast, target);
         } catch (Exception e) {
-            // Return default weather data if API fails
-            return createDefaultWeatherData(dateTime);
+            return createDefaultWeatherData(target);   // graceful fallback
         }
     }
 
-    /**
-     * Find weather data for specific datetime from forecast response
-     */
-    private WeatherData findWeatherForDateTime(ForecastResponse forecast, LocalDateTime targetDateTime) {
-        // This would need to be implemented based on the actual ForecastResponse structure
-        // For now, return default data
-        return createDefaultWeatherData(targetDateTime);
+    /* ------------------------------------------------------------------ */
+    /*  4. Find matching record in ForecastResponse                        */
+    /* ------------------------------------------------------------------ */
+    private WeatherData findWeatherForDateTime(ForecastResponse forecast, LocalDateTime target) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return forecast.getHourly().stream()
+                .filter(h -> target.format(fmt).equals(h.getReadableTime()))
+                .findFirst()
+                .map(h -> new WeatherData(
+                        target,
+                        BigDecimal.valueOf(h.getTemp()),
+                        h.getCondition(),
+                        h.getWeather().isEmpty() ? "" : h.getWeather().get(0).getDescription(),
+                        target.format(fmt)
+                ))
+                .orElseGet(() -> createDefaultWeatherData(target));
     }
 
-    /**
-     * Cache weather data
-     */
-    private void cacheWeatherData(WeatherData weatherData) {
-        WeatherCache cache = new WeatherCache(
-                weatherData.getDateTime(),
-                weatherData.getTemperature(),
-                weatherData.getCondition(),
-                weatherData.getDescription(),
-                LocalDateTime.now().plusHours(1) // Cache for 1 hour
-        );
-
-        weatherCacheRepository.save(cache);
-    }
-
-    /**
-     * Convert cached weather to WeatherData
-     */
-    private WeatherData convertCacheToWeatherData(WeatherCache cache) {
-        return new WeatherData(
-                cache.getForecastDateTime(),
-                cache.getTemperature(),
-                cache.getWeatherCondition(),
-                cache.getWeatherDescription(),
-                cache.getForecastDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-        );
-    }
-
-    /**
-     * Create default weather data when API is unavailable
-     */
+    /* ------------------------------------------------------------------ */
+    /*  5. Default fallback                                               */
+    /* ------------------------------------------------------------------ */
     private WeatherData createDefaultWeatherData(LocalDateTime dateTime) {
         return new WeatherData(
                 dateTime,
-                new BigDecimal("70.0"), // Default temperature
+                new BigDecimal("70.0"),
                 "Clear",
                 "clear sky",
                 dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
         );
     }
-
-    /**
-     * Clean up expired cache entries
-     */
-    public void cleanupExpiredCache() {
-        weatherCacheRepository.deleteExpiredEntries(LocalDateTime.now());
-    }
 }
-

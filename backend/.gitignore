@@ -4,7 +4,10 @@ target/
 !**/src/main/**/target/
 !src/test/**/target/
 
-### STS ###
+# Wrapper binaries
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Tool Suite
 .apt_generated
 .classpath
 .factorypath
@@ -34,3 +37,6 @@ build/
 
 ### .env ###
 .env
+
+## Jenkins due to passwords/usernames ##
+Jenkinsfile

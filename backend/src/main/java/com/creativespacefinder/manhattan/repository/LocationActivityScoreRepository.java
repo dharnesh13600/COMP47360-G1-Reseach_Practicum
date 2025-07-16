@@ -1,3 +1,4 @@
+// src/main/java/com/creativespacefinder/manhattan/repository/LocationActivityScoreRepository.java
 package com.creativespacefinder.manhattan.repository;
 
 import com.creativespacefinder.manhattan.entity.LocationActivityScore;
@@ -15,47 +16,61 @@ import java.util.UUID;
 @Repository
 public interface LocationActivityScoreRepository extends JpaRepository<LocationActivityScore, UUID> {
 
-    // Main query: Top 5 results by activity, date, and time (ordered by MuseScore)
+    // ——————————————————————————————————————————
+    // Correct DISTINCT-by-location query for PostgreSQL
+    // ——————————————————————————————————————————
+    @Query(value = """
+    SELECT * FROM location_activity_scores las
+    WHERE las.id IN (
+        SELECT DISTINCT ON (las2.location_id) las2.id
+        FROM location_activity_scores las2
+        JOIN activities a ON las2.activity_id = a.id
+        WHERE LOWER(a.name) = LOWER(:activityName)
+        ORDER BY las2.location_id, las2.historical_activity_score DESC NULLS LAST
+    )
+    ORDER BY las.historical_activity_score DESC NULLS LAST
+    """, nativeQuery = true)
+    List<LocationActivityScore> findDistinctLocationsByActivityName(@Param("activityName") String activityName, Pageable pageable);
+
+
+    // ——————————————————————————————————————————
     @Query("""
-        SELECT l FROM LocationActivityScore l
-        WHERE l.activity.name = :activityName
-          AND l.eventDate = :eventDate
-          AND l.eventTime = :eventTime
-        ORDER BY l.museScore DESC NULLS LAST
-        """)
-    List<LocationActivityScore> findTop5ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
-            @Param("activityName") String activityName,
-            @Param("eventDate") LocalDate eventDate,
-            @Param("eventTime") LocalTime eventTime
+        SELECT DISTINCT l.eventDate
+          FROM LocationActivityScore l
+         WHERE l.activity.name = :activityName
+    """)
+    List<LocalDate> findAvailableDatesByActivity(
+            @Param("activityName") String activityName
     );
 
-    // Fallback: Top N results by activity only (ignoring date/time) to fill gaps
     @Query("""
-        SELECT l FROM LocationActivityScore l
-        WHERE l.activity.name = :activityName
-        ORDER BY l.historicalActivityScore DESC NULLS LAST
-        """)
-    List<LocationActivityScore> findTopByActivityNameIgnoreDateTime(
-            @Param("activityName") String activityName,
-            Pageable pageable
-    );
-
-    // Available dates for the activity
-    @Query("SELECT DISTINCT l.eventDate FROM LocationActivityScore l WHERE l.activity.name = :activityName")
-    List<LocalDate> findAvailableDatesByActivity(@Param("activityName") String activityName);
-
-    // Available times for the activity on a given date
-    @Query("SELECT DISTINCT l.eventTime FROM LocationActivityScore l WHERE l.activity.name = :activityName AND l.eventDate = :eventDate")
+        SELECT DISTINCT l.eventTime
+          FROM LocationActivityScore l
+         WHERE l.activity.name = :activityName
+           AND l.eventDate = :eventDate
+    """)
     List<LocalTime> findAvailableTimesByActivityAndDate(
             @Param("activityName") String activityName,
             @Param("eventDate") LocalDate eventDate
     );
 
-    // Count records with ML predictions
-    @Query("SELECT COUNT(l) FROM LocationActivityScore l WHERE l.museScore IS NOT NULL")
+    @Query("""
+        SELECT COUNT(l)
+          FROM LocationActivityScore l
+         WHERE l.museScore IS NOT NULL
+    """)
     Long countRecordsWithMLPredictions();
 
-    // Count records with historical data
-    @Query("SELECT COUNT(l) FROM LocationActivityScore l WHERE l.historicalActivityScore IS NOT NULL")
+    @Query("""
+        SELECT COUNT(l)
+          FROM LocationActivityScore l
+         WHERE l.historicalActivityScore IS NOT NULL
+    """)
     Long countRecordsWithHistoricalData();
+
+    List<LocationActivityScore> findByActivityIdAndEventDateAndEventTime(
+            UUID activityId,
+            LocalDate eventDate,
+            LocalTime eventTime
+    );
 }
