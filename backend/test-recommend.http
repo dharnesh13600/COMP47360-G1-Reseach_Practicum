@@ -1,0 +1,16 @@
+### Test: Get top 5 recommendations for Street photography on 2023-06-20 at 15:00
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Filmmaking",
+  "dateTime": "2025-07-27T15:00:00"
+}
+
+### GET available forecast dateTimes from OpenWeather
+GET http://localhost:8080/api/forecast/available-datetimes
+Accept: application/json
+
+### Get weather for a specific datetime
+GET http://localhost:8080/api/forecast?datetime=2025-07-12T08:00
+Accept: application/json

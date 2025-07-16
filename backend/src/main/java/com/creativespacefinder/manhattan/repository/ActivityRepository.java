@@ -9,12 +9,15 @@ import java.util.UUID;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
-    
+
     /**
      * Find activity by name (case-insensitive)
      */
     Optional<Activity> findByNameIgnoreCase(String name);
-    
+
+    /** Look-up by activity name (e.g. “Street photography”, “Filmmaking”, …). */
+    Optional<Activity> findByName(String name);
+
     /**
      * Check if activity exists by name
      */
