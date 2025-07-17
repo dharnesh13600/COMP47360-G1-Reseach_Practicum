@@ -16,6 +16,9 @@ public class RecommendationRequest {
     @JsonProperty("dateTime")
     private LocalDateTime dateTime;
 
+    @JsonProperty("selectedZone")
+    private String selectedZone; // Optional zone filter
+
     // Constructors
     public RecommendationRequest() {}
 
@@ -24,11 +27,19 @@ public class RecommendationRequest {
         this.dateTime = dateTime;
     }
 
+    public RecommendationRequest(String activity, LocalDateTime dateTime, String selectedZone) {
+        this.activity = activity;
+        this.dateTime = dateTime;
+        this.selectedZone = selectedZone;
+    }
+
     // Getters and Setters
     public String getActivity() { return activity; }
     public void setActivity(String activity) { this.activity = activity; }
 
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
-}
 
+    public String getSelectedZone() { return selectedZone; }
+    public void setSelectedZone(String selectedZone) { this.selectedZone = selectedZone; }
+}

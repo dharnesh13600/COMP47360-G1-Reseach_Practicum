@@ -20,7 +20,7 @@ public class AdminController {
     public ResponseEntity<String> warmCache() {
         try {
             dailyPrecomputationService.triggerDailyPrecomputation();
-            return ResponseEntity.ok("Daily cache warming initiated successfully. This will take ~30-45 minutes to complete.");
+            return ResponseEntity.ok("Daily cache warming initiated successfully. This will take ~10 minutes to complete.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Cache warming failed: " + e.getMessage());
         }

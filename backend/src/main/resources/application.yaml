@@ -13,18 +13,21 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
     hikari:
-      # Balanced settings for Supabase free tier - allows startup but still conservative
-      maximum-pool-size: 2           # 2 connections max (allows startup + runtime)
-      minimum-idle: 1                # 1 idle connection for startup
-      connection-timeout: 20000      # 20 seconds (enough for startup)
-      idle-timeout: 300000           # 5 minutes idle timeout
-      max-lifetime: 900000           # 15 minutes max connection life
-      leak-detection-threshold: 30000 # 30 seconds leak detection
+      # ULTRA CONSERVATIVE for Supabase free tier - PRODUCTION READY
+      maximum-pool-size: 1           # Only 1 connection total
+      minimum-idle: 0                # No idle connections ever
+      connection-timeout: 10000      # 10 seconds
+      idle-timeout: 10000            # Close idle connections after 10 seconds
+      max-lifetime: 120000           # Force close connections after 2 minutes
+      leak-detection-threshold: 15000 # 15 seconds leak detection
       # Connection validation
       connection-test-query: SELECT 1
-      validation-timeout: 5000       # 5 seconds validation
+      validation-timeout: 3000       # 3 seconds validation
       auto-commit: true              # Explicit auto-commit
-      pool-name: "DevHikariPool"     # Named pool for debugging
+      pool-name: "ProductionHikariPool"     # Production pool name
+      # CRITICAL: Aggressive connection cleanup
+      keepalive-time: 0              # No keepalive pings
+      initialization-fail-timeout: 1 # Fail fast on startup issues
 
   cache:
     caffeine:
@@ -43,6 +46,15 @@ spring:
           batch_size: 20             # Batch operations for efficiency
         connection:
           provider_disables_autocommit: false  # Ensure autocommit works
+        # CRITICAL: Reduce connection usage during startup
+        temp:
+          use_jdbc_metadata_defaults: false
+        boot:
+          allow_jdbc_metadata_access: false
+
+  # CRITICAL: Graceful shutdown handling
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
 openweather:
   api-key: ${OPENWEATHER_API_KEY}
@@ -51,6 +63,11 @@ server:
   port: 8080
   servlet:
     context-path: /
+  # CRITICAL: Proper shutdown handling
+  shutdown: graceful
+  tomcat:
+    connection-timeout: 20000
+    max-connections: 50
 
 # Reduce logging noise but keep essential debugging
 logging:
@@ -67,7 +84,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,shutdown
   endpoint:
     health:
       show-details: always
+    shutdown:
+      enabled: true                  # Enable graceful shutdown endpoint

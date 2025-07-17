@@ -17,7 +17,32 @@ import java.util.UUID;
 public interface LocationActivityScoreRepository extends JpaRepository<LocationActivityScore, UUID> {
 
     // ——————————————————————————————————————————
-    // Correct DISTINCT-by-location query for PostgreSQL
+    // PERFORMANCE FIX: Two-step query to avoid DISTINCT + FETCH issues
+    // ——————————————————————————————————————————
+    @Query(value = """
+        SELECT las.id FROM location_activity_scores las
+        WHERE las.id IN (
+            SELECT DISTINCT ON (las2.location_id) las2.id
+            FROM location_activity_scores las2
+            JOIN activities a ON las2.activity_id = a.id
+            WHERE LOWER(a.name) = LOWER(:activityName)
+            ORDER BY las2.location_id, las2.historical_activity_score DESC NULLS LAST
+        )
+        ORDER BY las.historical_activity_score DESC NULLS LAST
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<String> findDistinctLocationIdsByActivityName(@Param("activityName") String activityName, @Param("limit") int limit);
+
+    @Query("""
+        SELECT las FROM LocationActivityScore las
+        JOIN FETCH las.location
+        JOIN FETCH las.taxiZone
+        WHERE las.id IN :ids
+        """)
+    List<LocationActivityScore> findByIdsWithEagerLoading(@Param("ids") List<UUID> ids);
+
+    // ——————————————————————————————————————————
+    // Keep original method as backup (you can remove this later)
     // ——————————————————————————————————————————
     @Query(value = """
     SELECT * FROM location_activity_scores las
@@ -31,7 +56,6 @@ public interface LocationActivityScoreRepository extends JpaRepository<LocationA
     ORDER BY las.historical_activity_score DESC NULLS LAST
     """, nativeQuery = true)
     List<LocationActivityScore> findDistinctLocationsByActivityName(@Param("activityName") String activityName, Pageable pageable);
-
 
     // ——————————————————————————————————————————
     @Query("""

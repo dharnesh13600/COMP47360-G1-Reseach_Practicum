@@ -34,8 +34,9 @@ public class RecommendationController {
         return ResponseEntity.ok(activities);
     }
 
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Creative Space Finder API is running.");
+    @GetMapping("/zones")
+    public ResponseEntity<List<String>> getAvailableZones() {
+        List<String> zones = locationRecommendationService.getAvailableZones();
+        return ResponseEntity.ok(zones);
     }
 }
