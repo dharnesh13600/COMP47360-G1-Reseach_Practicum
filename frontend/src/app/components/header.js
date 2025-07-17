@@ -40,6 +40,7 @@ export default function Header(){
                             <Image className='logoMap' src='/manhattan-muse-map.png' alt="Map Logo" width={360} height={120}/>
                             <MapDraw02 />
                         </div>
+                        
                     ) : (
                         <div className='logo-div-desktop'>
                             <Image className='logo' src='/manhattan-muse-home.png' alt="Home Logo" width={370} height={150}/>
@@ -47,17 +48,17 @@ export default function Header(){
                     )}
 
                         <div className='logo-div-mobile'>
-                            <Image className='logoMobile'src='/logo-mobile.png' alt="description"   width={50}
-                    height={80}/>
+                            <Image className='logoMobile'src='/logo-mobile.png' alt="Manhattan Muse logo"   width={50}
+                    height={70} quality={100}/>
                         </div>
       
-                        <div className='navigation-item-container '>
+                        <nav className='navigation-item-container '>
                             <ul className='navigation-list flex'>
                             <li><Link className='navigation-item' href="/">Home</Link></li>
                             <li><Link className='navigation-item' href="/map">Map</Link></li>
                             <li><Link className='navigation-item' href="/about">About</Link></li>
                             </ul>
-                        </div>
+                        </nav>
 
                         <div className='menuIcon'>
                             <Image src='/MenuButton.png' alt="description" width={24}
