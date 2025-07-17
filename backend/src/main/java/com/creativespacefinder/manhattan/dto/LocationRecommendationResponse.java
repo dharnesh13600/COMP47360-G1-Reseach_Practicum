@@ -36,6 +36,9 @@ public class LocationRecommendationResponse {
     @JsonProperty("estimatedCrowdNumber")
     private Integer estimatedCrowdNumber;
 
+    @JsonProperty("crowdLevel")
+    private String crowdLevel;
+
     @JsonProperty("scoreBreakdown")
     private ScoreBreakdown scoreBreakdown;
 
@@ -53,6 +56,21 @@ public class LocationRecommendationResponse {
         this.museScore = museScore;
         this.crowdScore = crowdScore;
         this.estimatedCrowdNumber = estimatedCrowdNumber;
+        this.scoreBreakdown = new ScoreBreakdown(activityScore, museScore, crowdScore);
+    }
+
+    public LocationRecommendationResponse(UUID id, String zoneName, BigDecimal latitude, BigDecimal longitude,
+                                          BigDecimal activityScore, BigDecimal museScore,
+                                          BigDecimal crowdScore, Integer estimatedCrowdNumber, String crowdLevel) {
+        this.id = id;
+        this.zoneName = zoneName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.activityScore = activityScore;
+        this.museScore = museScore;
+        this.crowdScore = crowdScore;
+        this.estimatedCrowdNumber = estimatedCrowdNumber;
+        this.crowdLevel = crowdLevel;
         this.scoreBreakdown = new ScoreBreakdown(activityScore, museScore, crowdScore);
     }
 
@@ -80,6 +98,9 @@ public class LocationRecommendationResponse {
 
     public Integer getEstimatedCrowdNumber() { return estimatedCrowdNumber; }
     public void setEstimatedCrowdNumber(Integer estimatedCrowdNumber) { this.estimatedCrowdNumber = estimatedCrowdNumber; }
+
+    public String getCrowdLevel() { return crowdLevel; }
+    public void setCrowdLevel(String crowdLevel) { this.crowdLevel = crowdLevel; }
 
     public ScoreBreakdown getScoreBreakdown() { return scoreBreakdown; }
     public void setScoreBreakdown(ScoreBreakdown scoreBreakdown) { this.scoreBreakdown = scoreBreakdown; }
