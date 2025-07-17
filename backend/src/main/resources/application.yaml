@@ -11,32 +11,63 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER-CLASS-NAME}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      # Balanced settings for Supabase free tier - allows startup but still conservative
+      maximum-pool-size: 2           # 2 connections max (allows startup + runtime)
+      minimum-idle: 1                # 1 idle connection for startup
+      connection-timeout: 20000      # 20 seconds (enough for startup)
+      idle-timeout: 300000           # 5 minutes idle timeout
+      max-lifetime: 900000           # 15 minutes max connection life
+      leak-detection-threshold: 30000 # 30 seconds leak detection
+      # Connection validation
+      connection-test-query: SELECT 1
+      validation-timeout: 5000       # 5 seconds validation
+      auto-commit: true              # Explicit auto-commit
+      pool-name: "DevHikariPool"     # Named pool for debugging
+
+  cache:
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=24h
 
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: validate             # Changed from 'none' to 'validate' for safety
+    show-sql: false                  # Disable SQL logging to reduce noise
+    open-in-view: false              # CRITICAL: Prevents connection leaks
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # Explicit dialect to avoid JDBC metadata lookup
+        jdbc:
+          time_zone: UTC
+          batch_size: 20             # Batch operations for efficiency
+        connection:
+          provider_disables_autocommit: false  # Ensure autocommit works
 
 openweather:
-    api-key: ${OPENWEATHER_API_KEY}
+  api-key: ${OPENWEATHER_API_KEY}
 
 server:
   port: 8080
   servlet:
     context-path: /
 
+# Reduce logging noise but keep essential debugging
 logging:
   level:
     com.creativespacefinder.manhattan: INFO
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.springframework.web: INFO           # Reduced from DEBUG
+    org.hibernate.SQL: WARN                 # Reduced from DEBUG
+    org.hibernate.orm.deprecation: WARN     # Suppress deprecation warnings
+    com.zaxxer.hikari: INFO                 # Reduced from DEBUG
+    com.zaxxer.hikari.pool: WARN            # Only show warnings for pool issues
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
