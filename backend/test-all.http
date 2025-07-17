@@ -1,0 +1,318 @@
+### Manhattan Muse - Creative Space Finder API Endpoints
+### Base URL: http://localhost:8080
+
+# =============================================================================
+# CORE RECOMMENDATION ENDPOINTS
+# =============================================================================
+
+### Get Location Recommendations (Portrait Photography - All Manhattan)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait photography",
+  "dateTime": "2025-07-18T15:00"
+}
+
+###
+
+### Get Location Recommendations (Street Photography - Zone Specific)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Street photography",
+  "dateTime": "2025-07-18T17:00",
+  "selectedZone": "times square theater district"
+}
+
+###
+
+### Get Location Recommendations (Busking - Midtown)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Busking",
+  "dateTime": "2025-07-18T18:00",
+  "selectedZone": "midtown"
+}
+
+###
+
+### Get All Activities
+GET http://localhost:8080/api/recommendations/activities
+
+###
+
+### Get All Manhattan Zones
+GET http://localhost:8080/api/recommendations/zones
+
+# =============================================================================
+# WEATHER FORECAST ENDPOINTS
+# =============================================================================
+
+### Get 96-Hour Weather Forecast
+GET http://localhost:8080/api/forecast
+
+###
+
+### Get Available Forecast DateTimes
+GET http://localhost:8080/api/forecast/available-datetimes
+
+###
+
+### Get Weather for Specific DateTime
+GET http://localhost:8080/api/forecast?datetime=2025-07-18T15:00
+
+# =============================================================================
+# ANALYTICS ENDPOINTS
+# =============================================================================
+
+### Get Popular Activity Combinations
+GET http://localhost:8080/api/analytics/popular-combinations
+
+###
+
+### Get Cache Performance Statistics
+GET http://localhost:8080/api/analytics/cache-performance
+
+###
+
+### Get Activity Popularity Trends
+GET http://localhost:8080/api/analytics/activity-trends
+
+###
+
+### Get Hourly Usage Patterns
+GET http://localhost:8080/api/analytics/hourly-patterns
+
+###
+
+### Get Recent Activity (Last 7 Days)
+GET http://localhost:8080/api/analytics/recent-activity
+
+###
+
+### Get Analytics Dashboard Summary
+GET http://localhost:8080/api/analytics/dashboard
+
+# =============================================================================
+# ADMIN ENDPOINTS
+# =============================================================================
+
+### Manual Cache Warming (Takes 30-45 minutes)
+POST http://localhost:8080/api/admin/warm-cache
+
+###
+
+### Get Cache Status
+GET http://localhost:8080/api/admin/cache-status
+
+# =============================================================================
+# HEALTH & MONITORING ENDPOINTS (Professors!)
+# =============================================================================
+
+### Comprehensive System Health Dashboard
+GET http://localhost:8080/api/health
+
+###
+
+# =============================================================================
+# ACTIVITY-SPECIFIC EXAMPLES
+# =============================================================================
+
+### Portrait Photography (Quiet Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait photography",
+  "dateTime": "2025-07-18T14:00"
+}
+
+###
+
+### Filmmaking (Quiet Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Filmmaking",
+  "dateTime": "2025-07-18T16:00"
+}
+
+###
+
+### Street Photography (Busy Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Street photography",
+  "dateTime": "2025-07-18T17:00"
+}
+
+###
+
+### Busking (Busy Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Busking",
+  "dateTime": "2025-07-18T18:00"
+}
+
+###
+
+### Art Sale (Busy Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Art Sale",
+  "dateTime": "2025-07-18T13:00"
+}
+
+###
+
+### Landscape Painting (Quiet Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Landscape painting",
+  "dateTime": "2025-07-18T10:00"
+}
+
+###
+
+### Portrait Painting (Quiet Activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait painting",
+  "dateTime": "2025-07-18T11:00"
+}
+
+### Central Park Zone
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Landscape painting",
+  "dateTime": "2025-07-18T12:00",
+  "selectedZone": "central park"
+}
+
+###
+
+### Financial District Zone
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Street photography",
+  "dateTime": "2025-07-18T09:00",
+  "selectedZone": "financial district"
+}
+
+###
+
+### West Village Zone
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait photography",
+  "dateTime": "2025-07-18T15:00",
+  "selectedZone": "west village"
+}
+
+###
+
+### East Village Zone
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Busking",
+  "dateTime": "2025-07-18T19:00",
+  "selectedZone": "east village"
+}
+
+###
+
+### SoHo Hudson Square Zone
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Art Sale",
+  "dateTime": "2025-07-18T14:00",
+  "selectedZone": "soho hudson square"
+}
+
+### Morning Activity (10 AM)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait photography",
+  "dateTime": "2025-07-18T10:00"
+}
+
+###
+
+### Afternoon Activity (2 PM)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Street photography",
+  "dateTime": "2025-07-18T14:00"
+}
+
+###
+
+### Evening Activity (6 PM)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Busking",
+  "dateTime": "2025-07-18T18:00"
+}
+
+###
+
+### Weekend Activity (Saturday)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Art Sale",
+  "dateTime": "2025-07-19T13:00"
+}
+
+### Test Cache Hit (Run same request twice)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Portrait photography",
+  "dateTime": "2025-07-18T15:00"
+}
+
+###
+
+### Test Cache Miss (Different activity)
+POST http://localhost:8080/api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "Filmmaking",
+  "dateTime": "2025-07-18T15:00"
+}

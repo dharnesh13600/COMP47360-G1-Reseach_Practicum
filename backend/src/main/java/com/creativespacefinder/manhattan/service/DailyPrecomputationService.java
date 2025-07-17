@@ -3,10 +3,12 @@ package com.creativespacefinder.manhattan.service;
 import com.creativespacefinder.manhattan.dto.RecommendationRequest;
 import com.creativespacefinder.manhattan.entity.Activity;
 import com.creativespacefinder.manhattan.repository.ActivityRepository;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -20,13 +22,19 @@ public class DailyPrecomputationService {
     @Autowired
     private LocationRecommendationService locationRecommendationService;
 
+    @Autowired
+    private DataSource dataSource;
+
     /**
      * Pre-compute all combinations once daily at 3 AM
-     * Optimized for Supabase Free plan (20 connection limit)
+     * With aggressive connection management for Supabase
      */
-    @Scheduled(cron = "0 0 3 * * *") // 3 AM every day
+    @Scheduled(cron = "0 0 3 * * *")
     public void dailyPrecomputation() {
-        System.out.println("Starting daily pre-computation at 3 AM...");
+        System.out.println("Starting daily pre-computation at 3 AM with connection monitoring...");
+
+        // Monitor connections before starting
+        logConnectionStats("BEFORE pre-computation");
 
         List<Activity> activities = activityRepository.findAll();
         List<LocalTime> reasonableTimes = List.of(
@@ -42,43 +50,63 @@ public class DailyPrecomputationService {
         int totalProcessed = 0;
         int batchCount = 0;
 
-        // Process all 4 days (96 hours to match weather API)
-        for (int dayOffset = 0; dayOffset < 4; dayOffset++) {
-            LocalDateTime baseDate = LocalDateTime.now().plusDays(dayOffset);
+        try {
+            // Process all 4 days
+            for (int dayOffset = 0; dayOffset < 4; dayOffset++) {
+                LocalDateTime baseDate = LocalDateTime.now().plusDays(dayOffset);
 
-            for (Activity activity : activities) {
-                for (LocalTime time : reasonableTimes) {
-                    try {
-                        LocalDateTime targetDateTime = baseDate.toLocalDate().atTime(time);
+                for (Activity activity : activities) {
+                    for (LocalTime time : reasonableTimes) {
+                        try {
+                            LocalDateTime targetDateTime = baseDate.toLocalDate().atTime(time);
 
-                        // Only pre-compute future times
-                        if (targetDateTime.isAfter(LocalDateTime.now())) {
-                            RecommendationRequest request = new RecommendationRequest(
-                                    activity.getName(),
-                                    targetDateTime
-                            );
+                            // Only pre-compute future times
+                            if (targetDateTime.isAfter(LocalDateTime.now())) {
+                                RecommendationRequest request = new RecommendationRequest(
+                                        activity.getName(),
+                                        targetDateTime
+                                );
 
-                            // Cache the result
-                            locationRecommendationService.getLocationRecommendations(request);
-                            totalProcessed++;
+                                // Cache the result
+                                locationRecommendationService.getLocationRecommendations(request);
+                                totalProcessed++;
 
-                            // Conservative delay to avoid overwhelming connections
-                            Thread.sleep(1000); // 1 second between requests
+                                // AGGRESSIVE connection management
+                                forceConnectionCleanup();
+                                Thread.sleep(2000); // 2 second break after each request
 
-                            // Every 5 requests, take a longer break
-                            if (totalProcessed % 5 == 0) {
-                                batchCount++;
-                                System.out.println("Completed batch " + batchCount + " (processed " + totalProcessed + " combinations so far...)");
-                                Thread.sleep(3000); // 3 second break every 5 requests
+                                // Every 3 requests, take a longer break and force cleanup
+                                if (totalProcessed % 3 == 0) {
+                                    batchCount++;
+                                    System.out.println("Completed batch " + batchCount + " (processed " + totalProcessed + " combinations)");
+
+                                    // Force cleanup and longer break
+                                    forceConnectionCleanup();
+                                    Thread.sleep(5000); // 5 second break every 3 requests
+
+                                    // Monitor connection status
+                                    logConnectionStats("After batch " + batchCount);
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error pre-computing for " + activity.getName() +
+                                    " at " + time + ": " + e.getMessage());
+
+                            // Force cleanup on error
+                            forceConnectionCleanup();
+                            try {
+                                Thread.sleep(3000); // Extra break on error
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
                             }
                         }
-                    } catch (Exception e) {
-                        System.err.println("Error pre-computing for " + activity.getName() +
-                                " at " + time + ": " + e.getMessage());
-                        // Continue processing even if one fails
                     }
                 }
             }
+        } finally {
+            // CRITICAL: Force cleanup after completion
+            forceConnectionCleanup();
+            logConnectionStats("AFTER pre-computation");
         }
 
         System.out.println("Daily pre-computation completed at " + LocalDateTime.now());
@@ -87,7 +115,41 @@ public class DailyPrecomputationService {
     }
 
     /**
-     * Manual trigger for daily pre-computation (for testing)
+     * Force connection cleanup
+     */
+    private void forceConnectionCleanup() {
+        try {
+            if (dataSource instanceof HikariDataSource) {
+                HikariDataSource hikariDS = (HikariDataSource) dataSource;
+                hikariDS.getHikariPoolMXBean().softEvictConnections();
+            }
+        } catch (Exception e) {
+            System.err.println("Error during connection cleanup: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Log connection statistics
+     */
+    private void logConnectionStats(String phase) {
+        try {
+            if (dataSource instanceof HikariDataSource) {
+                HikariDataSource hikariDS = (HikariDataSource) dataSource;
+                var poolBean = hikariDS.getHikariPoolMXBean();
+
+                System.out.println("=== CONNECTIONS " + phase + " ===");
+                System.out.println("Active: " + poolBean.getActiveConnections());
+                System.out.println("Idle: " + poolBean.getIdleConnections());
+                System.out.println("Total: " + poolBean.getTotalConnections());
+                System.out.println("==============================");
+            }
+        } catch (Exception e) {
+            System.err.println("Error logging connection stats: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Manual trigger for testing
      */
     public void triggerDailyPrecomputation() {
         dailyPrecomputation();
