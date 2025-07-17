@@ -3,7 +3,8 @@
     font-family: var(--ff-inter);
     font-size: 22px;
     font-weight: bold;
-    padding: 3% 6%;
+    padding: 20px 30px;
+    width: 120px;
     border-radius: 40px;
     text-decoration: none;
     border: none;
@@ -11,16 +12,27 @@
     background-color: var(--surface-1);
     transition: 0.3s;
     cursor: pointer;
+    display: inline-block;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 .button-style:hover{
     font-family: var(--ff-inter);
     font-size: 22px;
     font-weight: bold;
-    padding: 3% 6%;
     border-radius: 40px;
     text-decoration: none;
     border: none;
     color: var(--background);
     background-color: var(--on-surface-low-contrast);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* Moves button up by 5px on hover */
+}
+@media (min-width: 1500px){
+    .button-style, .button-style:hover{
+        width: 160px;
+        font-size: 26px;
+        padding: 25px 35px;
+    }
 }
