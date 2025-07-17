@@ -14,13 +14,14 @@ public class CacheConfig {
     @Bean
     public Caffeine<Object, Object> caffeineConfig() {
         return Caffeine.newBuilder()
-                .expireAfterWrite(2, TimeUnit.HOURS)  // Keep cached items for 2 hours
-                .maximumSize(500);                   // Maximum 500 entries in cache
+                .expireAfterWrite(24, TimeUnit.HOURS)  // 24-hour cache (matches daily schedule)
+                .maximumSize(1000)                     // Plenty of room for all combinations
+                .recordStats();                        // Enable cache statistics for monitoring
     }
 
     @Bean
     public CacheManager cacheManager(Caffeine<Object, Object> caffeine) {
-        CaffeineCacheManager manager = new CaffeineCacheManager("mlPredictions");
+        CaffeineCacheManager manager = new CaffeineCacheManager("recommendations");
         manager.setCaffeine(caffeine);
         return manager;
     }
