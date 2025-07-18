@@ -36,6 +36,7 @@
 .readableTimeContainer{
   display:flex;
   justify-content: space-between;
+  flex-direction: column;
 }
 .dateWrapper,.timeWrapper{
   background-color: #FFFBF6;
@@ -406,6 +407,7 @@ cursor: pointer;
 }
 .readableTimeContainer{
   display:flex;
+
   width:240px;
   justify-content: space-between;
 }

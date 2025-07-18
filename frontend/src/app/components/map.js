@@ -18,10 +18,10 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
-    -74.006,
-    40.7822
+ -74.000, 40.7826
 ]
 const INITIAL_ZOOM=11.25
+
 
 
 
@@ -43,8 +43,32 @@ const [showMarkers, setShowMarkers] = useState(false);
 
 
  
+async function fetchPlaceId(lat, lng) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TOKEN;  
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_TOKEN);
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+console.log('Google API response:', data);
+  if (data.status === "OK" && data.results.length > 0) {
+    const placeId = data.results[0].place_id;
+    return placeId;
+  } else {
+    throw new Error("No place found");
+  }
+}
 
 
+const openInGoogleMaps = async (lat, lng) => {
+  try {
+    const placeId = await fetchPlaceId(lat, lng);
+    window.open(`https://www.google.com/maps/place/?q=place_id:${placeId}`, '_blank');
+  } catch (err) {
+    console.error(err);
+    alert("Could not find place in Google Maps.");
+  }
+};
 
     useEffect(() => {
     if (!useMapbox) return;
@@ -59,8 +83,9 @@ const [showMarkers, setShowMarkers] = useState(false);
       center: center,
       zoom: zoom,
     });
-   
 
+  const handleResize = () => mapRef.current?.resize();
+  window.addEventListener('resize', handleResize);
 
 
    
@@ -109,6 +134,7 @@ const [showMarkers, setShowMarkers] = useState(false);
       }
        markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
+window.removeEventListener('resize', handleResize);
     };
 
 
@@ -180,6 +206,9 @@ const [showMarkers, setShowMarkers] = useState(false);
     <div class="estimate-crowd">4537</div>
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
+       <button id="gmaps-${index}">View on Google Maps</button>
+ 
+
 
     <div class="tooltip">
     <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
@@ -236,6 +265,12 @@ popup.on('open', () => {
       tooltip.style.display = isVisible ? 'none' : 'block';
     });
    
+const btn = document.getElementById(`gmaps-${index}`);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      openInGoogleMaps(location.latitude, location.longitude);
+    });
+  }
 
       
 
@@ -280,7 +315,7 @@ popup.on('open', () => {
 }
 
 
-      console.log("Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
+      
     return (
         <>
         
