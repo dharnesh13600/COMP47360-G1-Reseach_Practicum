@@ -1,13 +1,14 @@
-# Use the confirmed OpenJDK 24 slim image as the base
+# OpenJDK 24 slim image as the base
 FROM openjdk:24-jdk-slim-bullseye
 
-# Install necessary tools: curl for downloading, and clean up apt lists to reduce image size
+# Installing necessary tools and dependencies
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Install Maven on top of the OpenJDK image
-# CHANGED: Using Maven 3.8.8 from archive.apache.org as dlcdn.apache.org seems problematic for your VM.
+# Installing Maven on top of the OpenJDK image
+
 ARG MAVEN_VERSION=3.8.8
 ARG USER_HOME_DIR="/root"
+
 # New BASE_URL pointing to the archive server for stability
 ARG BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
 
