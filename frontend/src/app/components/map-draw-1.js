@@ -3,7 +3,7 @@ export default function MapDraw(){
         <>
             <div className='draw-map01'>
                 <svg height="150" width="120">
-                    <path className="map-draw-1-line" d='M100,40 
+                    <path className="draw-map-1-line" d='M100,40 
                     Q40,50 50,130
                     ' 
                     fill='none' stroke='#F69B86' strokeWidth='2.75'/>

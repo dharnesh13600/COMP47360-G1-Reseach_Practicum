@@ -3,6 +3,33 @@
     z-index: 10000;
     top: -5vh;
 }
+.draw-map-2-line{
+stroke-dasharray: 200;     /* Approximate total path length */
+  stroke-dashoffset: 200;
+  animation: drawPath 3s ease forwards;
+}
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.map-draw-2-circle {
+    opacity: 0;
+stroke-dasharray: 500;     /* Approximate total path length */
+  stroke-dashoffset: 500;
+  animation: popCircle 0.5s ease forwards;
+  animation-delay: 1s; /* 0.5s + 2.5s path animation = 3s delay */
+}
+
+@keyframes popCircle {
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
 @media (max-width:1250px){
 .draw-map02{
     display: none;

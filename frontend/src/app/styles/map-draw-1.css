@@ -2,15 +2,41 @@
     position: relative;
     z-index: 10000;
     top: 4vh;
-    left:10px;
-  stroke-dasharray: 1000;     /* Approximate total path length */
-  stroke-dashoffset: 1000;
-  animation: drawPath 5s ease forwards;
+    left:10px;  
+}
+
+.draw-map-1-line{
+  stroke-dasharray: 200;     /* Approximate total path length */
+  stroke-dashoffset: 200;
+  animation: drawPath 3s ease forwards;
+  animation-delay: 1.25s;
 }
 
 @keyframes drawPath {
   to {
     stroke-dashoffset: 0;
+  }
+}
+.map-draw-1-circle-top {
+    opacity: 0;
+stroke-dasharray: 500;     /* Approximate total path length */
+  stroke-dashoffset: 500;
+  animation: popCircle 1s ease forwards;
+  animation-delay: 1.2s; /* 0.5s + 2.5s path animation = 3s delay */
+}
+
+.map-draw-1-circle-bottom {
+    opacity: 0;
+stroke-dasharray: 500;     /* Approximate total path length */
+  stroke-dashoffset: 500;
+  animation: popCircle 1s ease forwards;
+  animation-delay: 2s; /* 0.5s + 2.5s path animation = 3s delay */
+}
+
+@keyframes popCircle {
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
   }
 }
 
