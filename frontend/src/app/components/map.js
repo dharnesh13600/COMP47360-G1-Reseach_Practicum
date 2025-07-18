@@ -8,6 +8,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
 import '../globals.css';
+import Image from 'next/image';
 
 
 
@@ -206,8 +207,16 @@ window.removeEventListener('resize', handleResize);
     <div class="estimate-crowd">4537</div>
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
-       <button id="gmaps-${index}">View on Google Maps</button>
- 
+    <div class="directions">
+    <Image
+      src="/directions-icon.png"     
+      alt="Venue image"
+      width={100}                
+      height={100}           
+      class="directions-image"    
+    />
+    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
+    </div>
 
 
     <div class="tooltip">
@@ -219,7 +228,7 @@ window.removeEventListener('resize', handleResize);
     whether in the crowd or in a peaceful corner.
 
     </p>
-  </div>
+    </div>
   </div>
 `);
 
