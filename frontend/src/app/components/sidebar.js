@@ -29,7 +29,7 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [activityChoice, setChoice]=useState(null);
 
     // activity items 
-    const activities=["Portrait Photography","Street Photography","Landscape Painting","Portrait Painting","Art Sale","Busking","Filmmaking"];
+    const activities=["Portrait photography","Street photography","Landscape painting","Portrait painting","Art Sale","Busking","Filmmaking"];
 
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
@@ -51,6 +51,7 @@ const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
 
+const [zone, setZone]=useState(null);
 
 
 useEffect(()=>{
@@ -335,20 +336,30 @@ const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
 async function handleSubmit(){
 if(!activityChoice || !selectedDate || !selectedTime){
-  alert("Please select activity, date, and time");
+  alert("Please select activity, date and time");
   return;
 }
   setSubmitted(true);
 
   const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
-const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
-  const res=await fetch('/api/location',{
+const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+}
+
+const res=await fetch('/api/location',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({activity:activityChoice,readableTime:readableTimeJson})
+    body:JSON.stringify(payload),
   });
+
+console.log("📬 Response Status:", res.status, res.statusText);
+console.log("📬 Response OK:", res.ok);
+console.log("📬 Response Headers:", [...res.headers.entries()]);
 
   const data=await res.json();
 
@@ -361,6 +372,37 @@ const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
 
    onSubmit(locations);
 };
+
+async function handleZoneClick(area){
+setZone(area);
+
+
+const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+  selectedZone:area,
+}
+
+console.log("Submitting with zone: ",payload);
+
+const res=await fetch('/api/location',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(payload),
+});
+
+const data=await res.json();
+
+if(res.ok){
+  console.log("Zone success: ",data);
+}
+else{
+  console.error("Error submitting with zone: ",data);
+}
+}
 const [locations, setLocations] = useState([]);
 useEffect(() => {
   // Simulate loading JSON data
@@ -668,7 +710,7 @@ useEffect(() => {
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
                         {Object.keys(manhattanNeighborhoods).map(area => (
-      <div key={area} className={styles.suggestedAreas}>
+      <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
         {area}
       </div>
     ))}

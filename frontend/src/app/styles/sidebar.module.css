@@ -225,6 +225,7 @@ animation: fadeSlideIn 0.4s forwards ease;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
+    cursor:pointer;
          
 }
 .suggestedItems::-webkit-scrollbar {
@@ -258,6 +259,7 @@ animation: fadeSlideIn 0.4s forwards ease;
   font-family: var(--ff-inter);
   color: var(--subway-bg);
   border: 1px solid #ddd;
+  
 
 }
 
@@ -407,7 +409,7 @@ cursor: pointer;
 }
 .readableTimeContainer{
   display:flex;
-
+flex-direction: row;
   width:240px;
   justify-content: space-between;
 }
