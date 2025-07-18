@@ -24,9 +24,9 @@ pipeline {
     GCP_ACCOUNTNAME = "your-service-account@${AR_PROJECT}.iam.gserviceaccount.com"
   }
 
-  triggers {
-    pollSCM('H/5 * * * *')
-  }
+  // triggers {
+  //   pollSCM('H/5 * * * *')
+  // }
 
   stages {
     stage('Checkout') {
