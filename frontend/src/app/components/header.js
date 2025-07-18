@@ -33,24 +33,27 @@ export default function Header(){
                 </div>
                 <div className={wrapperClassName}>
                     {isMapPage ? (
-
+                        <>
                         <div className='logo-div-map'>
                              <MapDraw />
                             <Image className='logoMap' src='/manhattan-muse-map.png' alt="Map Logo" width={360} height={120}/>
                             <MapDraw02 />
                         </div>
+                         <nav className='navigation-container-map '>
+                            <ul className='navigation-list-map flex'>
+                            <li><Link className='navigation-item-map' href="/">Home</Link></li>
+                            <li><Link className='navigation-item-map' href="/map">Map</Link></li>
+                            <li><Link className='navigation-item-map' href="/about">About</Link></li>
+                            </ul>
+                        </nav>
+                        </>
+                        
                         
                     ) : (
+                        <>
                         <div className='logo-div-desktop'>
                             <Image className='logo' src='/manhattan-muse-home.png' alt="Home Logo" width={370} height={150}/>
                         </div>
-                    )}
-
-                        <div className='logo-div-mobile'>
-                            <Image className='logoMobile'src='/logo-mobile.png' alt="Manhattan Muse logo"   width={50}
-                    height={70} quality={100}/>
-                        </div>
-      
                         <nav className='navigation-item-container '>
                             <ul className='navigation-list flex'>
                             <li><Link className='navigation-item' href="/">Home</Link></li>
@@ -59,6 +62,16 @@ export default function Header(){
                             </ul>
                         </nav>
 
+                        </>
+                        
+                    )}
+
+                        <div className='logo-div-mobile'>
+                            <Image className='logoMobile'src='/logo-mobile.png' alt="Manhattan Muse logo"   width={50}
+                    height={70} quality={100}/>
+                        </div>
+      
+                        
                         <div className='menuIcon'>
                             <Image src='/MenuButton.png' alt="Menu Button" width={24}
                     height={24} />

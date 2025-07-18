@@ -51,8 +51,19 @@
   padding-inline:2rem;
  
 }
-
+.navigation-list-map{
+  text-transform: uppercase;
+  color:var(--on-surface-1);
+  font-weight: 700;
+  font-family: var(--ff-inter);
   
+}
+
+  .navigation-item-map{
+    font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
+  }
+
+ 
 .logo-div-map{
  display:none;
 }
@@ -66,10 +77,10 @@
   box-shadow: 0 4px 1px 0 #00000040;
   padding-inline:2rem;
 }
- .navigation-list{
+ .navigation-list-map{
   display:none;
 }
- .navigation-item-container,.logo-div-desktop,.logo{
+ .navigation-container-map,.logo-div-desktop,.logo{
   display:none;
 } .logo-div-mobile{
   display:flex;
@@ -277,10 +288,10 @@ font-weight: bold;
   display:block;
 }
 
- .navigation-item-container{
+ .navigation-container-map{
   padding-inline: 5rem;
 }
- .navigation-list{
+ .navigation-list-map{
   display:block;
   gap:4rem;
   text-transform: uppercase;
@@ -299,15 +310,15 @@ font-weight: bold;
   margin-left: 8vh;
  
 }
- .navigation-list{
+ .navigation-list-map{
   display:block;
 }
- .navigation-item-container,.logo-div-desktop,.logo{
+ .navigation-container-map,.logo-div-desktop,.logo{
   display:block;
 }
  
 
- .navigation-list{
+ .navigation-list-map{
   display: flex;
   gap:3rem !important;
   margin-top: 5px;
@@ -326,7 +337,14 @@ font-weight: bold;
   .logoMap{
   height:100px;
   width: 210px;
+  
+ 
 }
+.logo-div-map{
+    top: -10px;
+    left:100px;
+    min-width: 210px;
+  }
    .navigation-wrapper-map {
   display: flex;
   padding-inline: 130px;
@@ -363,33 +381,79 @@ font-weight: bold;
  
 }
 
- .navigation-item-container{
-  padding-inline: 5rem;
+ .navigation-container-map{
+  padding-inline: 3rem;
 }
- .navigation-list{
+ .navigation-list-map{
   display: flex;
-  gap:4rem;
+  gap:3rem !important;
   margin-top: 5px;
+  font-size: 17px;
 }
 }
 
 
   
-@media (max-width:950px){
-  .logo-div-map{
-    top: -20px;
-    min-width: 210px;
-  }
-}
+
 
 
 
 @media(min-width:1200px){
+   .logo-div-map{
+    top: 20px;
+    left:10px;
+    min-width: 210px;
+  }
+
+.navigation-wrapper-map {
+  display: flex;
+  padding-inline: 130px;
+  justify-content: space-between;
+  align-items: center;
+  height:144px;
+  gap:0rem;
+  background-image: url('/waveMap.svg');
+  background-color: transparent;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  box-shadow: 0 0 0 0;
+  
+  background-repeat: no-repeat;
+  background-size: cover;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:2000; 
  
-
-
-
-
-
-
 }
+
+.logo-div-desktop,.logo{
+  display:block;
+}
+
+
+.logo{
+  height:auto;
+  width:300px;
+  min-width: 270px;
+  margin-top: 7vh;
+  margin-left: 8vh;
+ 
+}
+
+ .navigation-container-map{
+  padding-inline: 10rem;
+}
+ .navigation-list-map{
+  display: flex;
+  gap:3rem !important;
+  margin-top: 5px;
+  font-size: 15px;
+}
+}
+
+
+
+
+
