@@ -23,11 +23,11 @@ mkdir -p "./output"
 
 # CORRECTED LINE: Output filename changed from backend-deployment.yaml to backend_deployment.yaml
 env IMAGE_URL="${IMAGE_URL}" PROJECT_ID="${PROJECT_ID}" CLUSTER_NAME="${CLUSTER_NAME}" LOCATION="${LOCATION}" \
-envsubst < "k8s/backend_deployment.tmpl" > "./output/backend_deployment.yaml"
+envsubst < "k8s/backend-deployment.tmpl" > "./output/backend-deployment.yaml"
 
 # Assuming you also want to name the service file consistently:
 env IMAGE_URL="${IMAGE_URL}" \
-envsubst < "k8s/backend_service.tmpl" > "./output/backend_service.yaml"
+envsubst < "k8s/backend-service.tmpl" > "./output/backend-service.yaml"
 
 # Assuming ingress.tmpl is also directly under k8s/ and the output name is ingress.yaml
 # If ingress.tmpl is not present in your k8s folder as per the screenshot, you might remove this line
@@ -37,10 +37,10 @@ envsubst < "k8s/backend_service.tmpl" > "./output/backend_service.yaml"
 
 echo "*** Deploying Docker container and setting up the service and ingress ***"
 # Note: --validate=false and --insecure-skip-tls-verify=true are not recommended for production
-# kubectl apply -f "./output/backend_deployment.yaml" --validate=false --insecure-skip-tls-verify=true
-# kubectl apply -f "./output/backend_service.yaml" --validate=false --insecure-skip-tls-verify=true
-kubectl apply -f "./output/backend_deployment.yaml"
-kubectl apply -f "./output/backend_service.yaml"
+# kubectl apply -f "./output/backend-deployment.yaml" --validate=false --insecure-skip-tls-verify=true
+# kubectl apply -f "./output/backend-service.yaml" --validate=false --insecure-skip-tls-verify=true
+kubectl apply -f "./output/backend-deployment.yaml"
+kubectl apply -f "./output/backend-service.yaml"
 
 # kubectl apply -f "./output/ingress.yaml" --validate=false --insecure-skip-tls-verify=true
 
