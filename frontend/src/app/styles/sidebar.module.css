@@ -9,7 +9,6 @@
     top:70px;
     left:0;
     z-index:10;
-   
 }
 
 .activityWrapper{
@@ -56,6 +55,7 @@
   padding-bottom: 0.15rem;
  padding-top: 0.25rem;
   font-family: var(--ff-overpass);
+    box-shadow: 0 4px 4px -2px #00000040;
 }
 
 .sidebarInner img{
@@ -407,7 +407,7 @@ cursor: pointer;
 }
 .readableTimeContainer{
   display:flex;
-
+  flex-direction: row;
   width:240px;
   justify-content: space-between;
 }

@@ -84,8 +84,7 @@ const openInGoogleMaps = async (lat, lng) => {
       zoom: zoom,
     });
 
-  const handleResize = () => mapRef.current?.resize();
-  window.addEventListener('resize', handleResize);
+ 
 
 
    
@@ -134,7 +133,7 @@ const openInGoogleMaps = async (lat, lng) => {
       }
        markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
-window.removeEventListener('resize', handleResize);
+
     };
 
 
