@@ -15,23 +15,26 @@
     position: absolute;
     bottom: 50px;
     z-index: 1;
-    width: 8vw;
-    height: 3vw;
+    width: 120px;
+    height: 45px;
     right: 42px;
     padding: 4px 15px;
     border-radius: 20px;
     border: none;
     background-color: #4B8382;
-    font-size: 1vw;
+    font-size: 15px;
     font-family: var(--ff-inter);
    color: #FEFAF6;
     font-weight: bold;
+    transition: 0.1s;
      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
   }
   .reset-button:hover{
-        color: var(--background);
+    color: var(--background);
     background-color: var(--on-surface-low-contrast);
-        cursor: pointer;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 60px;
   }
 
    .navigation-wrapper-map {
