@@ -13,10 +13,13 @@ spec:
     metadata:
       labels:
         app: backend
+      annotations:
+        redeployedAt : "${TIMESTAMP}" 
     spec:
       containers:
       - name: backend-container
         image: ${IMAGE_URL} 
+        imagePullPolicy: Always 
         ports:
         - containerPort: 8080
         env:

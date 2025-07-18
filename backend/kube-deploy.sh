@@ -12,6 +12,7 @@ test -r "${GCP_KEYFILE_PATH}" && echo "DEBUG (in kube-deploy.sh): Key file is re
 # Add debug for IMAGE_URL (this will tell us if it's coming through correctly)
 echo "DEBUG (in kube-deploy.sh): IMAGE_URL is: ${IMAGE_URL}"
 
+export TIMESTAMP=$(date +%s)
 # Authenticate with gcloud service account
 gcloud auth activate-service-account --key-file="${GCP_KEYFILE_PATH}" --project="${PROJECT_ID}"
 
