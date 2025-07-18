@@ -6,6 +6,16 @@
   aspect-ratio: 690 / 250;
   z-index: 10;
   pointer-events: none;
+  stroke-dasharray: 1000;     /* Approximate total path length */
+  stroke-dashoffset: 1000;
+  animation: drawPath 2.7s ease forwards;
+  animation-delay: 0.5s; 
+}
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .draw02 svg {

@@ -5,7 +5,18 @@
   width: 12vw;
   aspect-ratio: 200 / 350;  
   z-index: 10;
+  stroke-dasharray: 1000;     /* Approximate total path length */
+  stroke-dashoffset: 1000;
+  animation: drawPath 5s ease forwards;
 }
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
 
 .draw01 svg {
   width: 100%;

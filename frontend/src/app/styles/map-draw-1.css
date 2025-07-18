@@ -3,7 +3,18 @@
     z-index: 10000;
     top: 4vh;
     left:10px;
+  stroke-dasharray: 1000;     /* Approximate total path length */
+  stroke-dashoffset: 1000;
+  animation: drawPath 5s ease forwards;
 }
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
 @media (max-width:1200px){
 .draw-map01{
     display: none;
