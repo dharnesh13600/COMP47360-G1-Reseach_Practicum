@@ -4,7 +4,6 @@
 // https://codepen.io/pen
 // https://www.nan.fyi/svg-paths/cubic-curves
 
-// demo
 'use client';
 
 import '../globals.css';
@@ -61,7 +60,7 @@ export default function Header(){
                         </nav>
 
                         <div className='menuIcon'>
-                            <Image src='/MenuButton.png' alt="description" width={24}
+                            <Image src='/MenuButton.png' alt="Menu Button" width={24}
                     height={24} />
                         </div>
 
