@@ -19,9 +19,9 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
- -74.000, 40.7826
+ -74.000, 40.776
 ]
-const INITIAL_ZOOM=11.25
+const INITIAL_ZOOM=11.57
 
 
 
@@ -208,13 +208,7 @@ window.removeEventListener('resize', handleResize);
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
     <div class="directions">
-    <Image
-      src="/directions-icon.png"     
-      alt="Venue image"
-      width={100}                
-      height={100}           
-      class="directions-image"    
-    />
+    <img src="/directions-icon.png" alt="Directions" style="width:50px; height:50px;" />
     <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
     </div>
 

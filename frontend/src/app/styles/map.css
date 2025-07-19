@@ -85,35 +85,48 @@
   .numbered-marker {
  
   cursor: pointer;
-  position: relative;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;  /* Taller pin */
   z-index:9999;
 }
 .pinShape {
   width: 100%;
   height: 100%;
   background:#52767E;
-  border-radius: 50% 50% 50% 10%;
-  transform: rotate(-45deg) scaleY(1.5) scaleX(1.5);
+  border-radius: 50% 50% 50% 50%;
   position: relative;
+  transform-origin: center center;
+  top:-15px;
+}
+
+.pinShape::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;  /* Just below the circle */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 15px solid #52767E; /* Triangle color same as pin */
+  border-radius: 50% / 100%;
 }
 
 .number {
   position: absolute;
-    top: 50%; 
+  top: 52%;  /* Adjust for visual centering */
   left: 50%;
-   z-index: 2;
-  transform: translate(-50%, -50%) rotate(45deg);
+  z-index: 2;
+  transform: translate(-50%, -50%);
   color: #52767E;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: bold;
-  width: 11px;
-  height: 11px;
-  padding:1px;
+  width: 19px;
+  height: 15px;
+  padding-bottom: 6px;
+  padding-left: 1px;
   border-radius: 50%;
-  line-height: 10px;
-  text-align: center;
   background: #FFF2E5;
   text-align: center;
   justify-items: center;

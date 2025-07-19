@@ -52,10 +52,26 @@ export default function Header(){
                         </div>
       
                         <nav className='navigation-item-container '>
-                            <ul className='navigation-list flex'>
-                            <li><Link className='navigation-item' href="/">Home</Link></li>
-                            <li><Link className='navigation-item' href="/map">Map</Link></li>
-                            <li><Link className='navigation-item' href="/about">About</Link></li>
+                            <ul className='navigation-list flex'>    
+                            <li className='nav-home'>
+                                <svg className='nav-draw-home' viewBox="0 0 30 30" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
+                                    <path d="M-2,-15 Q-3,15 12.9,10 T30,15" 
+                                    fill="none" stroke="orange" strokeWidth="1" />
+                                </svg>
+                                <Link className='navigation-item' href="/">Home</Link>
+                            </li>
+                            <li className='nav-map'>
+                                <svg className='nav-draw-map' viewBox="0 0 30 30" preserveAspectRatio="xMidYMid meet" width="100%" height="10%">
+                                    <path d="M-1,40 Q5,5 35,15" 
+                                    fill="none" stroke="orange" strokeWidth="1.2" />
+                                </svg>
+                                <Link className='navigation-item' href="/map">Map</Link></li>
+                            <li className='nav-about'>
+                                <svg className='nav-draw-about' viewBox="0 0 30 30" preserveAspectRatio="xMidYMid meet" width="100%" height="10%">
+                                    <path d="M3,23 Q18,24 16,11.5 T26,0"
+                                    fill="none" stroke="orange" strokeWidth="1.2" />
+                                </svg>
+                                <Link className='navigation-item' href="/about">About</Link></li>
                             </ul>
                         </nav>
 
