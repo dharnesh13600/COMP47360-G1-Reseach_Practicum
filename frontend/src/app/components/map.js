@@ -111,6 +111,7 @@ const openInGoogleMaps = async (lat, lng) => {
 mapRef.current.addControl(new mapboxgl.NavigationControl());
 const adjustView = () => {
   const config = getViewConfig();
+   if (!mapRef.current) return;
   mapRef.current.flyTo({
     center: config.center,
     zoom: config.zoom,
