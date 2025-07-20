@@ -408,7 +408,7 @@ body{
 .logo{
   height:auto;
   width:420px;
-  min-width: 270px;
+  max-width: 420px;
   margin-top: 8vh;
   margin-left: 8vh;
 }
@@ -438,14 +438,8 @@ body{
 }
 }
 
-
-  
-
-
-
 @media(min-width:1200px){
  
-
 .navigation-wrapper{
   display:flex;
   padding-inline: 130px;
