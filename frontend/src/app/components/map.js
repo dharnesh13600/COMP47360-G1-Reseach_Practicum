@@ -6,6 +6,7 @@ import mapboxgl from 'mapbox-gl';
 import {useRef,useEffect,useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+import ComparisonStack from './comparisonStack.js';
 
 import '../globals.css';
 import Image from 'next/image';
@@ -40,6 +41,7 @@ const [showMarkers, setShowMarkers] = useState(false);
    const markersRef = useRef([]);
 
   const activePopupRef = useRef(null);
+  const [comparisonStack, setComparisonStack] = useState([]);
 
 
 
@@ -186,7 +188,6 @@ window.removeEventListener('resize', handleResize);
   // if (!mapRef.current || !locations.length) return;
   if (!mapRef.current || !(locations?.length > 0)) return;
 
-
   // Remove existing markers
   markersRef.current.forEach(m => m.remove());
   markersRef.current = [];
@@ -208,10 +209,12 @@ window.removeEventListener('resize', handleResize);
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
     <div class="directions">
-    <img src="/directions-icon.png" alt="Directions" style="width:50px; height:50px;" />
+    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
     <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
     </div>
 
+    <!-- ComparisonStack placeholder directly under the Directions button -->
+    <button class="compare-button" id="compare-${index}">Add to Compare</button>
 
     <div class="tooltip">
     <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
@@ -225,6 +228,14 @@ window.removeEventListener('resize', handleResize);
     </div>
   </div>
 `);
+      
+const addToComparison = (location) => {
+  setComparisonStack(prev => {
+    if (prev.find(item => item.id === location.id)) return prev; // prevent duplicates
+    if (prev.length >= 5) return prev; // max 5
+    return [...prev, location];
+  });
+};
 
  const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
@@ -274,7 +285,21 @@ const btn = document.getElementById(`gmaps-${index}`);
       openInGoogleMaps(location.latitude, location.longitude);
     });
   }
-
+//// COMPARE BUTTON  
+const compareBtn = document.getElementById(`compare-${index}`);
+if (compareBtn) {
+  compareBtn.addEventListener('click', () => {
+    addToComparison({
+      id: location.id || index,
+      locName: location.name || `location name`,
+      selectedLat: location.latitude,
+      selectedLong: location.longitude,
+      museScore: location.museScore,
+      estimateCrowd: location.estimateCrowd ,
+      crowdStatus: location.crowdStatus 
+    });
+  });
+}
       
 
 
@@ -316,8 +341,6 @@ const btn = document.getElementById(`gmaps-${index}`);
     duration: 3000
   })
 }
-
-
       
     return (
         <>
@@ -328,6 +351,11 @@ const btn = document.getElementById(`gmaps-${index}`);
             <div id='map-container' ref={mapContainerRef}>
              
             </div>
+            <ComparisonStack
+              stack={comparisonStack}
+              clearStack={() => setComparisonStack([])}
+            />
+
         </>
     )
 }

@@ -56,7 +56,24 @@
  display:none;
 }
 
-
+.menuIcon{
+  position: relative; /* Make this the reference point */
+  cursor: pointer;
+}
+.line {
+    fill: var(--on-surface-1);
+    transition: all 0.5s ease;
+    transform-origin: center;
+}
+.menuIcon.open .top {
+    transform: rotate(45deg) translate(2px, 6px);
+}
+.menuIcon.open .middle {
+    opacity: 0;
+}
+.menuIcon.open .bottom {
+    transform: rotate(-45deg) translate(2px, -6px);
+}
 
 @media (max-width:425px) {
   
@@ -143,7 +160,7 @@
   border-radius: 15px;
   background: #FEFAF6;
   border: 1px solid #ccc;
-  z-index: 10000;
+  z-index: 100000;
   display: none; 
 }
 
@@ -154,6 +171,7 @@
   right: 15px !important;
   animation: popupAppear 0.5s ease forwards;
   transform-origin: bottom center;
+  z-index: 100;
 }
 @keyframes popupAppear {
   0% {
@@ -281,11 +299,12 @@ font-weight: 600;
 }
 
 .directions-image{
-  height: 30px;
+  height: 25px;
   width:auto;
 filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130%) contrast(88%);
 
 }
+
 .directions-button{
   font-family: var(--ff-overpass);
   background-color: transparent;
