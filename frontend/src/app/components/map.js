@@ -61,7 +61,7 @@ const [showMarkers, setShowMarkers] = useState(false);
 
   const activePopupRef = useRef(null);
 
-
+const lastClickedMarkerRef = useRef(null);
 
  
 async function fetchPlaceId(lat, lng) {
@@ -108,7 +108,7 @@ const openInGoogleMaps = async (lat, lng) => {
       bearing:-20
     });
 
-
+mapRef.current.addControl(new mapboxgl.NavigationControl());
 const adjustView = () => {
   const config = getViewConfig();
   mapRef.current.flyTo({
@@ -193,10 +193,12 @@ const adjustView = () => {
       easing: t => t,
     });
 
-    if (activePopupRef.current) {
+   if (activePopupRef.current) {
       activePopupRef.current.remove();
       activePopupRef.current = null;
-    }
+    } 
+   
+  
 
   
     const marker = markersRef.current.find(m => {
@@ -269,11 +271,27 @@ const adjustView = () => {
 
     
         
-  if (activePopupRef.current) {
+      if (
+  lastClickedMarkerRef.current &&
+  lastClickedMarkerRef.current === marker
+) {if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    } 
+    mapRef.current.flyTo({
+    center: INITIAL_CENTER,
+    zoom: INITIAL_ZOOM,
+    pitch: 0,
+    bearing: 0,
+    duration: 3000
+  });
+  lastClickedMarkerRef.current = null;
+  return;
+  }
+ if (activePopupRef.current) {
     activePopupRef.current.remove();
     activePopupRef.current = null;
   }
-
         mapRef.current.easeTo({
           center: [location.longitude, location.latitude],
           zoom: 18,          
@@ -284,7 +302,7 @@ const adjustView = () => {
         });
 marker.getPopup().addTo(mapRef.current);
   activePopupRef.current = marker.getPopup();
-  
+  lastClickedMarkerRef.current = marker;
 });
 popup.on('open', () => {
     const popupEl = popup.getElement();
