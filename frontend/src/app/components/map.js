@@ -216,7 +216,12 @@ window.removeEventListener('resize', handleResize);
     </div>
 
     <!-- ComparisonStack placeholder directly under the Directions button -->
-    <button class="compare-button" id="compare-${index}">Add to Compare</button>
+    <button class="compare-button" id="compare-${index}">
+<svg class="compare-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+    Add to Compare
+    </button>
 
     <div class="tooltip">
     <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
@@ -234,7 +239,7 @@ window.removeEventListener('resize', handleResize);
 const addToComparison = (location) => {
   setComparisonStack(prev => {
     if (prev.find(item => item.id === location.id)) return prev; // prevent duplicates
-    if (prev.length >= 5) return prev; // max 5
+    if (prev.length >= 3) return prev; // max 5
     return [...prev, location];
   });
 };

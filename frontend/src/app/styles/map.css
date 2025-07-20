@@ -16,7 +16,7 @@
     bottom: 50px;
     z-index: 1;
     width: 120px;
-    height: 45px;
+    height: 42px;
     right: 42px;
     padding: 4px 15px;
     border-radius: 20px;
@@ -167,7 +167,7 @@
 .mapboxgl-popup {
   top: auto !important;
   left: auto !important;
-  bottom: 110px !important;
+  bottom: 100px !important;
   right: 15px !important;
   animation: popupAppear 0.5s ease forwards;
   transform-origin: bottom center;
@@ -242,6 +242,30 @@ justify-content: center;
 font-weight: 600;
 }
 
+.compare-button{
+  display: flex;
+  border: none;
+  background-color: var(--background);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  font-family: var(--ff-overpass);
+  border-radius: 15px;
+  font-weight: bold;
+  padding: 8px;
+  transition: 0.3s ease;
+  color: var(--on-surface-1);
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  margin-top: 8px;
+}
+.compare-icon{
+  padding: 3px;
+  width: 12px;
+}
+.compare-button:hover{
+  transform: translateY(-2px) translateX(-2px);
+  cursor: pointer;
+}
 
 .popup-card {
   position: relative; /* make it a positioning context */
@@ -402,11 +426,11 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 
 .logo{
   height:auto;
-  width:300px;
-  min-width: 270px;
-  margin-top: 7vh;
+  width:420px;
+  max-width: 420px;
+  margin-top: 8vh;
   margin-left: 8vh;
- 
+
 }
 
  .navigation-item-container{
