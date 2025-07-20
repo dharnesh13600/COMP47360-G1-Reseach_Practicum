@@ -9,7 +9,11 @@ import '../styles/map.css';
 import ComparisonStack from './comparisonStack.js';
 
 import '../globals.css';
+
+import { maxTime } from 'date-fns/constants';
+
 import Image from 'next/image';
+
 
 
 
@@ -20,13 +24,37 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
- -74.000, 40.776
+
+ -74.000, 40.7526
 ]
+
+
 const INITIAL_ZOOM=11.57
 
 
 
 
+const viewConfigs = [
+  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:0,bearing:30},
+  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
+  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 10, bearing: -10 },
+];
+function getViewConfig() {
+  const width = window.innerWidth;
+
+  // find all configs where minWidth <= width
+  const applicableConfigs = viewConfigs.filter(cfg => width >= cfg.minWidth);
+
+  if (applicableConfigs.length > 0) {
+    // pick the one with largest minWidth
+    return applicableConfigs.reduce((prev, curr) =>
+      curr.minWidth > prev.minWidth ? curr : prev
+    );
+  }
+
+  // fallback
+  return viewConfigs[0];
+}
 
 export default function Map({ submitted, locations, selectedLocation }){
 const popupRef = useRef();
@@ -44,9 +72,13 @@ const [showMarkers, setShowMarkers] = useState(false);
   const [comparisonStack, setComparisonStack] = useState([]);
 
 
+const lastClickedMarkerRef = useRef(null);
+
+
 const removeItem = (id) => {
   setComparisonStack(prev => prev.filter(item => item.id !== id));
 };
+
  
 async function fetchPlaceId(lat, lng) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TOKEN;  
@@ -75,6 +107,7 @@ const openInGoogleMaps = async (lat, lng) => {
   }
 };
 
+
     useEffect(() => {
     if (!useMapbox) return;
 
@@ -87,14 +120,27 @@ const openInGoogleMaps = async (lat, lng) => {
       style:process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL,
       center: center,
       zoom: zoom,
+      pitch:50,
+      bearing:-20
     });
 
-  const handleResize = () => mapRef.current?.resize();
-  window.addEventListener('resize', handleResize);
-
-
-   
-
+mapRef.current.addControl(new mapboxgl.NavigationControl());
+const adjustView = () => {
+  const config = getViewConfig();
+   if (!mapRef.current) return;
+  mapRef.current.flyTo({
+    center: config.center,
+    zoom: config.zoom,
+    duration: 1000,
+    pitch: config.pitch ?? mapRef.current.getPitch(),
+    bearing: config.bearing ?? mapRef.current.getBearing()
+  });
+};
+    mapRef.current.on('load', () => {
+  mapRef.current.resize();
+  adjustView();
+  window.addEventListener('resize',adjustView);
+});
 
     mapRef.current.on('move', () => {
       const mapCenter = mapRef.current.getCenter();
@@ -139,7 +185,7 @@ const openInGoogleMaps = async (lat, lng) => {
       }
        markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
-window.removeEventListener('resize', handleResize);
+
     };
 
 
@@ -164,10 +210,12 @@ window.removeEventListener('resize', handleResize);
       easing: t => t,
     });
 
-    if (activePopupRef.current) {
+   if (activePopupRef.current) {
       activePopupRef.current.remove();
       activePopupRef.current = null;
-    }
+    } 
+   
+  
 
   
     const marker = markersRef.current.find(m => {
@@ -256,11 +304,27 @@ const addToComparison = (location) => {
 
     
         
-  if (activePopupRef.current) {
+      if (
+  lastClickedMarkerRef.current &&
+  lastClickedMarkerRef.current === marker
+) {if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    } 
+    mapRef.current.flyTo({
+    center: INITIAL_CENTER,
+    zoom: INITIAL_ZOOM,
+    pitch: 0,
+    bearing: 0,
+    duration: 3000
+  });
+  lastClickedMarkerRef.current = null;
+  return;
+  }
+ if (activePopupRef.current) {
     activePopupRef.current.remove();
     activePopupRef.current = null;
   }
-
         mapRef.current.easeTo({
           center: [location.longitude, location.latitude],
           zoom: 18,          
@@ -271,7 +335,7 @@ const addToComparison = (location) => {
         });
 marker.getPopup().addTo(mapRef.current);
   activePopupRef.current = marker.getPopup();
-  
+  lastClickedMarkerRef.current = marker;
 });
 popup.on('open', () => {
     const popupEl = popup.getElement();

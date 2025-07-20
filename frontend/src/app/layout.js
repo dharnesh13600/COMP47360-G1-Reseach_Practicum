@@ -22,9 +22,11 @@ export default function RootLayout({ children }) {
         >
   <div className="layout">
           <Header />
+
           <PageTransitionWrapper>
             {children}
           </PageTransitionWrapper>
+
         </div>
       </body>
     </html>
