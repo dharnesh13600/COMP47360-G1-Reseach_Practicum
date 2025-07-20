@@ -76,7 +76,7 @@
     font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
   }
 
-=======
+
 .menuIcon{
   position: relative; /* Make this the reference point */
   cursor: pointer;
@@ -109,7 +109,7 @@
  .navigation-container-map,.logo-div-desktop,.logo{
   display:none;
 } 
-
+}
 @media (min-width:700px){
 
    .navigation-wrapper-map {
@@ -132,12 +132,7 @@
 }
 }
 
-/* @media (max-width:425px) {
-  
- 
 
-
-} */
 
 
 /* https://codepen.io/katia-trifonova/pen/zwZgdx?editors=0110 */
@@ -373,7 +368,7 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 
 
 @media (min-width:700px){
-=======
+
 .directions-button{
   font-family: var(--ff-overpass);
   background-color: transparent;

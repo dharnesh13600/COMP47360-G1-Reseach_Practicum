@@ -11,7 +11,7 @@ import ComparisonStack from './comparisonStack.js';
 import '../globals.css';
 
 import { maxTime } from 'date-fns/constants';
-=======
+
 import Image from 'next/image';
 
 
@@ -27,10 +27,8 @@ const INITIAL_CENTER =[
 
  -74.000, 40.7526
 ]
-const INITIAL_ZOOM=11.70
-=======
- -74.000, 40.776
-]
+
+
 const INITIAL_ZOOM=11.57
 
 
@@ -76,7 +74,6 @@ const [showMarkers, setShowMarkers] = useState(false);
 
 const lastClickedMarkerRef = useRef(null);
 
-=======
 
 const removeItem = (id) => {
   setComparisonStack(prev => prev.filter(item => item.id !== id));
