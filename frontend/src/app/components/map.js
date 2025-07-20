@@ -6,8 +6,10 @@ import mapboxgl from 'mapbox-gl';
 import {useRef,useEffect,useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+import ComparisonStack from './comparisonStack.js';
 
 import '../globals.css';
+import Image from 'next/image';
 
 
 
@@ -18,10 +20,10 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
-    -74.006,
-    40.7822
+ -74.000, 40.776
 ]
-const INITIAL_ZOOM=11.25
+const INITIAL_ZOOM=11.57
+
 
 
 
@@ -39,12 +41,39 @@ const [showMarkers, setShowMarkers] = useState(false);
    const markersRef = useRef([]);
 
   const activePopupRef = useRef(null);
+  const [comparisonStack, setComparisonStack] = useState([]);
 
 
-
+const removeItem = (id) => {
+  setComparisonStack(prev => prev.filter(item => item.id !== id));
+};
  
+async function fetchPlaceId(lat, lng) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TOKEN;  
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_TOKEN);
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+console.log('Google API response:', data);
+  if (data.status === "OK" && data.results.length > 0) {
+    const placeId = data.results[0].place_id;
+    return placeId;
+  } else {
+    throw new Error("No place found");
+  }
+}
 
 
+const openInGoogleMaps = async (lat, lng) => {
+  try {
+    const placeId = await fetchPlaceId(lat, lng);
+    window.open(`https://www.google.com/maps/place/?q=place_id:${placeId}`, '_blank');
+  } catch (err) {
+    console.error(err);
+    alert("Could not find place in Google Maps.");
+  }
+};
 
     useEffect(() => {
     if (!useMapbox) return;
@@ -59,8 +88,9 @@ const [showMarkers, setShowMarkers] = useState(false);
       center: center,
       zoom: zoom,
     });
-   
 
+  const handleResize = () => mapRef.current?.resize();
+  window.addEventListener('resize', handleResize);
 
 
    
@@ -109,6 +139,7 @@ const [showMarkers, setShowMarkers] = useState(false);
       }
        markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
+window.removeEventListener('resize', handleResize);
     };
 
 
@@ -159,7 +190,6 @@ const [showMarkers, setShowMarkers] = useState(false);
   // if (!mapRef.current || !locations.length) return;
   if (!mapRef.current || !(locations?.length > 0)) return;
 
-
   // Remove existing markers
   markersRef.current.forEach(m => m.remove());
   markersRef.current = [];
@@ -180,6 +210,13 @@ const [showMarkers, setShowMarkers] = useState(false);
     <div class="estimate-crowd">4537</div>
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
+    <div class="directions">
+    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
+    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
+    </div>
+
+    <!-- ComparisonStack placeholder directly under the Directions button -->
+    <button class="compare-button" id="compare-${index}">Add to Compare</button>
 
     <div class="tooltip">
     <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
@@ -190,9 +227,17 @@ const [showMarkers, setShowMarkers] = useState(false);
     whether in the crowd or in a peaceful corner.
 
     </p>
-  </div>
+    </div>
   </div>
 `);
+      
+const addToComparison = (location) => {
+  setComparisonStack(prev => {
+    if (prev.find(item => item.id === location.id)) return prev; // prevent duplicates
+    if (prev.length >= 5) return prev; // max 5
+    return [...prev, location];
+  });
+};
 
  const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
@@ -236,7 +281,28 @@ popup.on('open', () => {
       tooltip.style.display = isVisible ? 'none' : 'block';
     });
    
+const btn = document.getElementById(`gmaps-${index}`);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      openInGoogleMaps(location.latitude, location.longitude);
+    });
+  }
+//// COMPARE BUTTON  
+const compareBtn = document.getElementById(`compare-${index}`);
 
+if (compareBtn) {
+  compareBtn.addEventListener('click', () => {
+    addToComparison({
+      id: location.id || index,
+      locName: location.name || `location name`,
+      selectedLat: location.latitude,
+      selectedLong: location.longitude,
+      museScore: location.museScore,
+      estimateCrowd: location.estimateCrowd ,
+      crowdStatus: location.crowdStatus 
+    });
+  });
+}
       
 
 
@@ -278,9 +344,7 @@ popup.on('open', () => {
     duration: 3000
   })
 }
-
-
-      console.log("Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
+      
     return (
         <>
         
@@ -290,6 +354,12 @@ popup.on('open', () => {
             <div id='map-container' ref={mapContainerRef}>
              
             </div>
+            <ComparisonStack
+              stack={comparisonStack}
+              clearStack={() => setComparisonStack([])}
+              removeItem={removeItem}
+            />
+
         </>
     )
 }
