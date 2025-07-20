@@ -11,6 +11,8 @@
       text-align: center;
       max-width: 100%;
       font-weight: 700;
+      padding-inline: 0.1rem;
+    
 }
 
 .time-toggle-icon{
@@ -34,7 +36,7 @@
     cursor: pointer;
     overflow: hidden;
        pointer-events: auto;
-       position: relative;
+       /* position: relative; */
        width:80px;
     height:31px;
     color:#FEFAF6;

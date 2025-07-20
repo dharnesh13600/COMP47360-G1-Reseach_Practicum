@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         >
   <div className="layout">
           <Header />
-          <main>{children}</main>
+          {children}
         </div>
       </body>
     </html>

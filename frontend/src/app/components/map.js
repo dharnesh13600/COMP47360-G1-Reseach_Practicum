@@ -8,6 +8,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
 import '../globals.css';
+import { maxTime } from 'date-fns/constants';
 
 
 
@@ -20,11 +21,31 @@ if (useMapbox) {
 const INITIAL_CENTER =[
  -74.000, 40.7826
 ]
-const INITIAL_ZOOM=11.25
+const INITIAL_ZOOM=11.70
 
 
 
+const viewConfigs = [
+  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:30,bearing:-30},
+  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: -30 },
+  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 55, bearing: -20 },
+];
+function getViewConfig() {
+  const width = window.innerWidth;
 
+  // find all configs where minWidth <= width
+  const applicableConfigs = viewConfigs.filter(cfg => width >= cfg.minWidth);
+
+  if (applicableConfigs.length > 0) {
+    // pick the one with largest minWidth
+    return applicableConfigs.reduce((prev, curr) =>
+      curr.minWidth > prev.minWidth ? curr : prev
+    );
+  }
+
+  // fallback
+  return viewConfigs[0];
+}
 
 export default function Map({ submitted, locations, selectedLocation }){
 const popupRef = useRef();
@@ -70,6 +91,7 @@ const openInGoogleMaps = async (lat, lng) => {
   }
 };
 
+
     useEffect(() => {
     if (!useMapbox) return;
 
@@ -82,13 +104,26 @@ const openInGoogleMaps = async (lat, lng) => {
       style:process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL,
       center: center,
       zoom: zoom,
+      pitch:50,
+      bearing:-20
     });
 
- 
 
-
-   
-
+const adjustView = () => {
+  const config = getViewConfig();
+  mapRef.current.flyTo({
+    center: config.center,
+    zoom: config.zoom,
+    duration: 1000,
+    pitch: config.pitch ?? mapRef.current.getPitch(),
+    bearing: config.bearing ?? mapRef.current.getBearing()
+  });
+};
+    mapRef.current.on('load', () => {
+  mapRef.current.resize();
+  adjustView();
+  window.addEventListener('resize',adjustView);
+});
 
     mapRef.current.on('move', () => {
       const mapCenter = mapRef.current.getCenter();

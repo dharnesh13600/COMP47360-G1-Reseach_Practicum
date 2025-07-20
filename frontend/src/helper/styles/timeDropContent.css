@@ -1,25 +1,29 @@
 .time-dropdown-content{
     position: absolute;
-    left:-1rem;
-    min-width: 100%;
-    width:100%;
+    left:0;
+    top: calc(100% + 6px);
+    
+   
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding-top: 1rem;
-    margin-top: 0.5rem;
+    justify-content: flex-start;
+ align-items: center; 
+
+   margin-top: 0.5rem;
     background-color:#FFFAF5;
     color:#52767E;
-    max-height: 30vh;
-    overflow-y:scroll;
+       max-height: 100px;
+    overflow-y:auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
     opacity: 0;
     border-radius: 20px;
-    padding-inline: 1rem;
+   padding-top:1rem;
     display:none;
     padding-bottom: 1rem;
+    min-width: 100%;
+    width:100%;
 
 }
 
@@ -29,18 +33,12 @@
 }
 
 .time-content-open{
-    transform:translateY(0);
-    opacity:1;
+    
     pointer-events: all;
     z-index: 100;
    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transform: translateY(-5px);
-animation: fadeSlideIn 0.3s forwards ease;
+    animation: fadeSlideIn 0.3s forwards ease;
 }
 @keyframes fadeSlideIn {
   to {
