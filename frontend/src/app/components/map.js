@@ -6,9 +6,14 @@ import mapboxgl from 'mapbox-gl';
 import {useRef,useEffect,useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+import ComparisonStack from './comparisonStack.js';
 
 import '../globals.css';
+
 import { maxTime } from 'date-fns/constants';
+=======
+import Image from 'next/image';
+
 
 
 
@@ -19,9 +24,15 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
+
  -74.000, 40.7526
 ]
 const INITIAL_ZOOM=11.70
+=======
+ -74.000, 40.776
+]
+const INITIAL_ZOOM=11.57
+
 
 
 
@@ -60,8 +71,16 @@ const [showMarkers, setShowMarkers] = useState(false);
    const markersRef = useRef([]);
 
   const activePopupRef = useRef(null);
+  const [comparisonStack, setComparisonStack] = useState([]);
+
 
 const lastClickedMarkerRef = useRef(null);
+
+=======
+
+const removeItem = (id) => {
+  setComparisonStack(prev => prev.filter(item => item.id !== id));
+};
 
  
 async function fetchPlaceId(lat, lng) {
@@ -222,7 +241,6 @@ const adjustView = () => {
   // if (!mapRef.current || !locations.length) return;
   if (!mapRef.current || !(locations?.length > 0)) return;
 
-
   // Remove existing markers
   markersRef.current.forEach(m => m.remove());
   markersRef.current = [];
@@ -243,9 +261,18 @@ const adjustView = () => {
     <div class="estimate-crowd">4537</div>
     <div class="crowd-label ">Crowd Status </div>
     <div class="crowd-status">Busy</div>
-       <button id="gmaps-${index}">View on Google Maps</button>
- 
+    <div class="directions">
+    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
+    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
+    </div>
 
+    <!-- ComparisonStack placeholder directly under the Directions button -->
+    <button class="compare-button" id="compare-${index}">
+<svg class="compare-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+    Add to Compare
+    </button>
 
     <div class="tooltip">
     <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
@@ -256,9 +283,17 @@ const adjustView = () => {
     whether in the crowd or in a peaceful corner.
 
     </p>
-  </div>
+    </div>
   </div>
 `);
+      
+const addToComparison = (location) => {
+  setComparisonStack(prev => {
+    if (prev.find(item => item.id === location.id)) return prev; // prevent duplicates
+    if (prev.length >= 3) return prev; // max 5
+    return [...prev, location];
+  });
+};
 
  const marker=new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
@@ -324,7 +359,22 @@ const btn = document.getElementById(`gmaps-${index}`);
       openInGoogleMaps(location.latitude, location.longitude);
     });
   }
+//// COMPARE BUTTON  
+const compareBtn = document.getElementById(`compare-${index}`);
 
+if (compareBtn) {
+  compareBtn.addEventListener('click', () => {
+    addToComparison({
+      id: location.id || index,
+      locName: location.name || `location name`,
+      selectedLat: location.latitude,
+      selectedLong: location.longitude,
+      museScore: location.museScore,
+      estimateCrowd: location.estimateCrowd ,
+      crowdStatus: location.crowdStatus 
+    });
+  });
+}
       
 
 
@@ -366,8 +416,6 @@ const btn = document.getElementById(`gmaps-${index}`);
     duration: 3000
   })
 }
-
-
       
     return (
         <>
@@ -378,6 +426,12 @@ const btn = document.getElementById(`gmaps-${index}`);
             <div id='map-container' ref={mapContainerRef}>
              
             </div>
+            <ComparisonStack
+              stack={comparisonStack}
+              clearStack={() => setComparisonStack([])}
+              removeItem={removeItem}
+            />
+
         </>
     )
 }

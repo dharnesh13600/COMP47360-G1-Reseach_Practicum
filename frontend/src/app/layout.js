@@ -1,5 +1,7 @@
+
 import BodyWrapper from './components/bodyWrapper'; 
 import Header from "./components/header";
+import PageTransitionWrapper from './components/PageTransitionWrapper'; 
 import './globals.css';
 
 
@@ -20,7 +22,11 @@ export default function RootLayout({ children }) {
         >
   <div className="layout">
           <Header />
-          {children}
+
+          <PageTransitionWrapper>
+            {children}
+          </PageTransitionWrapper>
+
         </div>
       </body>
     </html>

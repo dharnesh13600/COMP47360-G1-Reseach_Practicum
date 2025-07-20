@@ -13,28 +13,81 @@ body{
   display: flex;
   justify-content: space-between;
   align-items: center;
+    background-image: none;
+  background-color: var(--background);
+  max-width:100%;
+  height:100px;
+  padding-inline: 2rem;
 }
  .navigation-list{
   text-transform: uppercase;
   color:var(--on-surface-1);
   font-weight: 700;
   font-family: var(--ff-inter);
-  
+  display:none;
+  margin-bottom: 25px;
 }
 
   .navigation-item{
+
     font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
+
+    display: block;
+    font-size: clamp(0.95rem, 1vw + 0.2rem, 0.2rem);
+    transition: 0.3s;
   }
-   .navigation-wrapper{
-  background-image: none;
-  background-color: var(--background);
-  max-width:100%;
-  height:100px;
-  padding-inline: 2rem;
- }
- .navigation-list{
-  display:none;
-}
+  .nav-draw-home{
+    display: block;
+    position: relative;
+    width: 50px;
+    height: 30px;
+    top: 43px;
+    left: -18px;
+    transition: 0.3s;
+    opacity: 0;
+  }
+  .nav-home:hover .nav-draw-home{
+    opacity: 1;
+    cursor: pointer;
+  }
+  .nav-home:hover .navigation-item{
+    transform: translateY(-2px);
+  }
+    .nav-draw-map{
+    display: block;
+    position: relative;
+    width: 25px;
+    height: 30px;
+    top: 8px;
+    left: -10px;
+    transition: 0.3s;
+    opacity: 0;
+  }
+  .nav-map:hover .nav-draw-map{
+    opacity: 1;
+    cursor: pointer;
+  }
+  .nav-map:hover .navigation-item{
+    transform: translateY(-2px);
+  }
+    .nav-draw-about{
+    display: block;
+    position: relative;
+    width: 25px;
+    height: 30px;
+    top: 33px;
+    right: -48px;
+    transition: 0.3s;
+    opacity: 0;
+  }
+  .nav-about:hover .nav-draw-about{
+    opacity: 1;
+    cursor: pointer;
+  }
+  .nav-about:hover .navigation-item{
+    transform: translateY(-2px);
+
+  }
 
 .logo-div-mobile{
   display:flex;
@@ -45,12 +98,62 @@ body{
  
 }
 .logoMobile{
-   width:100%;
+  width:100%;
   height:auto;
 }
 .menuIcon{
-  display:block;
+  position: relative; /* Make this the reference point */
+  cursor: pointer;
 }
+        .line {
+            fill: var(--on-surface-1);
+            transition: all 0.5s ease;
+            transform-origin: center;
+        }
+        .menuIcon.open .top {
+            transform: rotate(45deg) translate(2px, 6px);
+        }
+        .menuIcon.open .middle {
+            opacity: 0;
+        }
+        .menuIcon.open .bottom {
+            transform: rotate(-45deg) translate(2px, -6px);
+        }
+
+.menuOverlay{
+  width: 100%;
+  height: 220px;
+  top: 100%;
+  max-width: 90%;
+  border-radius: 20px;
+  display: block;
+  position: absolute;   
+  text-align: center;
+  justify-content: center;
+  line-height: 70px;
+  background-color: rgba(253, 250, 246, 0.9) ;
+  z-index: 1000;
+  font-family: var(--ff-inter);
+  font-weight: bold;
+  color: var(--on-surface-1);
+  animation: fadeInSlide 0.3s ease forwards;
+  opacity: 0;
+  padding: 5px;
+  padding-bottom: 20px;
+  box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1) ;
+}
+
+@keyframes fadeInSlide{
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .logo-div-desktop,.logo{
   display:none;
 }
@@ -151,15 +254,17 @@ body{
   display: flex;
   margin-bottom: 5vw;
   gap: 80px;
+  max-width: 100%;
+  padding: 0;
 }
 .hero-content {
-  width: 100%;
-  max-width: 100%;
+  width: 80%;
+  max-width: 80%;
   text-align: center;
   display: flex;
   flex-direction: column;
   margin-top: -20vw;
-  margin-bottom: 5vw;
+  margin-bottom: 10vw;
   gap: 20px;
 }
 .home-map-button{
@@ -253,10 +358,6 @@ body{
 
 
 
-
-
-
-
 /* Header responsiveness */
 @media(min-width:700px){
      .logo-div-mobile{
@@ -271,7 +372,6 @@ body{
 .logo-div-desktop,.logo{
   display:block;
 }
-
 
 .logo{
   height:auto;
@@ -311,11 +411,10 @@ body{
 
 .logo{
   height:auto;
-  width:300px;
-  min-width: 270px;
-  margin-top: 7vh;
+  width:420px;
+  max-width: 420px;
+  margin-top: 8vh;
   margin-left: 8vh;
- 
 }
 .navigation-wrapper{
   display:flex;
@@ -343,16 +442,8 @@ body{
 }
 }
 
-
-  
-
-
-
 @media(min-width:1200px){
  
-
-
-
 .navigation-wrapper{
   display:flex;
   padding-inline: 130px;
