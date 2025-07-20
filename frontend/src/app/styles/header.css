@@ -407,11 +407,10 @@ body{
 
 .logo{
   height:auto;
-  width:300px;
+  width:420px;
   min-width: 270px;
-  margin-top: 7vh;
+  margin-top: 8vh;
   margin-left: 8vh;
- 
 }
 .navigation-wrapper{
   display:flex;

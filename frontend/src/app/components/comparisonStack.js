@@ -1,26 +1,41 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 import '../styles/comparisonStack.css';
 
-export default function ComparisonStack({ stack, clearStack }) {
+export default function ComparisonStack({ stack, clearStack, removeItem }) {
+    const [isCollapsed, setIsCollapsed] = useState(false);
   if (!stack.length) return null; // Hide if empty
 
   return (
-    <div className="comparison-panel">
+    <div className={`comparison-panel ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="panel-header">
-        <button onClick={clearStack} className="close-button">Clear</button>
+        <button
+          onClick={() => setIsCollapsed(prev => !prev)}
+          className="collapse-toggle-button"
+        >
+          {isCollapsed ? 'Show Compare' : 'Hide'}
+        </button>
       </div>
-      <div className="comparison-items">
-        {stack.map(item => (
-          <div key={item.id} className="comparison-item">
-            <h3 className='loc-name-text'>{item.locName}</h3>
-            <p className='muse-score-text'><strong>Muse Score:</strong> {item.museScore}/10</p>
-            <p className='est-crowd-text'><strong>Estimate Crowd:</strong> {item.estimateCrowd}</p>
-            <p className='crowd-status-text'><strong>Status:</strong> {item.crowdStatus}</p> 
-          </div>
-        ))}
-      </div>
+      {!isCollapsed && (
+        <div className="comparison-items">
+          {stack.map(item => (
+            <div key={item.id} className="comparison-item">
+              <button
+                onClick={() => removeItem(item.id)}
+                className="close-item-button"
+              >
+                ✕
+              </button>
+              <p className='loc-name-text'>{item.locName}</p>
+              <p className='muse-score-text'>Muse Score: {item.museScore}/10</p>
+              <p className='est-crowd-text'>Estimate Crowd: {item.estimateCrowd}</p>
+              <p className='crowd-status-text'>Status: {item.crowdStatus}</p> 
+            </div>
+          ))}
+                      <button onClick={clearStack} className="clear-button">Clear</button>
+        </div>
+      )}
     </div>
   );
 }

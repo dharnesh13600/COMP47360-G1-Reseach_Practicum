@@ -44,7 +44,9 @@ const [showMarkers, setShowMarkers] = useState(false);
   const [comparisonStack, setComparisonStack] = useState([]);
 
 
-
+const removeItem = (id) => {
+  setComparisonStack(prev => prev.filter(item => item.id !== id));
+};
  
 async function fetchPlaceId(lat, lng) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TOKEN;  
@@ -287,6 +289,7 @@ const btn = document.getElementById(`gmaps-${index}`);
   }
 //// COMPARE BUTTON  
 const compareBtn = document.getElementById(`compare-${index}`);
+
 if (compareBtn) {
   compareBtn.addEventListener('click', () => {
     addToComparison({
@@ -354,6 +357,7 @@ if (compareBtn) {
             <ComparisonStack
               stack={comparisonStack}
               clearStack={() => setComparisonStack([])}
+              removeItem={removeItem}
             />
 
         </>

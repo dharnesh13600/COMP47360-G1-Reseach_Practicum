@@ -1,23 +1,73 @@
 .comparison-panel{
     position: fixed;
-    height: 20%;
-    border-radius: 20px;
-    max-width: 100%;
     right: 13vw;
-    bottom: 5;
+    bottom: 35;
     display: flex;
     flex-direction: row;
     z-index: 10000;
-    background-color:rgba(255, 251, 246, 0.7);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 .comparison-items{
     position: relative;
-    border: yellow solid;
+    justify-items: center;
+    align-items: center;
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+        height: 20%;
+    border-radius: 20px;
+    max-width: 100%;
+    background-color:rgba(255, 251, 246, 0.9);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.comparison-items.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
 }
 .comparison-item{
     display: inline-block;
-    height: 50vw;
     background-color:rgba(255, 251, 246, 1);
-    border: blue solid;
+    padding: 10px;
+    border-radius: 15px;
+    line-height: 30px;
+    width: 150px;
+    max-width: 150px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    position: relative;
+    color: var(--subway-bg);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.clear-button{
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    font-family: var(--ff-inter);
+    font-weight: bold;
+    color: var(--subway-bg);
+}
+.clear-button:hover{
+    cursor: pointer;
+    color: var(--on-surface-low-contrast);
+}
+.loc-name-text{
+    text-transform: uppercase;
+}
+.muse-score-text, .est-crowd-text, .crowd-status-text{
+    font-family: var(--ff-overpass);
+    font-size: 12px;
+}
+.comparison-panel.collapsed .collapse-toggle-button {
+  display: block;
+}
+.close-item-button{
+    background-color: transparent;
+    border: none;
+    padding:0;
+    position: absolute;
+    right: 10;
+    top:3;
 }
