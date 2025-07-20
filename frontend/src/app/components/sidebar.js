@@ -29,7 +29,7 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [activityChoice, setChoice]=useState(null);
 
     // activity items 
-    const activities=["Portrait Photography","Street Photography","Landscape Painting","Portrait Painting","Art Sale","Busking","Filmmaking"];
+    const activities=["Portrait photography","Street photography","Landscape painting","Portrait painting","Art Sale","Busking","Filmmaking"];
 
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
@@ -51,6 +51,7 @@ const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
 
+const [zone, setZone]=useState(null);
 
 
 useEffect(()=>{
@@ -334,21 +335,31 @@ const manhattanNeighborhoods = {
 const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
 async function handleSubmit(){
-  if(!activityChoice || !selectedTime){
-    alert("Please select both activity and time");
-    return;
-  }
+if(!activityChoice || !selectedDate || !selectedTime){
+  alert("Please select activity, date and time");
+  return;
+}
   setSubmitted(true);
 
   const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
-const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
-  const res=await fetch('/api/location',{
+const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+}
+
+const res=await fetch('/api/location',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({activity:activityChoice,readableTime:readableTimeJson})
+    body:JSON.stringify(payload),
   });
+
+console.log("📬 Response Status:", res.status, res.statusText);
+console.log("📬 Response OK:", res.ok);
+console.log("📬 Response Headers:", [...res.headers.entries()]);
 
   const data=await res.json();
 
@@ -361,6 +372,37 @@ const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm a');
 
    onSubmit(locations);
 };
+
+async function handleZoneClick(area){
+setZone(area);
+
+
+const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+  selectedZone:area,
+}
+
+console.log("Submitting with zone: ",payload);
+
+const res=await fetch('/api/location',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(payload),
+});
+
+const data=await res.json();
+
+if(res.ok){
+  console.log("Zone success: ",data);
+}
+else{
+  console.error("Error submitting with zone: ",data);
+}
+}
 const [locations, setLocations] = useState([]);
 useEffect(() => {
   // Simulate loading JSON data
@@ -609,18 +651,18 @@ useEffect(() => {
                       <p className={styles.area}>Area</p>
                     </div>
                       
-                     <button onClick={handleToggleClick} className="areaToggleBtn">
+                     <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
                      {isVisible && (
                         <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 9.99902H16C8.26801 9.99902 2 16.267 2 23.999C2 31.731 8.26801 37.999 16 37.999H32C39.732 37.999 46 31.731 46 23.999C46 16.267 39.732 9.99902 32 9.99902Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 <path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
                      )} 
                      {!isVisible && (
                    
- <svg width="40" height="25" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" fill="#52767E" strokeLinejoin="round"/>
 </svg>
 
                      )}
@@ -668,7 +710,7 @@ useEffect(() => {
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
                         {Object.keys(manhattanNeighborhoods).map(area => (
-      <div key={area} className={styles.suggestedAreas}>
+      <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
         {area}
       </div>
     ))}

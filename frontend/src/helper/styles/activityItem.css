@@ -9,6 +9,8 @@
   padding-inline: 1rem;
   font-family: var(--ff-overpass);
   font-size: 12px;
+  opacity: 1;
+  animation: fadeSlideIn 0.1s forwards ease;
 }
 
 .dropdown-item:hover {

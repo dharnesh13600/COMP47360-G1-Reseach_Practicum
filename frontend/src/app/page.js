@@ -7,6 +7,12 @@ import './styles/home-draw-1.css'
 import './styles/home-draw-2.css'
 import './styles/home-draw-3.css'
 
+<link
+  rel="icon"
+  href="/icon?<generated>"
+  type="image/<generated>"
+  sizes="<generated>"
+/>
 
 export default function Page(){
     return (

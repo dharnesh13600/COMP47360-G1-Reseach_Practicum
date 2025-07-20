@@ -1,4 +1,31 @@
 .time-dropdown-btn{
+     display:flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.1rem;
+    cursor: pointer;
+    height:30px;
+    overflow: hidden;
+      border-radius: 5px;
+      margin-bottom: 0.1rem;
+      text-align: center;
+      max-width: 100%;
+      font-weight: 700;
+}
+
+.time-toggle-icon{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+     width:11px;
+    height:5px;
+    color:var(--on-surface-1);
+    margin-left: 0.4rem;
+    opacity:60%;
+}
+
+@media (min-width:900px){
+    .time-dropdown-btn{
     display:flex;
     align-items: center;
     justify-content: space-between;
@@ -29,4 +56,4 @@
     margin-left: 0.4rem;
     opacity:60%;
 }
-
+}
