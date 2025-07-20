@@ -29,6 +29,9 @@ body{
 }
 
   .navigation-item{
+
+    font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
+
     display: block;
     font-size: clamp(0.95rem, 1vw + 0.2rem, 0.2rem);
     transition: 0.3s;
@@ -83,6 +86,7 @@ body{
   }
   .nav-about:hover .navigation-item{
     transform: translateY(-2px);
+
   }
 
 .logo-div-mobile{

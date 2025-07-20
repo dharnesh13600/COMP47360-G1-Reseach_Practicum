@@ -1,48 +1,73 @@
   .sidebarContainer{
-    max-width:100%;
-    height: auto; 
+    width:100%;
     background-color: transparent;
     font-family:var(--ff-inter);
     display: flex;
-    align-items: center;
-    position:absolute;
-    top:70px;
+    align-items: stretch;
+    flex-direction: column;
+    position:relative;
+    top:100px;
     left:0;
     z-index:10;
+  
+}
+.dropdownTopMob{
+display: flex;
+justify-content: center;
+   position: absolute;
+     top: -10px;
+    left: 0;
+    right:0;
+    gap:0.4rem;
    
-}
-
-.activityWrapper{
-  width: 220px;
-    min-height: 30px;
-    position: relative; 
- display: flex;
- align-items: center;
- justify-content: center;
- padding-bottom: 0.15rem;
- padding-top: 0.25rem;
- padding-inline: 0.1rem;
-     font-size: 12px;
-    text-transform: uppercase;
-    background-color: #FFFBF6;
-    margin-top: 13px;
-    font-weight: 700;
+    z-index: 100;
+    background: transparent;
+    max-width:100%;
+    width:100%;
+  padding-inline: 0.2rem;
     
-    border-radius: 8px;
-    margin-bottom: 10px;
-     font-family: var(--ff-overpass);
-     box-shadow: 0 4px 4px -2px #00000040;
+      
 }
-.readableTimeContainer{
+.weatherLarge {
+    display: none;
+  }
+.subButtonMob{
+  border:0;
+  background-color: var(--on-surface-1);
+  border-radius: 50%;
+  width:25px;
+  height:25px;
+  color:var(--background);
+  line-height: 10px;
+  align-self: center;
+  font-size: 12px;
+}
+  .dropdownTopMob>.buttonStyle{
+    display: none;
+  align-self: flex-start;
+ justify-self: flex-end;
+
+
+}
+.activityWrapper,
+  .dateWrapper,
+  .timeWrapper {
+    width:103px;
+    font-size: 12px;
+  
+    border: none;
+    background-color: transparent;
+  }
+  .readableTimeContainer{
+
   display:flex;
-  justify-content: space-between;
-  flex-direction: column;
+    flex-direction: column;
+ 
+
 }
 .dateWrapper,.timeWrapper{
   background-color: #FFFBF6;
- padding-inline: 0.1rem;
  min-height: 30px;
-
     border-radius: 8px;
     margin-bottom: 10px;
     text-transform: uppercase;
@@ -50,14 +75,29 @@
     display: flex;
  justify-content: center;
  align-items: center;
- width:103px;
+ width:100px;
  padding-top: 0.1rem;
  padding-bottom: 0.1rem;
   padding-bottom: 0.15rem;
  padding-top: 0.25rem;
   font-family: var(--ff-overpass);
+    box-shadow: 0 4px 4px -2px #00000040;
+       position: relative; 
 }
-
+.activityWrapper{
+  
+   background-color: #FFFBF6 !important;
+   height:35px;
+     box-shadow: 0 4px 4px -2px #00000040;
+     border-radius: 8px;
+      text-transform: uppercase;
+       font-size: 12px;
+       width:160px;
+       font-weight: 700;
+       padding-top: 0.1rem;
+ padding-bottom: 0.1rem;
+ align-self: center;
+}
 .sidebarInner img{
     width:45px;
 } 
@@ -91,9 +131,20 @@ div.vl{
   opacity:0;
   transform: translateY(-10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
+
+  
+}
+.weatherSmall {
+  display: flex;
+ position: fixed;
+  top: 2px;
+  right: 65px;
+  z-index:200;
 }
 
-.show {
+
+
+.weatherDisplay.show {
   opacity: 1;
   transform: translateY(0);
 }
@@ -101,6 +152,7 @@ div.vl{
 .locationHeader{
     display:flex;
     align-items: center;
+    justify-content: center;
     margin-top: 1rem;
     padding-inline: 1rem;
      color: var(--subway-bg);
@@ -130,16 +182,20 @@ div.vl{
 }
 
 .locationListContainer {
-    margin-top:0.5rem;
-  padding-inline: 16px;
- 
+    margin-top:1rem;
+  padding-inline: 20px;
+
   border-radius: 12px;
+      display:flex;
+  flex-direction: column;
+  
+  align-items: center;
 }
 
 .locationItem {
   padding-top: 3px;
   padding-bottom: 3px;
-  padding-inline: 0.2rem;
+  padding-inline: 0;
   width:100%;
   margin-bottom: 4px;
   background-color: #F4F5F2;
@@ -156,6 +212,7 @@ div.vl{
   opacity:0;
   transform:translateY(-10px);
   transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
+   max-width: 335px;
 }
 .locationItem.show {
   opacity: 1;
@@ -178,33 +235,61 @@ div.vl{
 }
 .locationName{
  border-radius: inherit;
- padding-inline:10px;
+ padding-inline:0px;
  width:100%;
  padding-top:5px;
  padding-bottom:5px;
  text-transform: lowercase;
  display: flex;
- justify-content: center;
+ justify-content:center;
    font-family: var(--ff-overpass);
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .suggestedLocations{
-    background-color: #A2B9A7;
-     margin-top:1rem;
     background-color: rgba(162, 185, 167, 0.26);
-    height:140px;
+    height:auto;
     z-index:10;
     border-radius: 18px;
     padding-top:1rem;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
+    padding-inline: 2rem;
     width:100%;
     opacity: 0;
     transform: translateY(10px);
 animation: fadeSlideIn 0.4s forwards ease;
+    margin-top:1rem;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ width:max-content;
+
+ 
 }
+ .locationBottomSection {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: var(--background, #fff);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    padding: 0.5rem 0.2rem;
+   
+    display: flex;
+flex-direction: column;
+align-items: center;
+
+  }
+
+  .locationBottomSection .locationListContainer {
+    /* max-height: 350px;  */
+    overflow-y: hidden;
+    overflow-x: hidden;
+    
+  }
 @keyframes fadeSlideIn {
   to {
     opacity: 1;
@@ -216,6 +301,7 @@ animation: fadeSlideIn 0.4s forwards ease;
     justify-content: center;
     margin-bottom: 0.5rem;
       color: var(--subway-bg);
+       
 }
 .suggestedItems{
     text-transform: capitalize;
@@ -225,7 +311,8 @@ animation: fadeSlideIn 0.4s forwards ease;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
-    cursor:pointer;
+
+
          
 }
 .suggestedItems::-webkit-scrollbar {
@@ -259,7 +346,8 @@ animation: fadeSlideIn 0.4s forwards ease;
   font-family: var(--ff-inter);
   color: var(--subway-bg);
   border: 1px solid #ddd;
-  
+max-width:430px;
+
 
 }
 
@@ -283,6 +371,7 @@ animation: fadeSlideIn 0.4s forwards ease;
      width:13px;
     height:15px;
     color:#FEFAF6;
+    color:var(--on-surface-1);
     margin-left: 0.4rem;
     opacity:60%;
   transition: color 0.2s ease;
@@ -292,7 +381,22 @@ animation: fadeSlideIn 0.4s forwards ease;
   color: #333;
 }
 .buttonStyle{
-   display:none;
+   display:block;
+   font-family: var(--ff-inter);
+    font-size: 15px;
+    margin-top:2px;
+    font-weight: bold;
+   padding-inline:1rem;
+   padding-top: 0.5rem;
+   padding-bottom:0.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    color: #FEFAF6;
+    background-color:#4B8382;
+    transition: 0.2s;
+    cursor: pointer;
+    height: 35px;
 }
 
 .buttonStyle:hover{
@@ -343,13 +447,14 @@ animation: fadeSlideIn 0.4s forwards ease;
 
 
 .selectedItem {
-  font-size: clamp(12px, 4vw, 13.6px);
+  font-size: clamp(10px, 4vw, 10.8px);
   display:flex;
   width:100%;
 }
 
 .locationListContainer>button {
-  border: red solid;
+ border:0;
+ background-color: transparent;
   width:100%;
   justify-content: center;
   display: block;
@@ -363,20 +468,289 @@ justify-content: center;
 .locationListContainer>button:hover{
 cursor: pointer;
 }
+.word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(1em);
+  animation: wordFadeUp 0.6s forwards cubic-bezier(0.22, 1, 0.36, 1);
+  animation-play-state: paused;
+}
+
+.locationItem.show .word {
+  animation-play-state: running;
+}
+
+@keyframes wordFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.iconSpan {
+  position: relative;
+  display: inline-block;
+}
+
+.iconSpan::before,
+.iconSpan::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #4B8382;
+  border-color: transparent #4B8382 #4B8382 transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.iconSpan::before {
+  left: -2px;
+  transform: translateY(calc(-50% + 7px)) rotate(160deg) scale(0.8);
+}
+
+.iconSpan::after {
+  right: -1px;
+  transform: translateY(calc(-50% - 1px)) rotate(-20deg) scale(0.8);
+}
+
+.iconSpan:hover::before {
+  opacity: 1;
+  transform:translateY(calc(-50% + 7px)) rotate(60deg) scale(1);
+}
+
+.iconSpan:hover::after {
+  opacity: 1;
+  transform: translateY(calc(-50% - 5px))rotate(-50deg) scale(1);
+}
 
 
+
+@media (min-width:400px){
+      .dropdownTopMob{
+  display:flex;
+  justify-content: center;
+   position: absolute;
+    top: 0;
+    left: 0;
+    right:0;
+    gap:1rem;
+flex-wrap: wrap;
+    z-index: 100;
+    background: transparent;
+    max-width:100%;
+    width:100%;
+}
+ .readableTimeContainer{
+
+  display:flex;
+  flex-direction: row;
+  gap:1rem;
+
+}
+
+.activityWrapper{
+   align-self: flex-start;
+}
+.subButtonMob{
+ display: none;
+}
+  .dropdownTopMob>.buttonStyle{
+    display: block;
+  align-self: flex-start;
+ justify-self: flex-end;
+}
+.suggestedItems{
+    text-transform: capitalize;
+     padding-inline: 1rem;
+     max-height: calc(170px - 0.5rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+
+ display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns:140px;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.5rem;
+  /* overflow-x: auto; */
+    max-width: 100%;
+    text-align: center;
+         
+}
+.suggestedAreas{
+  width:130px;
+  padding-inline: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+ 
+}
+}
+@media (min-width:487px){
+  .dropdownTopMob{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+   position: absolute;
+    top: 0;
+    left: 0;
+    right:0;
+    gap:1rem;
+    z-index: 100;
+    background: transparent;
+    max-width:100%;
+    width:100%;
+}
+.subButtonMob{
+ display: none;
+}
+  .dropdownTopMob>.buttonStyle{
+
+  align-self: flex-start;
+ justify-self: flex-end;
+}
+.suggestedItems{
+    text-transform: capitalize;
+     padding-inline: 1rem;
+     max-height: calc(170px - 0.5rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+
+ display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns:180px;
+    grid-template-rows: repeat(10, auto);
+    gap: 0.5rem;
+  overflow-x: auto;
+    max-width: 100%;
+    text-align: center;
+         
+}
+.suggestedAreas{
+  width:170px;
+  padding-inline: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+ 
+}
+}
+@media(max-width:628px){
+    .locationListContainer.compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+}
+@media (min-width:629px) and (max-width:900px){
+  .dropdownTopMob{
+  display:flex;
+  justify-content: center;
+   position: absolute;
+    top: -10px;
+    left: 0;
+    right:0;
+    gap:1rem;
+    z-index: 100;
+    background: transparent;
+    max-width:100%;
+    width:100%;
+}
+.subButtonMob{
+ display: none;
+}
+.readableTimeContainer{
+  display:flex;
+  justify-content: space-between;
+  flex-direction: row;
+  gap:1rem;
+}
+.dropdownTopMob>.buttonStyle{
+  display:block;
+  align-self: flex-start;
+ justify-self: flex-end;
+ margin-left: 4rem;
+
+}
+.activityWrapper{
+  
+   background-color: #FFFBF6 !important;
+   margin-top: 0.1rem;
+   height:35px;
+     box-shadow: 0 4px 4px -2px #00000040;
+     border-radius: 8px;
+      text-transform: uppercase;
+       font-size: 12px;
+       width:180px;
+       font-weight: 700;
+       padding-top: 0.1rem;
+ padding-bottom: 0.1rem;
+
+}
+.suggestedItems{
+    text-transform: capitalize;
+     padding-inline: 1rem;
+     max-height: calc(170px - 0.5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+
+ display: grid;
+    grid-auto-flow: column;
+grid-auto-columns: 169px; 
+    grid-template-rows: repeat(8, auto);
+    gap: 0.5rem;
+    overflow-x: auto;
+    max-width: 100%;
+         
+}
+.suggestedAreas{
+  width:160px;
+}
+.locationListContainer{
+  display: grid !important;
+  flex-direction: unset;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(5, auto); 
+    grid-auto-columns: 300px; 
+    overflow-x: auto;
+    overflow-y: auto;
+    gap: 0.5rem;
+    max-width: 100%;
+    padding: 0.5rem;
+    white-space: nowrap;
+    height:calc(200px -0.5rem);
+}
+ .locationItem {
+    width: auto;
+    max-width: unset;
+  }
+  .locationListContainer>button {
+
+  display: none;
+}
+  
+
+}
 /* sidebar responsive */
 
 @media (min-width:900px){
   .sidebarContainer{
     width:280px;
-     min-height: 530px;  
-    height: auto; 
+     min-height: 510px;  
+    height:auto; 
     border-radius: 56px;
     background-color: var(--background);
     box-shadow: 0 4px 20.5px 3px #00000025;
     padding-inline:20px;
-    padding-top: 35px;
+    padding-top: 50px;
     font-family:var(--ff-inter);
     display: flex;
     flex-direction: column;
@@ -385,7 +759,33 @@ cursor: pointer;
     top:160px;
     left:50px;
     z-index:10;
-    margin-bottom: 10rem;
+  margin-bottom: 0;
+}
+ .locationListContainer>button {
+
+  display: block;
+}
+.dropdownTopMob{
+display: flex;
+flex-direction: column;
+align-content: center;
+   position: absolute;
+  margin-top: 2.5rem;
+    top: 0;
+    left: 0;
+    right:0;
+    gap:0.5rem;
+    flex-wrap: wrap;
+    z-index: 100;
+    background: transparent;
+    max-width:100%;
+    width:100%;
+}
+.dropdownTopMob>.buttonStyle{
+  align-self: center;
+ justify-self: flex-end;
+ margin-left: 0rem;
+
 }
 .activityWrapper{
   width: 220px;
@@ -409,7 +809,7 @@ cursor: pointer;
 }
 .readableTimeContainer{
   display:flex;
-flex-direction: row;
+  flex-direction: row;
   width:240px;
   justify-content: space-between;
 }
@@ -429,8 +829,22 @@ flex-direction: row;
  padding-top: 0.1rem;
  padding-bottom: 0.1rem;
   font-family: var(--ff-overpass);
+   position: relative; 
 }
-
+.locationBottomSection {
+  position: static;
+   margin-top: 11rem;
+    width: 100%;
+    height:auto;
+    z-index:10;
+    background: transparent;
+     box-shadow: 0 0 0 0;
+}
+  .locationBottomSection .locationListContainer {
+    
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
 .sidebarInner img{
     width:45px;
 } 
@@ -452,29 +866,38 @@ div.vl{
       z-index:20000;
       display: flex;  
 }
-
-.weatherDisplay {
+.weatherLarge {
+  position: static;
   margin-top: 1rem;
+}
+.weatherDisplay {
+  
+   margin-top: 0.5rem;         /* space below Submit */
   font-size: 18px;
   color: var(--subway-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  opacity:0;
+  opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
+  position: static; 
 }
 
 .show {
   opacity: 1;
   transform: translateY(0);
 }
-
+.weatherDisplay.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 .locationHeader{
     display:flex;
     align-items: center;
-    margin-top: 1rem;
+    justify-content: flex-start;
+    margin-top: 3rem;
     padding-inline: 1rem;
      color: var(--subway-bg);
      font-weight: 700;
@@ -483,6 +906,7 @@ div.vl{
      gap:0.2rem;
 }
 .locationHeader>button{
+  display: block;
     background-color: transparent;
     padding:0;
     border:0;
@@ -503,10 +927,14 @@ div.vl{
 }
 
 .locationListContainer {
-    margin-top:0.5rem;
-  padding-inline: 16px;
+    margin-top:0.9rem;
+  padding-inline: 14px;
  
   border-radius: 12px;
+       display:flex;
+  flex-direction: column;
+  
+  align-items: center;
 }
 
 .locationItem {
@@ -573,10 +1001,12 @@ div.vl{
     padding-top:1rem;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    width:100%;
+
     opacity: 0;
     transform: translateY(10px);
 animation: fadeSlideIn 0.4s forwards ease;
+ display: block;
+ 
 }
 @keyframes fadeSlideIn {
   to {
@@ -592,12 +1022,26 @@ animation: fadeSlideIn 0.4s forwards ease;
 }
 .suggestedItems{
     text-transform: capitalize;
-     padding-inline: 1rem;
+     padding-inline: 0.5rem;
      max-height: calc(140px - 0.5rem);
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
+         
+}
+.suggestedItems{
+    text-transform: capitalize;
+     padding-inline: 0.5rem;
+     max-height: calc(140px - 0.5rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    max-width: 100%;
+    display:flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    gap:0.1rem;
          
 }
 .suggestedItems::-webkit-scrollbar {
@@ -623,7 +1067,7 @@ animation: fadeSlideIn 0.4s forwards ease;
   display:flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   background-color: #FFFBF6;
   border-radius: 20px;
   font-size: 12px;
@@ -631,6 +1075,8 @@ animation: fadeSlideIn 0.4s forwards ease;
   font-family: var(--ff-inter);
   color: var(--subway-bg);
   border: 1px solid #ddd;
+max-width:100%;
+width:190px;
 
 }
 
@@ -680,6 +1126,7 @@ animation: fadeSlideIn 0.4s forwards ease;
     cursor: pointer;
     height: 35px;
     display:block;
+  
 }
 
 .buttonStyle:hover{
@@ -736,7 +1183,7 @@ animation: fadeSlideIn 0.4s forwards ease;
 }
 
 .locationListContainer>button {
-  border: red solid;
+  
   width:100%;
   justify-content: center;
   display: block;
@@ -750,4 +1197,12 @@ justify-content: center;
 .locationListContainer>button:hover{
 cursor: pointer;
 }
+  .weatherSmall {
+    display: none;
+  }
+  .weatherLarge {
+    position: static;
+    margin-top: 1rem;
+  }
+
 }

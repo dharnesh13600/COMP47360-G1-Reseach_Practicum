@@ -4,6 +4,7 @@ import styles from '../styles/sidebar.module.css';
 import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
+import { FaCheck } from 'react-icons/fa';
 
 // importing dropdown components
 import Dropdown from './dropdowns/actDropdown';
@@ -29,7 +30,7 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [activityChoice, setChoice]=useState(null);
 
     // activity items 
-    const activities=["Portrait photography","Street photography","Landscape painting","Portrait painting","Art Sale","Busking","Filmmaking"];
+    const activities=["Portrait Photography","Street Photography","Landscape Painting","Portrait Painting","Art Sale","Busking","Filmmaking"];
 
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
@@ -50,9 +51,15 @@ const [times,setTimes]=useState([]);
 const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
+const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
 
-const [zone, setZone]=useState(null);
+const today=new Date();
 
+const isToday=(dateStr)=>{
+  const todayStr=format(today, 'MMMM d');
+  return dateStr===todayStr;
+  
+};
 
 useEffect(()=>{
     async function weatherFetch(){
@@ -92,7 +99,7 @@ useEffect(()=>{
     const timeStr=format(readableDate,'h:mm a');
 
     if (dateStr==selectedDate){
-      const timeStr=format(readableDate, 'h:mm a');
+      const timeStr=format(readableDate, 'h:mm ');
       matchingTimes.add(timeStr);
     }
   });
@@ -112,7 +119,7 @@ useEffect(()=>{
   const matches= fullWeatherData.find(entry=>{
     const readableObj=new Date(entry.readableTime);
     const dateStr=format(readableObj,'MMMM d');
-    const timeStr=format(readableObj,'h:mm a');
+    const timeStr=format(readableObj,'h:mm ');
 
     return dateStr== selectedDate && timeStr==selectedTime;
   });
@@ -336,30 +343,20 @@ const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
 async function handleSubmit(){
 if(!activityChoice || !selectedDate || !selectedTime){
-  alert("Please select activity, date and time");
+  alert("Please select activity, date, and time");
   return;
 }
   setSubmitted(true);
 
-  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
-const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
-
-const payload={
-  activity:activityChoice,
-  dateTime:readableTimeJson,
-}
-
-const res=await fetch('/api/location',{
+  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm ', new Date());
+const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm ');
+  const res=await fetch('/api/location',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify(payload),
+    body:JSON.stringify({activity:activityChoice,readableTime:readableTimeJson})
   });
-
-console.log("📬 Response Status:", res.status, res.statusText);
-console.log("📬 Response OK:", res.ok);
-console.log("📬 Response Headers:", [...res.headers.entries()]);
 
   const data=await res.json();
 
@@ -372,37 +369,6 @@ console.log("📬 Response Headers:", [...res.headers.entries()]);
 
    onSubmit(locations);
 };
-
-async function handleZoneClick(area){
-setZone(area);
-
-
-const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
-const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
-
-const payload={
-  activity:activityChoice,
-  dateTime:readableTimeJson,
-  selectedZone:area,
-}
-
-console.log("Submitting with zone: ",payload);
-
-const res=await fetch('/api/location',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify(payload),
-});
-
-const data=await res.json();
-
-if(res.ok){
-  console.log("Zone success: ",data);
-}
-else{
-  console.error("Error submitting with zone: ",data);
-}
-}
 const [locations, setLocations] = useState([]);
 useEffect(() => {
   // Simulate loading JSON data
@@ -504,13 +470,47 @@ useEffect(() => {
   console.log("Dates available:", dates);
 }, [dates]);
 
+
+const [width, setWidth] = useState(window.innerWidth);
+
+useEffect(() => {
+  const handleResize = () => setWidth(window.innerWidth);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+const isSmall = width < 629;
+const isMedium = width >= 629 && width < 900;
+const isLarge = width >= 900;
+
+const showCollapsed = isSmall || isLarge;
+const visibleLocations =
+  (showCollapsed && !showAllLocations) ? locations.slice(0, 5) : locations;
+
     return(
           <>
+                  <div className={`${styles.weatherDisplay} ${styles.weatherSmall} ${submitted && weather ? styles.show : ''}`}>
+    {weather && (
+      <>
+     
+    <img
+      src={icon}
+      alt={weather.condition}
+      width={32}
+      height={32}
+      style={{ marginRight: '8px' }}
+    />
+    <span>{temp}°F</span>
+     </>
+    )}
+  </div>
           <div 
           className={styles.sidebarContainer}
           >
 
-                <div
+               
+                <div className={styles.dropdownTopMob}>
+                   <div
                 className={styles.activityWrapper}
                 > 
                    
@@ -553,17 +553,16 @@ useEffect(() => {
                     
                
                 </div>
-                <div className={styles.readableTimeContainer}>
+                                    <div className={styles.readableTimeContainer}>
                         <div
                 className={styles.dateWrapper}
                 >
-                    <div className={`${styles.innerPosition}`}>
-                    <div>
+                    
                     
                      
                     
                      
-                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate || "Date"}
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate ? (isToday(selectedDate) ? 'Today' : selectedDate) : 'Date'}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -583,7 +582,7 @@ useEffect(() => {
                           
  
 <DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close); setSubmitted(false);}} className={date === selectedDate ? styles.selectedItem : ''}>
-                            {date}
+                            {isToday(date) ? 'Today' : date}
                             </DateItem>
 
                           
@@ -596,11 +595,7 @@ useEffect(() => {
                     
                     </div>
                  
-                    </div>
-                    
-
-                </div>
-                <div  className={styles.timeWrapper}>
+                 <div  className={styles.timeWrapper}>
                              <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
@@ -623,11 +618,18 @@ useEffect(() => {
               ))}
               </>)} /> 
                 </div>
+                    
+
                 </div>
                 
+                
+                <button className={styles.subButtonMob} onClick={handleSubmit}>
+   <FaCheck />
+</button>
                 <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
-                 
-  <div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
+
+          {isLarge && (
+<div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
     {weather && (
       <>
      
@@ -642,9 +644,13 @@ useEffect(() => {
      </>
     )}
   </div>
+    )}  
+                </div>
 
-                
-                  
+          
+
+<div className={styles.locationBottomSection}>
+              
                     <div className={styles.locationHeader}>
                     <div className={`${styles.recArea} ${isVisible ? styles.active : styles.inactive}`}>
                       <p className={styles.recommendation}>Recommended</p>
@@ -675,17 +681,25 @@ useEffect(() => {
 </div>
                 )}
                  {submitted && !isVisible && (
-                   <div className={styles.locationListContainer}>
-  {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
+                   <div className={`${styles.locationListContainer} ${!showAllLocations ? styles.compact : ''}`}>
+  {visibleLocations.map((location,index) => (
     <div key={location.id} className={`${styles.locationItem} ${
       visibleIndexes.includes(index) ? styles.show : ''
     }`} onClick={()=>onLocationSelect(location)}>
-      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
-      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
+      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName.split(" ").map((word, i) => (
+    <span
+      key={i}
+      className={styles.word}
+      style={{ animationDelay: `${i * 0.1}s` }}
+    >
+      {word}&nbsp;
+    </span>
+  ))}</span>
+      <span className={styles.iconSpan}><Image className={styles.photo} src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
   {
-    locations.length>5 && (
+    locations.length>5 && (isSmall || isLarge) &&(
       <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
         {showAllLocations ?  
          (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -710,7 +724,7 @@ useEffect(() => {
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
                         {Object.keys(manhattanNeighborhoods).map(area => (
-      <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
+      <div key={area} className={styles.suggestedAreas}>
         {area}
       </div>
     ))}
@@ -720,9 +734,18 @@ useEffect(() => {
              
                     </div>
                  )}
+</div>
+                
+              
+
+          
+
+             
+  
                   
                     
           </div>
+           
     </>
     );
 
