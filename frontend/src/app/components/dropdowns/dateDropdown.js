@@ -8,7 +8,7 @@ const DropdownDate=({buttonText,content,selectedDate})=>{
      const [Dateopen,setDateOpen]=useState(false);
       const dropdownRef = useRef(null);
     const toggleDate=()=>{
-        console.log("Dropdown toggle clicked");
+    
         setDateOpen(prev => !prev);
     }
       const close = () => {
@@ -25,7 +25,7 @@ const DropdownDate=({buttonText,content,selectedDate})=>{
 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-console.log("Rendering DateDropdown");
+
 
     return(
         <>
