@@ -468,6 +468,67 @@ justify-content: center;
 .locationListContainer>button:hover{
 cursor: pointer;
 }
+.word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(1em);
+  animation: wordFadeUp 0.6s forwards cubic-bezier(0.22, 1, 0.36, 1);
+  animation-play-state: paused;
+}
+
+.locationItem.show .word {
+  animation-play-state: running;
+}
+
+@keyframes wordFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.iconSpan {
+  position: relative;
+  display: inline-block;
+}
+
+.iconSpan::before,
+.iconSpan::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #4B8382;
+  border-color: transparent #4B8382 #4B8382 transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.iconSpan::before {
+  left: -2px;
+  transform: translateY(calc(-50% + 7px)) rotate(160deg) scale(0.8);
+}
+
+.iconSpan::after {
+  right: -1px;
+  transform: translateY(calc(-50% - 1px)) rotate(-20deg) scale(0.8);
+}
+
+.iconSpan:hover::before {
+  opacity: 1;
+  transform:translateY(calc(-50% + 7px)) rotate(60deg) scale(1);
+}
+
+.iconSpan:hover::after {
+  opacity: 1;
+  transform: translateY(calc(-50% - 5px))rotate(-50deg) scale(1);
+}
+
+
 
 @media (min-width:400px){
       .dropdownTopMob{

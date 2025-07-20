@@ -686,8 +686,16 @@ const visibleLocations =
     <div key={location.id} className={`${styles.locationItem} ${
       visibleIndexes.includes(index) ? styles.show : ''
     }`} onClick={()=>onLocationSelect(location)}>
-      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
-      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
+      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName.split(" ").map((word, i) => (
+    <span
+      key={i}
+      className={styles.word}
+      style={{ animationDelay: `${i * 0.1}s` }}
+    >
+      {word}&nbsp;
+    </span>
+  ))}</span>
+      <span className={styles.iconSpan}><Image className={styles.photo} src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
   {
