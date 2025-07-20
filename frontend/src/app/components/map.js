@@ -19,16 +19,16 @@ if (useMapbox) {
 }
 
 const INITIAL_CENTER =[
- -74.000, 40.7826
+ -74.000, 40.7526
 ]
 const INITIAL_ZOOM=11.70
 
 
 
 const viewConfigs = [
-  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:30,bearing:-30},
-  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: -30 },
-  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 55, bearing: -20 },
+  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:0,bearing:30},
+  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
+  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 10, bearing: -10 },
 ];
 function getViewConfig() {
   const width = window.innerWidth;
