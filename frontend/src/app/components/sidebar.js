@@ -15,31 +15,38 @@ import DateItem from "@/helper/dateItem.js";
 import DropdownTime from "./dropdowns/timeDropdown";
 import TimeItem from "@/helper/timeItem";
 
-import { GetWeatherData } from "./weather-data";
 
 import { fetchActivities } from "../api/fetchActivities/route";
 
 import { fetchZones } from "../api/zones/route";
+import { fetchDateTimes } from "../api/fetchDateTimes/route";
+
+import { fetchWeather } from "../api/weather/route";
 
 import { useWeather } from "./useWeather";
 export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLocations,showAllLocations,setShowAllLocations ,onSelectedTimeChange}){
 
-// const [activities, setActivities] = useState([]);
-// const [manhattanNeighborhoods, setManhattan]=useState([]);
 
-    const [selected, setSelected] = useState('2');
+// useStates for  retrieving from api endpoints
+const [activities, setActivities] = useState([]);
+const [manhattanNeighborhoods, setManhattan]=useState([]);
+const [dates,setDate]=useState([]);
+const [times,setTime]=useState([]);
+const [weather,setWeather]=useState(null);
+    
+
+
+const [selected, setSelected] = useState('2');
 
     // activity dropdown useState
     const [activityChoice, setChoice]=useState(null);
 
-    // activity items 
-    const activities=["Portrait photography","Street photography","Landscape painting","Portrait painting","Art Sale","Busking","Filmmaking"];
 
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
     const dropRef= useRef();
  const [weatherItems, setweatherItems] = useState([]);
-    const [fullWeatherData, setFullWeatherData] = useState([]);
+  
 
     const [timeItems, settimeItems] = useState([]);
     const [isDateOpen,setIsDateOpen]=useState([]);
@@ -47,11 +54,9 @@ export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLo
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [submitted, setSubmitted] = useState(false);
-  // const [showAllLocations,setShowAllLocations]=useState(false);
 
-const [dates,setDates]=useState([]);
-const [times,setTimes]=useState([]);
-const [weather,setWeather]=useState(null);
+
+const [zone,setZone]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
 const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
@@ -63,98 +68,116 @@ const isToday=(dateStr)=>{
   return dateStr===todayStr;
   
 };
-// useEffect(()=>{
-//     aysnc function getActivities(){
-//       const data=await fetchActivities();
-//       setActivities(data);
-//     }
-
-//     getActivities();
-// },[]);
-// useEffect(()=>{
-//     aysnc function getZones(){
-//       const data=await fetchZones();
-//       setManhattan(data);
-//     }
-
-//     getZones();
-// },[]);
-
+// creating activity array items for Activity dropdown
 useEffect(()=>{
-    async function weatherFetch(){
-    const dateSet=new Set();
-    const weatherResponse =await GetWeatherData();
-    setFullWeatherData(weatherResponse.list);
-    weatherResponse.list.forEach(entry=>{
-            const dateObj=new Date(entry.readableTime);
-
-            const formattedDate= format(dateObj,'MMMM d');
-            dateSet.add(formattedDate);
-            
-
-
-        });
-        const dates=Array.from(dateSet);
-        setDates(dates);
-        console.log("weatherResponse", weatherResponse);
-console.log("weatherResponse.list", weatherResponse.list);
-
+    async function getActivities(){
+      const data=await fetchActivities();
+      
+      setActivities(data);
     }
-    weatherFetch();
+
+    getActivities();
+},[]);
+// creating zone array items for Zone dropdown
+useEffect(()=>{
+    async function getZones(){
+      const data=await fetchZones();
+      setManhattan(data);
+    }
+
+    getZones();
+},[]);
+// creating dates array items for Date dropdown
+useEffect(()=>{
+    async function getDate(){
+      const data=await fetchDateTimes();
+  
+      const dateSet=new Set();
+
+      data.forEach(entry =>{
+        
+        const dateObj=new Date(entry);
+         const formattedDate= format(dateObj,'MMMM d');
+        dateSet.add(formattedDate);
+      });
+       const dates=Array.from(dateSet);
+       console.log("dates rendered",dates);
+      setDate(dates);
+    
+    }
+
+    getDate();
 },[]);
 
-// updating time when date changes
+
+// creating time array items for Time dropdown
+useEffect(()=>{
+async function getTime(){
+      const data=await fetchDateTimes();
+      
+      const timeSet=new Set();
+
+       data.forEach(entry =>{
+        const timeObj=new Date(entry);
+        const timeStr=format(timeObj,'h:mm ');
+        timeSet.add(timeStr);
+      });
+       const times=Array.from(timeSet);
+      setTime(times);
+    
+    }
+
+    getTime();
+},[]);
+
+// displaying time only when date is clicked
 useEffect(()=>{
   if(!selectedDate){
-    setTimes([]);
+    setTime([]);
     return;
   }
-
-  const matchingTimes=new Set();
-
-  fullWeatherData.forEach(entry=>{
-    const readableDate= new Date(entry.readableTime);
+  async function matchTime(){
+    const data=await fetchDateTimes();
+      const matchingTimes=new Set();
+       data.forEach(entry=>{
+    const readableDate= new Date(entry);
     const dateStr=format(readableDate,'MMMM d');
-    const timeStr=format(readableDate,'h:mm a');
+    const timeStr=format(readableDate,'h:mm ');
 
     if (dateStr==selectedDate){
-      const timeStr=format(readableDate, 'h:mm a');
+      const timeStr=format(readableDate, 'h:mm ');
       matchingTimes.add(timeStr);
     }
   });
-  const times=Array.from(matchingTimes);
-  setTimes(times);
-},[selectedDate,fullWeatherData]);
+  const filteredTimes = Array.from(matchingTimes);
+  setTime(filteredTimes);
+  }
+
+matchTime();
+
+},[selectedDate]);
+
+
+// retrieve weather info by passing selected date and selected time to getWeather
+
 useEffect(()=>{
-    if(!submitted){
-      setWeather(null);
-      return;
-    }
-    if(!selectedDate || !selectedTime){
+  if (!submitted || !selectedDate || !selectedTime){
     setWeather(null);
     return;
   }
 
-  const matches= fullWeatherData.find(entry=>{
-    const readableObj=new Date(entry.readableTime);
-    const dateStr=format(readableObj,'MMMM d');
-    const timeStr=format(readableObj,'h:mm a');
+  async function getWeather(){
+    const data=await fetchWeather(selectedDate,selectedTime);
+    if(data){
+      setWeather(data);
+    }
+    else{
+      setWeather(null);
+    }
 
-    return dateStr== selectedDate && timeStr==selectedTime;
-  });
-  if(matches){
-    setWeather({
-      condition:matches.condition,
-      temp:matches.temp
-    });
   }
-  else{
-    setWeather(null);
-  }
-
- 
-  
-},[submitted,selectedDate,selectedTime,fullWeatherData]);
+  getWeather();
+},[submitted,selectedDate,selectedTime]);
 
 const {icon,temp}=useWeather(weather || {});
 
@@ -162,220 +185,32 @@ const {icon,temp}=useWeather(weather || {});
 
 
 
-// useEffect(() => {
-//   // Simulate loading JSON data
-  
 
-//   const locationJson = {
-//   "locations": [
-//     {
-//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-//       "zoneName": "Washington Square Park",
-//       "latitude": 40.7312185,
-//       "longitude": -73.9970929,
-//       "combinedScore": 5.03,
-//       "activityScore": 4.14,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-//       "zoneName": "Bryant Park",
-//       "latitude": 40.7548472,
-//       "longitude": -73.9841117,
-//       "combinedScore": 4.99,
-//       "activityScore": 4.30,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-//       "zoneName": "West End Avenue",
-//       "latitude": 40.7883655,
-//       "longitude": -73.9745122,
-//       "combinedScore": 5.69,
-//       "activityScore": 4.36,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-//       "zoneName": "8th Avenue",
-//       "latitude": 40.763826,
-//       "longitude": -73.982222,
-//       "combinedScore": 9.17,
-//       "activityScore": 8.88,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-//       "zoneName": "Frederick Douglass",
-//       "latitude": 40.810000,
-//       "longitude": -73.950000,
-//       "combinedScore": 9.10,
-//       "activityScore": 8.74,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-//       "zoneName": "Central Park North",
-//       "latitude": 40.800679,
-//       "longitude": -73.958248,
-//       "combinedScore": 7.85,
-//       "activityScore": 7.12,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-//       "zoneName": "South Street Seaport",
-//       "latitude": 40.706917,
-//       "longitude": -74.003638,
-//       "combinedScore": 6.42,
-//       "activityScore": 6.00,
-//       "museScore": null,
-//       "crowdScore": null
-//     }
-//   ]
-// };
-
-
-//   setLocations(locationJson.locations);
-// }, []);
 
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
   setIsVisible(prev => !prev);
 };
-// defining zones 
-const manhattanNeighborhoods = {
-  "financial district": [
-    "Financial District North",
-    "Financial District South",
-    "World Trade Center",
-    "Battery Park",
-    "Battery Park City",
-    "Seaport",
-    "TriBeCa/Civic Center"
-  ],
-  "soho hudson square": [
-    "SoHo",
-    "Hudson Sq",
-    "Little Italy/NoLiTa"
-  ],
-  "lower east side": [
-    "Lower East Side",
-    "Chinatown",
-    "Two Bridges/Seward Park"
-  ],
-  "east village": [
-    "East Village",
-    "Alphabet City"
-  ],
-  "west village": [
-    "West Village",
-    "Greenwich Village North",
-    "Greenwich Village South",
-    "Meatpacking/West Village West"
-  ],
-  "chelsea": [
-    "West Chelsea/Hudson Yards",
-    "East Chelsea",
-    "Flatiron"
-  ],
-  "midtown": [
-    "Midtown South",
-    "Midtown Center",
-    "Midtown North"
-  ],
-  "times square theater district": [
-    "Times Sq/Theatre District",
-    "Garment District"
-  ],
-  "murray hill area": [
-    "Murray Hill",
-    "Kips Bay",
-    "Gramercy"
-  ],
-  "union square area": [
-    "Union Sq",
-    "Stuy Town/Peter Cooper Village",
-    "UN/Turtle Bay South",
-    "Sutton Place/Turtle Bay North"
-  ],
-  "clinton hells kitchen": [
-    "Clinton East",
-    "Clinton West"
-  ],
-  "upper west side": [
-    "Upper West Side South",
-    "Upper West Side North",
-    "Lincoln Square East",
-    "Lincoln Square West",
-    "Manhattan Valley",
-    "Bloomingdale"
-  ],
-  "upper east side": [
-    "Upper East Side South",
-    "Upper East Side North",
-    "Yorkville East",
-    "Lenox Hill East",
-    "Lenox Hill West"
-  ],
-  "central park": [
-    "Central Park"
-  ],
-  "harlem": [
-    "Central Harlem",
-    "Central Harlem North",
-    "Morningside Heights",
-    "Manhattanville"
-  ],
-  "hamilton heights": [
-    "Hamilton Heights"
-  ],
-  "east harlem": [
-    "East Harlem South",
-    "East Harlem North"
-  ],
-  "washington heights": [
-    "Washington Heights South",
-    "Washington Heights North"
-  ],
-  "inwood": [
-    "Inwood",
-    "Inwood Hill Park"
-  ],
-  "special areas": [
-    "Roosevelt Island",
-    "Randalls Island",
-    "Marble Hill",
-    "Highbridge Park",
-    "Governor's Island/Ellis Island/Liberty Island"
-  ]
-};
 
-// creating areas with only area names
-const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
+
+// setting the payload for post request to backend
 async function handleSubmit(){
 if(!activityChoice || !selectedDate || !selectedTime){
   alert("Please select activity, date and time");
   return;
 }
   setSubmitted(true);
-
-  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+try{
+ const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm', new Date());
 const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
 
 const payload={
   activity:activityChoice,
   dateTime:readableTimeJson,
-}
+};
 
-const res=await fetch('/api/location',{
+const res=await fetch('/api/recommendations',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
@@ -387,24 +222,39 @@ console.log("📬 Response Status:", res.status, res.statusText);
 console.log("📬 Response OK:", res.ok);
 console.log("📬 Response Headers:", [...res.headers.entries()]);
 
-  const data=await res.json();
 
-  if(res.ok){
-    console.log("Success:",data);
-  }
-  else{
-    console.error("Error:",data.error);
+
+  if(!res.ok){
+    console.error("HTTP Error:", res.status, res.statusText);
+    return;
   }
 
-   onSubmit(locations);
+const text = await res.text();
+    if (!text) {
+      console.error("Empty response received");
+      return;
+    }
+
+    const data = JSON.parse(text);
+    console.log("Success:", data);
+
+    // FIXED: Pass the actual data instead of undefined 'locations'
+    onSubmit(data);
+    
+}
+ catch(error){
+  console.error("Error in handleSubmit:", error);
+ }
+   
 };
 
 async function handleZoneClick(area){
 setZone(area);
 
-
-const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+try{
+const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm', new Date());
 const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
+console.log(activityChoice);
 
 const payload={
   activity:activityChoice,
@@ -414,102 +264,32 @@ const payload={
 
 console.log("Submitting with zone: ",payload);
 
-const res=await fetch('/api/location',{
+const res=await fetch('/api/recommendations',{
   method:'POST',
   headers:{'Content-Type':'application/json'},
   body:JSON.stringify(payload),
 });
 
+  if(!res.ok){
+    console.error("HTTP Error:", res.status, res.statusText);
+    return;
+  }
+ const text = await res.text();
+    if (!text) {
+      console.error("Empty response received");
+      return;
+    }
 const data=await res.json();
-
-if(res.ok){
-  console.log("Zone success: ",data);
-}
-else{
-  console.error("Error submitting with zone: ",data);
-}
+console.log("Zone success: ", data);
 }
 
-// useEffect(() => {
-//   // Simulate loading JSON data
-//    const locationJson = {
-//   "locations": [
-//     {
-//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-//       "zoneName": "Washington Square Park",
-//       "latitude": 40.7312185,
-//       "longitude": -73.9970929,
-//       "combinedScore": 5.03,
-//       "activityScore": 4.14,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-//       "zoneName": "Bryant Park",
-//       "latitude": 40.7548472,
-//       "longitude": -73.9841117,
-//       "combinedScore": 4.99,
-//       "activityScore": 4.30,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-//       "zoneName": "West End Avenue",
-//       "latitude": 40.7883655,
-//       "longitude": -73.9745122,
-//       "combinedScore": 5.69,
-//       "activityScore": 4.36,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-//       "zoneName": "8th Avenue",
-//       "latitude": 40.763826,
-//       "longitude": -73.982222,
-//       "combinedScore": 9.17,
-//       "activityScore": 8.88,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-//       "zoneName": "Frederick Douglass",
-//       "latitude": 40.810000,
-//       "longitude": -73.950000,
-//       "combinedScore": 9.10,
-//       "activityScore": 8.74,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-//       "zoneName": "Central Park North",
-//       "latitude": 40.800679,
-//       "longitude": -73.958248,
-//       "combinedScore": 7.85,
-//       "activityScore": 7.12,
-//       "museScore": null,
-//       "crowdScore": null
-//     },
-//     {
-//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-//       "zoneName": "South Street Seaport",
-//       "latitude": 40.706917,
-//       "longitude": -74.003638,
-//       "combinedScore": 6.42,
-//       "activityScore": 6.00,
-//       "museScore": null,
-//       "crowdScore": null
-//     }
+catch (error) {
+    console.error("Error in handleZoneClick:", error);
+  }
 
-//   ]
-// };
-//   setLocations(locationJson.locations);
-// }, []);
-// const [locations, setLocations] = useState([]);
+
+};
+
 
 useEffect(() => {
   if (submitted) {
@@ -753,12 +533,14 @@ const showCollapsed = isSmall || isLarge;
                   <div className={styles.suggestedLocations}>
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
-                        {Object.keys(manhattanNeighborhoods).map(area => (
-      <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
+                        
+     
+  
+                        {manhattanNeighborhoods.map(area=>(
+                 <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
         {area}
       </div>
-    ))}
-                       
+              ))}
                        </div>
                         
              
@@ -771,3 +553,5 @@ const showCollapsed = isSmall || isLarge;
     );
 
 }
+
+

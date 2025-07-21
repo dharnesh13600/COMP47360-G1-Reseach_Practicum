@@ -6,6 +6,8 @@ import MapDraw02 from '../components/map-draw-2.js'
 import '../styles/map-draw-1.css'
 import '../styles/map-draw-2.css'
 
+import { fetchLocations } from '../api/fetchLocations/route.js';
+
 const Map = dynamic(() => import('@/app/components/map'),{ ssr: false });
 const SideBar =dynamic(() => import('@/app/components/sidebar'),{ ssr: false });
 
@@ -84,6 +86,7 @@ const SideBar =dynamic(() => import('@/app/components/sidebar'),{ ssr: false });
   ]
 };
 
+
 export default function MapPage() {
 const [submitted, setSubmitted] = useState(false);  
  const [locations, setLocations] = useState([]);
@@ -94,6 +97,13 @@ const visibleLocations =
   !showAllLocations ? locations.slice(0, 5) : locations;
 
 const [selectedTime, setSelectedTime] = useState(null);
+// useEffect(()=>{
+//   async function getLocations(){
+//     const data=await fetchLocations();
+//     setLocations(data);
+//   }
+// getLocations();
+// },[]);
 
   return (
     

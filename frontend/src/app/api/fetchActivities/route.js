@@ -1,8 +1,9 @@
 
 export async function fetchActivities(){
-    const res=await fetch("GET /api/recommendations/activities");
+    const res=await fetch("http://34.94.195.103/api/recommendations/activities");
     const json=await res.json();
-    const activities=json.map(item=>item.activity);
+    const activities=json.map(item=>item.name);
+    console.log(activities);
     return activities;
 
 }
