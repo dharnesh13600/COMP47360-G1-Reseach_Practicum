@@ -33,7 +33,6 @@ const INITIAL_ZOOM=11.57
 
 
 
-
 const viewConfigs = [
   { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:0,bearing:30},
   { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
