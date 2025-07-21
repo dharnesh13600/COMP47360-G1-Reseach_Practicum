@@ -1,20 +1,25 @@
 // tests/About.test.js
 import React from 'react'
-import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
 
-// ─── Stub next/link so it renders a plain <a> ────────────────────────────────
+// 1) Stub next/dynamic so it just returns the real module immediately:
+jest.mock('next/dynamic', () => {
+  return (importFn, options) => {
+    // call the dynamic import immediately
+    const mod = importFn()
+    return mod.default || mod
+  }
+})
+
+// 2) Stub next/link so we don’t get warnings about jsdom navigation
 jest.mock('next/link', () => {
-  const Link = ({ href, children, ...props }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  )
+  const Link = ({ href, children, ...props }) => <a href={href} {...props}>{children}</a>
   return { __esModule: true, default: Link, Link }
 })
 
-// ─── Import your About page’s default export ────────────────────────────────
-import About from '../src/app/about/page'
+// 3) Now import the real component
+import About from '../src/app/components/about'
 
 describe('<About /> “Go To Map” link', () => {
   it('renders the Go To Map link pointing at /map', () => {

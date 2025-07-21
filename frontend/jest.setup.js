@@ -5,6 +5,17 @@
 // global.TextDecoder = TextDecoder;
 // global.TextEncoder = TextEncoder;
 
+// /* ---- 0. stub next/dynamic so dynamic imports render immediately ---- */
+// jest.mock('next/dynamic', () => (importFn) => {
+//   const mod = importFn();
+//   return mod.default || mod;
+// });
+
+// // --- stub next/link so it renders as a plain <a> ---
+// jest.mock('next/link', () => {
+//   const Link = ({ href, children, ...p }) => <a href={href} {...p}>{children}</a>
+//   return { __esModule: true, default: Link, Link }
+// })
 // /* ---- 1. global router mock ---- */
 // import { createMockRouter } from './mocks/nextRouterMock';    
 // import { useRouter } from 'next/router';
@@ -32,8 +43,7 @@
 // }));
 // */
 
-//---------------------------------
-
+//-------------------------------------------
 
 import '@testing-library/jest-dom';
 
@@ -42,17 +52,34 @@ const { TextDecoder, TextEncoder } = require('util');
 global.TextDecoder = TextDecoder;
 global.TextEncoder = TextEncoder;
 
+// —————————————————————————————————————————————————————————
+// Suppress JSDOM “Not implemented: navigation” warnings
+const origError = console.error;
+console.error = (...args) => {
+  // suppress string-based navigation errors
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('Not implemented: navigation')
+  ) {
+    return;
+  }
+  // suppress Error-object navigation errors
+  if (
+    args[0] instanceof Error &&
+    typeof args[0].message === 'string' &&
+    args[0].message.includes('Not implemented: navigation')
+  ) {
+    return;
+  }
+  origError(...args);
+};
+
 /* ---- 0. stub next/dynamic so dynamic imports render immediately ---- */
 jest.mock('next/dynamic', () => (importFn) => {
   const mod = importFn();
   return mod.default || mod;
 });
 
-// --- stub next/link so it renders as a plain <a> ---
-jest.mock('next/link', () => {
-  const Link = ({ href, children, ...p }) => <a href={href} {...p}>{children}</a>
-  return { __esModule: true, default: Link, Link }
-})
 /* ---- 1. global router mock ---- */
 import { createMockRouter } from './mocks/nextRouterMock';    
 import { useRouter } from 'next/router';
@@ -60,7 +87,6 @@ import { useRouter } from 'next/router';
 jest.mock('next/router', () => ({ useRouter: jest.fn() }));
 
 jest.mock('next/navigation', () => ({
-  // <App Router hooks>
   useRouter: () => createMockRouter(),
   usePathname: () => '/', 
 }));
