@@ -1,0 +1,20 @@
+.draw01 {
+  position: absolute;
+  top: -7%;                /* Adjust this to position the line visually */
+  left: 0%;
+  width: 12vw;
+  aspect-ratio: 200 / 350;  
+  z-index: 10;
+}
+
+.draw01 svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width:1150px) {
+    .draw01{
+        display: none;
+    }
+}

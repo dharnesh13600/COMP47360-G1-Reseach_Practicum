@@ -1,0 +1,32 @@
+.time-dropdown-btn{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #4B8382;
+    border-radius: 5px;
+    cursor: pointer;
+    overflow: hidden;
+       pointer-events: auto;
+       position: relative;
+       width:80px;
+    height:31px;
+    color:#FEFAF6;
+    font-weight: 700;
+    padding-top: 0.1rem;
+    padding-inline: 0.6rem;
+    height:31px;
+    color:#FEFAF6;
+    text-align: center;
+}
+
+.time-toggle-icon{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+     width:11px;
+    height:5px;
+    color:#FEFAF6;
+    margin-left: 0.4rem;
+    opacity:60%;
+}
+

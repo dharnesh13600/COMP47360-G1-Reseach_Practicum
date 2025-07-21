@@ -1,0 +1,10 @@
+.draw-map02{
+    position: relative;
+    z-index: 10000;
+    top: -5vh;
+}
+@media (max-width:1250px){
+.draw-map02{
+    display: none;
+}
+}

@@ -1,0 +1,41 @@
+.time-dropdown-content{
+    position: absolute;
+    left:-1rem;
+    min-width: 100%;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    background-color:#FFFAF5;
+    color:#52767E;
+    max-height: 30vh;
+    overflow-y:scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    opacity: 0;
+    border-radius: 20px;
+    padding-inline: 1rem;
+    display:none;
+    padding-bottom: 1rem;
+
+}
+
+.time-dropdown-content::-webkit-scrollbar{
+    width:0;
+    height:0;
+}
+
+.time-content-open{
+    transform:translateY(0);
+    opacity:1;
+    pointer-events: all;
+    z-index: 100;
+   display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3)
+}
