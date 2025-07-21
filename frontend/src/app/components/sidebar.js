@@ -56,9 +56,11 @@ const [selected, setSelected] = useState('2');
     const [submitted, setSubmitted] = useState(false);
 
 
-const [zone,setZone]=useState(null);
+
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
+
+const [zone, setZone]=useState(null);
 const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
 
 const today=new Date();
@@ -541,6 +543,7 @@ const showCollapsed = isSmall || isLarge;
         {area}
       </div>
               ))}
+                       
                        </div>
                         
              
@@ -553,5 +556,3 @@ const showCollapsed = isSmall || isLarge;
     );
 
 }
-
-
