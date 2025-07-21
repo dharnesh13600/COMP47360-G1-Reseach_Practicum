@@ -35,12 +35,15 @@ export default function Header(){
                 </div>
                 <div className={wrapperClassName}>
                     {isMapPage ? (
-
-                        <div className='logo-div-map'>
+                        <>
+                              <div className='logo-div-map'>
                              <MapDraw />
                             <Image className='logoMap' src='/manhattan-muse-map.png' alt="Map Logo" width={360} height={120}/>
                             <MapDraw02 />
                         </div>
+                                  
+                        </>
+                  
                         
                     ) : (
                         <div className='logo-div-desktop'>

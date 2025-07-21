@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Weather data DTO for VISUALIZATION PURPOSES ONLY
- * This data does NOT influence location recommendations in any way
- */
 public class WeatherData {
     
     @JsonProperty("dateTime")
@@ -25,10 +21,7 @@ public class WeatherData {
     
     @JsonProperty("formattedDateTime")
     private String formattedDateTime;
-    
-    @JsonProperty("note")
-    private String note = "This weather data is for visualization only and does not influence location recommendations";
-    
+
     // Constructors
     public WeatherData() {}
     
@@ -56,8 +49,5 @@ public class WeatherData {
     
     public String getFormattedDateTime() { return formattedDateTime; }
     public void setFormattedDateTime(String formattedDateTime) { this.formattedDateTime = formattedDateTime; }
-    
-    public String getNote() { return note; }
-    public void setNote(String note) { this.note = note; }
 }
 

@@ -4,7 +4,6 @@ import styles from '../styles/sidebar.module.css';
 import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
-import { FaCheck } from 'react-icons/fa';
 
 // importing dropdown components
 import Dropdown from './dropdowns/actDropdown';
@@ -18,11 +17,15 @@ import TimeItem from "@/helper/timeItem";
 
 import { GetWeatherData } from "./weather-data";
 
+import { fetchActivities } from "../api/fetchActivities/route";
 
+import { fetchZones } from "../api/zones/route";
 
 import { useWeather } from "./useWeather";
-export default function SideBar({ onLocationSelect, onSubmit }){
+export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLocations,showAllLocations,setShowAllLocations ,onSelectedTimeChange}){
 
+// const [activities, setActivities] = useState([]);
+// const [manhattanNeighborhoods, setManhattan]=useState([]);
 
     const [selected, setSelected] = useState('2');
 
@@ -30,7 +33,7 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [activityChoice, setChoice]=useState(null);
 
     // activity items 
-    const activities=["Portrait Photography","Street Photography","Landscape Painting","Portrait Painting","Art Sale","Busking","Filmmaking"];
+    const activities=["Portrait photography","Street photography","Landscape painting","Portrait painting","Art Sale","Busking","Filmmaking"];
 
     // to open and close the dropdowns
     const [isOpen, setIsOpen]=useState(false);
@@ -44,13 +47,15 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [submitted, setSubmitted] = useState(false);
-  const [showAllLocations,setShowAllLocations]=useState(false);
+  // const [showAllLocations,setShowAllLocations]=useState(false);
 
 const [dates,setDates]=useState([]);
 const [times,setTimes]=useState([]);
 const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
+
+const [zone, setZone]=useState(null);
 const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
 
 const today=new Date();
@@ -60,6 +65,22 @@ const isToday=(dateStr)=>{
   return dateStr===todayStr;
   
 };
+// useEffect(()=>{
+//     aysnc function getActivities(){
+//       const data=await fetchActivities();
+//       setActivities(data);
+//     }
+
+//     getActivities();
+// },[]);
+// useEffect(()=>{
+//     aysnc function getZones(){
+//       const data=await fetchZones();
+//       setManhattan(data);
+//     }
+
+//     getZones();
+// },[]);
 
 useEffect(()=>{
     async function weatherFetch(){
@@ -99,7 +120,7 @@ useEffect(()=>{
     const timeStr=format(readableDate,'h:mm a');
 
     if (dateStr==selectedDate){
-      const timeStr=format(readableDate, 'h:mm ');
+      const timeStr=format(readableDate, 'h:mm a');
       matchingTimes.add(timeStr);
     }
   });
@@ -119,7 +140,7 @@ useEffect(()=>{
   const matches= fullWeatherData.find(entry=>{
     const readableObj=new Date(entry.readableTime);
     const dateStr=format(readableObj,'MMMM d');
-    const timeStr=format(readableObj,'h:mm ');
+    const timeStr=format(readableObj,'h:mm a');
 
     return dateStr== selectedDate && timeStr==selectedTime;
   });
@@ -143,88 +164,88 @@ const {icon,temp}=useWeather(weather || {});
 
 
 
-useEffect(() => {
-  // Simulate loading JSON data
+// useEffect(() => {
+//   // Simulate loading JSON data
   
 
-  const locationJson = {
-  "locations": [
-    {
-      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-      "zoneName": "Washington Square Park",
-      "latitude": 40.7312185,
-      "longitude": -73.9970929,
-      "combinedScore": 5.03,
-      "activityScore": 4.14,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-      "zoneName": "Bryant Park",
-      "latitude": 40.7548472,
-      "longitude": -73.9841117,
-      "combinedScore": 4.99,
-      "activityScore": 4.30,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-      "zoneName": "West End Avenue",
-      "latitude": 40.7883655,
-      "longitude": -73.9745122,
-      "combinedScore": 5.69,
-      "activityScore": 4.36,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-      "zoneName": "8th Avenue",
-      "latitude": 40.763826,
-      "longitude": -73.982222,
-      "combinedScore": 9.17,
-      "activityScore": 8.88,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-      "zoneName": "Frederick Douglass",
-      "latitude": 40.810000,
-      "longitude": -73.950000,
-      "combinedScore": 9.10,
-      "activityScore": 8.74,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-      "zoneName": "Central Park North",
-      "latitude": 40.800679,
-      "longitude": -73.958248,
-      "combinedScore": 7.85,
-      "activityScore": 7.12,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-      "zoneName": "South Street Seaport",
-      "latitude": 40.706917,
-      "longitude": -74.003638,
-      "combinedScore": 6.42,
-      "activityScore": 6.00,
-      "museScore": null,
-      "crowdScore": null
-    }
-  ]
-};
+//   const locationJson = {
+//   "locations": [
+//     {
+//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+//       "zoneName": "Washington Square Park",
+//       "latitude": 40.7312185,
+//       "longitude": -73.9970929,
+//       "combinedScore": 5.03,
+//       "activityScore": 4.14,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+//       "zoneName": "Bryant Park",
+//       "latitude": 40.7548472,
+//       "longitude": -73.9841117,
+//       "combinedScore": 4.99,
+//       "activityScore": 4.30,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+//       "zoneName": "West End Avenue",
+//       "latitude": 40.7883655,
+//       "longitude": -73.9745122,
+//       "combinedScore": 5.69,
+//       "activityScore": 4.36,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+//       "zoneName": "8th Avenue",
+//       "latitude": 40.763826,
+//       "longitude": -73.982222,
+//       "combinedScore": 9.17,
+//       "activityScore": 8.88,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+//       "zoneName": "Frederick Douglass",
+//       "latitude": 40.810000,
+//       "longitude": -73.950000,
+//       "combinedScore": 9.10,
+//       "activityScore": 8.74,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+//       "zoneName": "Central Park North",
+//       "latitude": 40.800679,
+//       "longitude": -73.958248,
+//       "combinedScore": 7.85,
+//       "activityScore": 7.12,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+//       "zoneName": "South Street Seaport",
+//       "latitude": 40.706917,
+//       "longitude": -74.003638,
+//       "combinedScore": 6.42,
+//       "activityScore": 6.00,
+//       "museScore": null,
+//       "crowdScore": null
+//     }
+//   ]
+// };
 
 
-  setLocations(locationJson.locations);
-}, []);
+//   setLocations(locationJson.locations);
+// }, []);
 
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
@@ -343,20 +364,30 @@ const manhattanAreas=Object.keys(manhattanNeighborhoods);
 
 async function handleSubmit(){
 if(!activityChoice || !selectedDate || !selectedTime){
-  alert("Please select activity, date, and time");
+  alert("Please select activity, date and time");
   return;
 }
   setSubmitted(true);
 
-  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm ', new Date());
-const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm ');
-  const res=await fetch('/api/location',{
+  const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+}
+
+const res=await fetch('/api/location',{
     method:'POST',
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({activity:activityChoice,readableTime:readableTimeJson})
+    body:JSON.stringify(payload),
   });
+
+console.log("📬 Response Status:", res.status, res.statusText);
+console.log("📬 Response OK:", res.ok);
+console.log("📬 Response Headers:", [...res.headers.entries()]);
 
   const data=await res.json();
 
@@ -369,98 +400,131 @@ const readableTimeJson = format(date, 'yyyy-MM-dd HH:mm ');
 
    onSubmit(locations);
 };
-const [locations, setLocations] = useState([]);
-useEffect(() => {
-  // Simulate loading JSON data
-   const locationJson = {
-  "locations": [
-    {
-      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-      "zoneName": "Washington Square Park",
-      "latitude": 40.7312185,
-      "longitude": -73.9970929,
-      "combinedScore": 5.03,
-      "activityScore": 4.14,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-      "zoneName": "Bryant Park",
-      "latitude": 40.7548472,
-      "longitude": -73.9841117,
-      "combinedScore": 4.99,
-      "activityScore": 4.30,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-      "zoneName": "West End Avenue",
-      "latitude": 40.7883655,
-      "longitude": -73.9745122,
-      "combinedScore": 5.69,
-      "activityScore": 4.36,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-      "zoneName": "8th Avenue",
-      "latitude": 40.763826,
-      "longitude": -73.982222,
-      "combinedScore": 9.17,
-      "activityScore": 8.88,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-      "zoneName": "Frederick Douglass",
-      "latitude": 40.810000,
-      "longitude": -73.950000,
-      "combinedScore": 9.10,
-      "activityScore": 8.74,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-      "zoneName": "Central Park North",
-      "latitude": 40.800679,
-      "longitude": -73.958248,
-      "combinedScore": 7.85,
-      "activityScore": 7.12,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-      "zoneName": "South Street Seaport",
-      "latitude": 40.706917,
-      "longitude": -74.003638,
-      "combinedScore": 6.42,
-      "activityScore": 6.00,
-      "museScore": null,
-      "crowdScore": null
-    }
 
-  ]
-};
-  setLocations(locationJson.locations);
-}, []);
+async function handleZoneClick(area){
+setZone(area);
+
+
+const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm a', new Date());
+const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
+
+const payload={
+  activity:activityChoice,
+  dateTime:readableTimeJson,
+  selectedZone:area,
+}
+
+console.log("Submitting with zone: ",payload);
+
+const res=await fetch('/api/location',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(payload),
+});
+
+const data=await res.json();
+
+if(res.ok){
+  console.log("Zone success: ",data);
+}
+else{
+  console.error("Error submitting with zone: ",data);
+}
+}
+
+// useEffect(() => {
+//   // Simulate loading JSON data
+//    const locationJson = {
+//   "locations": [
+//     {
+//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+//       "zoneName": "Washington Square Park",
+//       "latitude": 40.7312185,
+//       "longitude": -73.9970929,
+//       "combinedScore": 5.03,
+//       "activityScore": 4.14,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+//       "zoneName": "Bryant Park",
+//       "latitude": 40.7548472,
+//       "longitude": -73.9841117,
+//       "combinedScore": 4.99,
+//       "activityScore": 4.30,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+//       "zoneName": "West End Avenue",
+//       "latitude": 40.7883655,
+//       "longitude": -73.9745122,
+//       "combinedScore": 5.69,
+//       "activityScore": 4.36,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+//       "zoneName": "8th Avenue",
+//       "latitude": 40.763826,
+//       "longitude": -73.982222,
+//       "combinedScore": 9.17,
+//       "activityScore": 8.88,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+//       "zoneName": "Frederick Douglass",
+//       "latitude": 40.810000,
+//       "longitude": -73.950000,
+//       "combinedScore": 9.10,
+//       "activityScore": 8.74,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+//       "zoneName": "Central Park North",
+//       "latitude": 40.800679,
+//       "longitude": -73.958248,
+//       "combinedScore": 7.85,
+//       "activityScore": 7.12,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+//       "zoneName": "South Street Seaport",
+//       "latitude": 40.706917,
+//       "longitude": -74.003638,
+//       "combinedScore": 6.42,
+//       "activityScore": 6.00,
+//       "museScore": null,
+//       "crowdScore": null
+//     }
+
+//   ]
+// };
+//   setLocations(locationJson.locations);
+// }, []);
+// const [locations, setLocations] = useState([]);
+
 useEffect(() => {
   if (submitted) {
     setVisibleIndexes([]);
 
-    locations.forEach((_, i) => {
+     visibleLocations.forEach((_, i) => {
       let delay=200 +i*200;
       setTimeout(() => {
         setVisibleIndexes(prev => [...prev, i]);
       }, delay);
     });
   }
-}, [submitted, locations]);
+}, [submitted, visibleLocations]);
 
 
 useEffect(() => {
@@ -484,33 +548,15 @@ const isMedium = width >= 629 && width < 900;
 const isLarge = width >= 900;
 
 const showCollapsed = isSmall || isLarge;
-const visibleLocations =
-  (showCollapsed && !showAllLocations) ? locations.slice(0, 5) : locations;
+
 
     return(
           <>
-                  <div className={`${styles.weatherDisplay} ${styles.weatherSmall} ${submitted && weather ? styles.show : ''}`}>
-    {weather && (
-      <>
-     
-    <img
-      src={icon}
-      alt={weather.condition}
-      width={32}
-      height={32}
-      style={{ marginRight: '8px' }}
-    />
-    <span>{temp}°F</span>
-     </>
-    )}
-  </div>
           <div 
           className={styles.sidebarContainer}
           >
 
-               
-                <div className={styles.dropdownTopMob}>
-                   <div
+                <div
                 className={styles.activityWrapper}
                 > 
                    
@@ -553,16 +599,17 @@ const visibleLocations =
                     
                
                 </div>
-                                    <div className={styles.readableTimeContainer}>
+                <div className={styles.readableTimeContainer}>
                         <div
                 className={styles.dateWrapper}
                 >
-                    
+                    <div className={`${styles.innerPosition}`}>
+                    <div>
                     
                      
                     
                      
-                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate ? (isToday(selectedDate) ? 'Today' : selectedDate) : 'Date'}
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate || "Date"}
                       {selectedDate && (
                         <AiOutlineClose
                           size={16}
@@ -582,7 +629,7 @@ const visibleLocations =
                           
  
 <DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close); setSubmitted(false);}} className={date === selectedDate ? styles.selectedItem : ''}>
-                            {isToday(date) ? 'Today' : date}
+                            {date}
                             </DateItem>
 
                           
@@ -595,7 +642,11 @@ const visibleLocations =
                     
                     </div>
                  
-                 <div  className={styles.timeWrapper}>
+                    </div>
+                    
+
+                </div>
+                <div  className={styles.timeWrapper}>
                              <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
                         <AiOutlineClose
                           size={16}
@@ -612,24 +663,17 @@ const visibleLocations =
                       content={(close)=>(<>
               {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
-                <TimeItem key={time} onClick={()=>{setSelectedTime(time);setSubmitted(false);close();}}>
+                <TimeItem key={time} onClick={()=>{setSelectedTime(time);onSelectedTimeChange(time);setSubmitted(false);close();}}>
                   {time}
                 </TimeItem>
               ))}
               </>)} /> 
                 </div>
-                    
-
                 </div>
                 
-                
-                <button className={styles.subButtonMob} onClick={handleSubmit}>
-   <FaCheck />
-</button>
                 <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
-
-          {isLarge && (
-<div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
+                 
+  <div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
     {weather && (
       <>
      
@@ -644,13 +688,9 @@ const visibleLocations =
      </>
     )}
   </div>
-    )}  
-                </div>
 
-          
-
-<div className={styles.locationBottomSection}>
-              
+                
+                  
                     <div className={styles.locationHeader}>
                     <div className={`${styles.recArea} ${isVisible ? styles.active : styles.inactive}`}>
                       <p className={styles.recommendation}>Recommended</p>
@@ -681,25 +721,17 @@ const visibleLocations =
 </div>
                 )}
                  {submitted && !isVisible && (
-                   <div className={`${styles.locationListContainer} ${!showAllLocations ? styles.compact : ''}`}>
-  {visibleLocations.map((location,index) => (
+                   <div className={styles.locationListContainer}>
+  {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
     <div key={location.id} className={`${styles.locationItem} ${
       visibleIndexes.includes(index) ? styles.show : ''
     }`} onClick={()=>onLocationSelect(location)}>
-      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName.split(" ").map((word, i) => (
-    <span
-      key={i}
-      className={styles.word}
-      style={{ animationDelay: `${i * 0.1}s` }}
-    >
-      {word}&nbsp;
-    </span>
-  ))}</span>
-      <span className={styles.iconSpan}><Image className={styles.photo} src='/search.png' alt='d' width={30} height={25}/></span>
+      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
+      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
   {
-    locations.length>5 && (isSmall || isLarge) &&(
+    locations.length>5 && (
       <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
         {showAllLocations ?  
          (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -724,7 +756,7 @@ const visibleLocations =
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
                         {Object.keys(manhattanNeighborhoods).map(area => (
-      <div key={area} className={styles.suggestedAreas}>
+      <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
         {area}
       </div>
     ))}
@@ -734,18 +766,9 @@ const visibleLocations =
              
                     </div>
                  )}
-</div>
-                
-              
-
-          
-
-             
-  
                   
                     
           </div>
-           
     </>
     );
 

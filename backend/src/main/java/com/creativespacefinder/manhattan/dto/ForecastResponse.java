@@ -1,98 +1,91 @@
 package com.creativespacefinder.manhattan.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
 
-//This class will map the JSON structure from OpenWeather for a 96hr forecast
+/* ------------------------------------------------------------------
+   DTO that maps the 96‑hour /forecast response from OpenWeather
+   ------------------------------------------------------------------ */
+
+@JsonIgnoreProperties(ignoreUnknown = true)           // keep lenient at the root
 public class ForecastResponse {
 
-    // "hourly" contains the list of all our location hourly forecasts
+    /* ------------- list of 96 hourly records ------------- */
     @JsonProperty("list")
     private List<HourlyForecast> hourly;
 
-    // A getter for the hourly forecast list in JSON
-    public List<HourlyForecast> getHourly() {
-        return hourly;
-    }
+    public List<HourlyForecast> getHourly()            { return hourly; }
+    public void setHourly(List<HourlyForecast> hourly) { this.hourly = hourly; }
 
-    // A setter for the hourly forecast list in JSON
-    public void setHourly(List<HourlyForecast> hourly) {
-        this.hourly = hourly;
-    }
-
-    // The class was created to hold the data for each of the forecasts
+    /* ======================================================
+       Inner DTO for each individual hour
+       ====================================================== */
+    // @JsonIgnoreProperties(ignoreUnknown = true)      // ✱ REMOVED (be strict here)
     public static class HourlyForecast {
-        private long dt; // make sure that this is human-readable!
 
-        // This was done to get rid of the 'main:temp' in the OpenWeather API response
-        @JsonProperty("main")
+        private long dt;                               // epoch‑seconds
+
+        @JsonProperty("main")                          // nested temps
         private TempInfo tempInfo;
 
         private List<Weather> weather;
 
-        // Setters and Getters for the JSON data returned
+        /* ---------- ✱ ADDED: capture any unknown keys ---------- */
+        @JsonAnySetter
+        void putUnknown(String k, Object v) { unknown.put(k, v); }
 
-        public long getDt() {
-            return dt;
-        }
+        @JsonIgnore
+        private final Map<String,Object> unknown = new HashMap<>();
+        /* ------------------------------------------------------- */
 
-        public void setDt(long dt) {
-            this.dt = dt;
-        }
+        /* --------------- getters / helpers ---------------- */
+        public long getDt()            { return dt; }
+        public void setDt(long dt)     { this.dt = dt; }
 
-        public List<Weather> getWeather() {
-            return weather;
-        }
+        public List<Weather> getWeather()            { return weather; }
+        public void setWeather(List<Weather> weather){ this.weather = weather; }
 
-        public void setWeather(List<Weather> weather) {
-            this.weather = weather;
-        }
-
-        // Returns the human-readable time, for New York
+        /** "2025‑07‑15 06:00" in New‑York local time */
         public String getReadableTime() {
             return Instant.ofEpochSecond(dt)
                     .atZone(ZoneId.of("America/New_York"))
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
+        public double  getTemp()      { return tempInfo != null ? tempInfo.temp  : 0; }
+        public String  getCondition() { return (weather!=null && !weather.isEmpty())
+                ? weather.get(0).getMain() : "Unknown"; }
 
-        // Temperature getter based on nested 'main.temp' but don't show both
-        public double getTemp() {
-            return tempInfo != null ? tempInfo.temp : 0.0;
-        }
-
-        // High level weather condition (rain, cloud, sun, snow etc.)
-        public String getCondition() {
-            return weather != null && !weather.isEmpty() ? weather.get(0).getMain() : "Unknown";
-        }
-
-        // Nested class to represent the 'main' JSON object
+        /* ------- nested "main" object ------- */
+        @JsonIgnoreProperties(ignoreUnknown = true)   // keep lenient on the leaf
         public static class TempInfo {
             public double temp;
         }
     }
 
-    // The Weather class will handle the main condition and a description if needed for testing
+    /* ======================================================
+       Weather entry (first element is used for the summary)
+       ====================================================== */
+    // @JsonIgnoreProperties(ignoreUnknown = true)     // ✱ REMOVED (be strict)
     public static class Weather {
+
+        private int id;
         private String main;
         private String description;
+        private String icon;
 
-        public String getMain() {
-            return main;
-        }
+        public int getId() {return id;}
+        public void setId(int id) {this.id = id; }
 
-        public void setMain(String main) {
-            this.main = main;
-        }
+        public String getMain()        { return main;        }
+        public void   setMain(String m){ this.main = m;      }
 
-        public String getDescription() {
-            return description;
-        }
+        public String getDescription() { return description; }
+        public void   setDescription(String d){ this.description = d; }
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
+        public String getIcon()        { return icon; }
+        public void   setIcon(String i){ this.icon = i; }
     }
 }

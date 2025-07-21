@@ -553,9 +553,9 @@ flex-wrap: wrap;
 
 }
 
-.activityWrapper{
+/* .activityWrapper{
    align-self: flex-start;
-}
+} */
 .subButtonMob{
  display: none;
 }
