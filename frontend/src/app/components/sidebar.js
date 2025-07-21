@@ -54,6 +54,8 @@ const [times,setTimes]=useState([]);
 const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
+
+const [zone, setZone]=useState(null);
 const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
 
 const today=new Date();
