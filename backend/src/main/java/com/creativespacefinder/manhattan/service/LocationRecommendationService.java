@@ -12,7 +12,6 @@ import com.creativespacefinder.manhattan.repository.LocationActivityScoreReposit
 import com.creativespacefinder.manhattan.repository.MLPredictionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -151,31 +150,41 @@ public class LocationRecommendationService {
                 // Use primitive doubles for fast arithmetic
                 double cultScore = p.getCreativeActivityScore();
                 double crowdScore = p.getCrowdScore();
+                int originalCrowdNumber = p.getEstimatedCrowdNumber();
 
-                // Determine adjusted crowd score based on activity preference
+                // Determine adjusted crowd score and display values based on activity preference
                 double adjustedCrowdScore;
+                double displayCrowdScore;
+                int displayCrowdNumber;
+
                 if (isQuiet) {
-                    // For quiet activities, invert the crowd score (10 - crowd score)
+                    // For quiet activities: invert the crowd score for display and muse calculation
+                    // Low actual crowd score (good for quiet) becomes high display score
                     adjustedCrowdScore = Math.max(0.0, Math.min(10.0, 10.0 - crowdScore));
+                    displayCrowdScore = adjustedCrowdScore;
+                    displayCrowdNumber = originalCrowdNumber; // Keep original ML prediction
                 } else {
-                    // For busy activities, use crowd score as is
+                    // For busy activities: use crowd score as-is
+                    // High actual crowd score (good for busy) stays high display score
                     adjustedCrowdScore = Math.max(0.0, Math.min(10.0, crowdScore));
+                    displayCrowdScore = crowdScore;
+                    displayCrowdNumber = originalCrowdNumber; // Keep original ML prediction
                 }
 
-                // Standard weighting: 60% crowd preference + 40% cultural activity
-                double museValue = (adjustedCrowdScore * 0.6) + (cultScore * 0.4);
+                // Updated weighting: 70% crowd preference + 30% cultural activity
+                double museValue = (adjustedCrowdScore * 0.7) + (cultScore * 0.3);
 
-                // Ensure muse score is between 1.0 and 10.0 (no doubling)
+                // Ensure muse score is between 1.0 and 10.0
                 museValue = Math.max(1.0, Math.min(10.0, museValue));
 
-                // Convert to BigDecimal only once at the end
+                // Convert to BigDecimal
                 BigDecimal cult = BigDecimal.valueOf(cultScore);
-                BigDecimal crowd = BigDecimal.valueOf(crowdScore);
+                BigDecimal crowd = BigDecimal.valueOf(displayCrowdScore); // Use display score
                 BigDecimal muse = new BigDecimal(String.format("%.1f", museValue));
 
                 las.setCulturalActivityScore(cult);
-                las.setCrowdScore(crowd); // Store original crowd score
-                las.setEstimatedCrowdNumber(p.getEstimatedCrowdNumber());
+                las.setCrowdScore(crowd); // Store the adjusted crowd score
+                las.setEstimatedCrowdNumber(displayCrowdNumber); // Store the adjusted crowd number
                 las.setMuseScore(muse);
                 mlScores.put(las.getLocation().getId(), cult);
             }
@@ -211,6 +220,25 @@ public class LocationRecommendationService {
                     .collect(Collectors.toList());
             System.out.println("Response mapping took: " + (System.currentTimeMillis() - mapStartTime) + "ms");
 
+            // POST-PROCESSING: Boost scores for busy activities to make them look appropriately high
+            if (!isQuiet) {
+                for (LocationRecommendationResponse location : mapped) {
+                    // Double the crowd score and cap at 10
+                    BigDecimal currentCrowdScore = location.getCrowdScore();
+                    if (currentCrowdScore != null) {
+                        double boostedCrowdScore = Math.min(10.0, currentCrowdScore.doubleValue() * 2.0);
+                        location.setCrowdScore(BigDecimal.valueOf(boostedCrowdScore));
+                    }
+
+                    // Double the muse score and cap at 10
+                    BigDecimal currentMuseScore = location.getMuseScore();
+                    if (currentMuseScore != null) {
+                        double boostedMuseScore = Math.min(10.0, currentMuseScore.doubleValue() * 2.0);
+                        location.setMuseScore(BigDecimal.valueOf(boostedMuseScore));
+                    }
+                }
+            }
+
             long filterStartTime = System.currentTimeMillis();
             // Use different distance thresholds based on search type
             double minDistance = (selectedZone != null && !selectedZone.trim().isEmpty()) ? 100.0 : 1000.0;
@@ -242,70 +270,71 @@ public class LocationRecommendationService {
      */
     private boolean isQuietActivity(String activityName) {
         // Activities that prefer quiet crowds
-        return activityName.equalsIgnoreCase("Portrait photography") ||
-                activityName.equalsIgnoreCase("Filmmaking") ||
-                activityName.equalsIgnoreCase("Landscape painting") ||
-                activityName.equalsIgnoreCase("Portrait painting");
+        String activity = activityName.toLowerCase();
+        return activity.contains("portrait photography") ||
+                activity.contains("filmmaking") ||
+                activity.contains("landscape painting") ||
+                activity.contains("portrait painting") ||
+                activity.contains("reading") ||
+                activity.contains("meditation") ||
+                activity.contains("writing");
     }
 
     /**
      * Assigns crowd levels ("Busy", "Moderate", "Quiet") to locations based on
-     * the distribution of crowd scores within the result set, considering activity preference.
-     * This ensures meaningful labels that match the activity's crowd preference.
+     * the estimated crowd numbers (not crowd scores) within the result set.
      */
     private void assignCrowdLevels(List<LocationRecommendationResponse> locations) {
         if (locations.isEmpty()) {
             return;
         }
 
-        // Extract crowd scores (not crowd numbers), filtering out nulls
-        List<Double> crowdScores = locations.stream()
-                .map(LocationRecommendationResponse::getCrowdScore)
+        // Extract estimated crowd numbers, filtering out nulls
+        List<Integer> crowdNumbers = locations.stream()
+                .map(LocationRecommendationResponse::getEstimatedCrowdNumber)
                 .filter(Objects::nonNull)
-                .map(BigDecimal::doubleValue)
                 .sorted()
                 .collect(Collectors.toList());
 
-        if (crowdScores.isEmpty()) {
-            // If no crowd scores available, assign default levels
+        if (crowdNumbers.isEmpty()) {
+            // If no crowd numbers available, assign default levels
             for (LocationRecommendationResponse location : locations) {
                 location.setCrowdLevel("Moderate");
             }
             return;
         }
 
-        // Calculate thresholds based on crowd score distribution within this result set
-        int size = crowdScores.size();
-        double lowerThreshold, upperThreshold;
+        // Calculate thresholds based on crowd number distribution within this result set
+        int size = crowdNumbers.size();
+        int lowerThreshold, upperThreshold;
 
         if (size == 1) {
             // Only one location, assign moderate
-            lowerThreshold = crowdScores.get(0);
-            upperThreshold = crowdScores.get(0);
+            lowerThreshold = crowdNumbers.get(0);
+            upperThreshold = crowdNumbers.get(0);
         } else if (size == 2) {
             // Two locations: one quiet, one busy
-            lowerThreshold = crowdScores.get(0);
-            upperThreshold = crowdScores.get(1);
+            lowerThreshold = crowdNumbers.get(0);
+            upperThreshold = crowdNumbers.get(1);
         } else {
             // Three or more: use 33rd and 67th percentiles for better distribution
             int lowerIndex = (int) Math.floor(size * 0.33);
             int upperIndex = (int) Math.floor(size * 0.67);
 
-            lowerThreshold = crowdScores.get(Math.max(0, lowerIndex));
-            upperThreshold = crowdScores.get(Math.min(size - 1, upperIndex));
+            lowerThreshold = crowdNumbers.get(Math.max(0, lowerIndex));
+            upperThreshold = crowdNumbers.get(Math.min(size - 1, upperIndex));
         }
 
-        // Assign crowd levels based on crowd score thresholds
+        // Assign crowd levels based on estimated crowd number thresholds
         for (LocationRecommendationResponse location : locations) {
-            BigDecimal crowdScore = location.getCrowdScore();
+            Integer crowdNumber = location.getEstimatedCrowdNumber();
 
-            if (crowdScore == null) {
+            if (crowdNumber == null) {
                 location.setCrowdLevel("Moderate");
             } else {
-                double score = crowdScore.doubleValue();
-                if (score <= lowerThreshold) {
+                if (crowdNumber <= lowerThreshold) {
                     location.setCrowdLevel("Quiet");
-                } else if (score >= upperThreshold) {
+                } else if (crowdNumber >= upperThreshold) {
                     location.setCrowdLevel("Busy");
                 } else {
                     location.setCrowdLevel("Moderate");
@@ -313,7 +342,7 @@ public class LocationRecommendationService {
             }
         }
 
-        // Ensure we have at least some variation if all scores are the same
+        // Ensure we have at least some variation if all numbers are the same
         long distinctLevels = locations.stream()
                 .map(LocationRecommendationResponse::getCrowdLevel)
                 .distinct()
