@@ -17,11 +17,15 @@ import TimeItem from "@/helper/timeItem";
 
 import { GetWeatherData } from "./weather-data";
 
+import { fetchActivities } from "../api/fetchActivities/route";
 
+import { fetchZones } from "../api/zones/route";
 
 import { useWeather } from "./useWeather";
-export default function SideBar({ onLocationSelect, onSubmit }){
+export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLocations,showAllLocations,setShowAllLocations ,onSelectedTimeChange}){
 
+// const [activities, setActivities] = useState([]);
+// const [manhattanNeighborhoods, setManhattan]=useState([]);
 
     const [selected, setSelected] = useState('2');
 
@@ -43,16 +47,38 @@ export default function SideBar({ onLocationSelect, onSubmit }){
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [submitted, setSubmitted] = useState(false);
-  const [showAllLocations,setShowAllLocations]=useState(false);
+  // const [showAllLocations,setShowAllLocations]=useState(false);
 
 const [dates,setDates]=useState([]);
 const [times,setTimes]=useState([]);
 const [weather,setWeather]=useState(null);
 
 const [visibleIndexes, setVisibleIndexes] = useState([]);
+const isMediumOrLarger = typeof window !== "undefined" && window.innerWidth >= 629;
 
-const [zone, setZone]=useState(null);
+const today=new Date();
 
+const isToday=(dateStr)=>{
+  const todayStr=format(today, 'MMMM d');
+  return dateStr===todayStr;
+  
+};
+// useEffect(()=>{
+//     aysnc function getActivities(){
+//       const data=await fetchActivities();
+//       setActivities(data);
+//     }
+
+//     getActivities();
+// },[]);
+// useEffect(()=>{
+//     aysnc function getZones(){
+//       const data=await fetchZones();
+//       setManhattan(data);
+//     }
+
+//     getZones();
+// },[]);
 
 useEffect(()=>{
     async function weatherFetch(){
@@ -136,88 +162,88 @@ const {icon,temp}=useWeather(weather || {});
 
 
 
-useEffect(() => {
-  // Simulate loading JSON data
+// useEffect(() => {
+//   // Simulate loading JSON data
   
 
-  const locationJson = {
-  "locations": [
-    {
-      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-      "zoneName": "Washington Square Park",
-      "latitude": 40.7312185,
-      "longitude": -73.9970929,
-      "combinedScore": 5.03,
-      "activityScore": 4.14,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-      "zoneName": "Bryant Park",
-      "latitude": 40.7548472,
-      "longitude": -73.9841117,
-      "combinedScore": 4.99,
-      "activityScore": 4.30,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-      "zoneName": "West End Avenue",
-      "latitude": 40.7883655,
-      "longitude": -73.9745122,
-      "combinedScore": 5.69,
-      "activityScore": 4.36,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-      "zoneName": "8th Avenue",
-      "latitude": 40.763826,
-      "longitude": -73.982222,
-      "combinedScore": 9.17,
-      "activityScore": 8.88,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-      "zoneName": "Frederick Douglass",
-      "latitude": 40.810000,
-      "longitude": -73.950000,
-      "combinedScore": 9.10,
-      "activityScore": 8.74,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-      "zoneName": "Central Park North",
-      "latitude": 40.800679,
-      "longitude": -73.958248,
-      "combinedScore": 7.85,
-      "activityScore": 7.12,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-      "zoneName": "South Street Seaport",
-      "latitude": 40.706917,
-      "longitude": -74.003638,
-      "combinedScore": 6.42,
-      "activityScore": 6.00,
-      "museScore": null,
-      "crowdScore": null
-    }
-  ]
-};
+//   const locationJson = {
+//   "locations": [
+//     {
+//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+//       "zoneName": "Washington Square Park",
+//       "latitude": 40.7312185,
+//       "longitude": -73.9970929,
+//       "combinedScore": 5.03,
+//       "activityScore": 4.14,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+//       "zoneName": "Bryant Park",
+//       "latitude": 40.7548472,
+//       "longitude": -73.9841117,
+//       "combinedScore": 4.99,
+//       "activityScore": 4.30,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+//       "zoneName": "West End Avenue",
+//       "latitude": 40.7883655,
+//       "longitude": -73.9745122,
+//       "combinedScore": 5.69,
+//       "activityScore": 4.36,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+//       "zoneName": "8th Avenue",
+//       "latitude": 40.763826,
+//       "longitude": -73.982222,
+//       "combinedScore": 9.17,
+//       "activityScore": 8.88,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+//       "zoneName": "Frederick Douglass",
+//       "latitude": 40.810000,
+//       "longitude": -73.950000,
+//       "combinedScore": 9.10,
+//       "activityScore": 8.74,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+//       "zoneName": "Central Park North",
+//       "latitude": 40.800679,
+//       "longitude": -73.958248,
+//       "combinedScore": 7.85,
+//       "activityScore": 7.12,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+//       "zoneName": "South Street Seaport",
+//       "latitude": 40.706917,
+//       "longitude": -74.003638,
+//       "combinedScore": 6.42,
+//       "activityScore": 6.00,
+//       "museScore": null,
+//       "crowdScore": null
+//     }
+//   ]
+// };
 
 
-  setLocations(locationJson.locations);
-}, []);
+//   setLocations(locationJson.locations);
+// }, []);
 
 const [isVisible, setIsVisible]=useState(false);
 const handleToggleClick=()=>{
@@ -403,98 +429,100 @@ else{
   console.error("Error submitting with zone: ",data);
 }
 }
-const [locations, setLocations] = useState([]);
-useEffect(() => {
-  // Simulate loading JSON data
-   const locationJson = {
-  "locations": [
-    {
-      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-      "zoneName": "Washington Square Park",
-      "latitude": 40.7312185,
-      "longitude": -73.9970929,
-      "combinedScore": 5.03,
-      "activityScore": 4.14,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
-      "zoneName": "Bryant Park",
-      "latitude": 40.7548472,
-      "longitude": -73.9841117,
-      "combinedScore": 4.99,
-      "activityScore": 4.30,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
-      "zoneName": "West End Avenue",
-      "latitude": 40.7883655,
-      "longitude": -73.9745122,
-      "combinedScore": 5.69,
-      "activityScore": 4.36,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
-      "zoneName": "8th Avenue",
-      "latitude": 40.763826,
-      "longitude": -73.982222,
-      "combinedScore": 9.17,
-      "activityScore": 8.88,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
-      "zoneName": "Frederick Douglass",
-      "latitude": 40.810000,
-      "longitude": -73.950000,
-      "combinedScore": 9.10,
-      "activityScore": 8.74,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
-      "zoneName": "Central Park North",
-      "latitude": 40.800679,
-      "longitude": -73.958248,
-      "combinedScore": 7.85,
-      "activityScore": 7.12,
-      "museScore": null,
-      "crowdScore": null
-    },
-    {
-      "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
-      "zoneName": "South Street Seaport",
-      "latitude": 40.706917,
-      "longitude": -74.003638,
-      "combinedScore": 6.42,
-      "activityScore": 6.00,
-      "museScore": null,
-      "crowdScore": null
-    }
 
-  ]
-};
-  setLocations(locationJson.locations);
-}, []);
+// useEffect(() => {
+//   // Simulate loading JSON data
+//    const locationJson = {
+//   "locations": [
+//     {
+//       "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+//       "zoneName": "Washington Square Park",
+//       "latitude": 40.7312185,
+//       "longitude": -73.9970929,
+//       "combinedScore": 5.03,
+//       "activityScore": 4.14,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+//       "zoneName": "Bryant Park",
+//       "latitude": 40.7548472,
+//       "longitude": -73.9841117,
+//       "combinedScore": 4.99,
+//       "activityScore": 4.30,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+//       "zoneName": "West End Avenue",
+//       "latitude": 40.7883655,
+//       "longitude": -73.9745122,
+//       "combinedScore": 5.69,
+//       "activityScore": 4.36,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+//       "zoneName": "8th Avenue",
+//       "latitude": 40.763826,
+//       "longitude": -73.982222,
+//       "combinedScore": 9.17,
+//       "activityScore": 8.88,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+//       "zoneName": "Frederick Douglass",
+//       "latitude": 40.810000,
+//       "longitude": -73.950000,
+//       "combinedScore": 9.10,
+//       "activityScore": 8.74,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "ecdfb7fa-46c7-4f0d-9f3e-22ee9e8d4567",
+//       "zoneName": "Central Park North",
+//       "latitude": 40.800679,
+//       "longitude": -73.958248,
+//       "combinedScore": 7.85,
+//       "activityScore": 7.12,
+//       "museScore": null,
+//       "crowdScore": null
+//     },
+//     {
+//       "id": "d6a08f7e-cc5c-4e1e-913a-3f3a907c7fd9",
+//       "zoneName": "South Street Seaport",
+//       "latitude": 40.706917,
+//       "longitude": -74.003638,
+//       "combinedScore": 6.42,
+//       "activityScore": 6.00,
+//       "museScore": null,
+//       "crowdScore": null
+//     }
+
+//   ]
+// };
+//   setLocations(locationJson.locations);
+// }, []);
+// const [locations, setLocations] = useState([]);
+
 useEffect(() => {
   if (submitted) {
     setVisibleIndexes([]);
 
-    locations.forEach((_, i) => {
+     visibleLocations.forEach((_, i) => {
       let delay=200 +i*200;
       setTimeout(() => {
         setVisibleIndexes(prev => [...prev, i]);
       }, delay);
     });
   }
-}, [submitted, locations]);
+}, [submitted, visibleLocations]);
 
 
 useEffect(() => {
@@ -503,6 +531,22 @@ useEffect(() => {
 useEffect(() => {
   console.log("Dates available:", dates);
 }, [dates]);
+
+
+const [width, setWidth] = useState(window.innerWidth);
+
+useEffect(() => {
+  const handleResize = () => setWidth(window.innerWidth);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+const isSmall = width < 629;
+const isMedium = width >= 629 && width < 900;
+const isLarge = width >= 900;
+
+const showCollapsed = isSmall || isLarge;
+
 
     return(
           <>
@@ -617,7 +661,7 @@ useEffect(() => {
                       content={(close)=>(<>
               {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
               {times.map(time=>(
-                <TimeItem key={time} onClick={()=>{setSelectedTime(time);setSubmitted(false);close();}}>
+                <TimeItem key={time} onClick={()=>{setSelectedTime(time);onSelectedTimeChange(time);setSubmitted(false);close();}}>
                   {time}
                 </TimeItem>
               ))}

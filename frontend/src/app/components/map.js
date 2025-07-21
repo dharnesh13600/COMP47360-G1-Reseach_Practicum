@@ -11,6 +11,8 @@ import ComparisonStack from './comparisonStack.js';
 import '../globals.css';
 
 import { maxTime } from 'date-fns/constants';
+import { parse, format } from 'date-fns';
+
 
 import Image from 'next/image';
 
@@ -56,7 +58,7 @@ function getViewConfig() {
   return viewConfigs[0];
 }
 
-export default function Map({ submitted, locations, selectedLocation }){
+export default function Map({ submitted, locations, selectedLocation,selectedTime }){
 const popupRef = useRef();
 const [showMarkers, setShowMarkers] = useState(false);
 
@@ -72,6 +74,7 @@ const [showMarkers, setShowMarkers] = useState(false);
   const [comparisonStack, setComparisonStack] = useState([]);
 
 
+
 const lastClickedMarkerRef = useRef(null);
 
 
@@ -83,11 +86,13 @@ const removeItem = (id) => {
 async function fetchPlaceId(lat, lng) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TOKEN;  
   console.log(process.env.NEXT_PUBLIC_GOOGLE_TOKEN);
+  console.log(lat);
+  console.log(lng);
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
   const res = await fetch(url);
   const data = await res.json();
-console.log('Google API response:', data);
+// console.log('Google API response:', data);
   if (data.status === "OK" && data.results.length > 0) {
     const placeId = data.results[0].place_id;
     return placeId;
@@ -106,6 +111,18 @@ const openInGoogleMaps = async (lat, lng) => {
     alert("Could not find place in Google Maps.");
   }
 };
+
+function getStyleFromSelectedTime(selectedTime) {
+  const DAY_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL;
+  const NIGHT_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE_DARK_URL;
+
+  if (!selectedTime) return DAY_STYLE;
+
+  const parsed = parse(selectedTime.trim(), 'h:mm ', new Date());
+  const hour = parsed.getHours();
+
+  return hour >= 18 ? NIGHT_STYLE : DAY_STYLE;
+}
 
 
     useEffect(() => {
@@ -191,6 +208,17 @@ const adjustView = () => {
 
 
   }, [])
+useEffect(() => {
+  if (!mapRef.current || !selectedTime) return;
+
+  const styleUrl = getStyleFromSelectedTime(selectedTime);
+  mapRef.current.setStyle(styleUrl);
+
+
+  mapRef.current.on('style.load', () => {
+    mapRef.current.addControl(new mapboxgl.NavigationControl());
+  });
+}, [selectedTime]);
 
   useEffect(() => {
     if (!selectedLocation || !mapRef.current) return;
