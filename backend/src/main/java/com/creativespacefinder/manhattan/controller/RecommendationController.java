@@ -6,12 +6,9 @@ import com.creativespacefinder.manhattan.entity.Activity;
 import com.creativespacefinder.manhattan.service.LocationRecommendationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -37,23 +34,9 @@ public class RecommendationController {
         return ResponseEntity.ok(activities);
     }
 
-    @GetMapping("/activities/{activityName}/dates")
-    public ResponseEntity<List<LocalDate>> getAvailableDates(
-            @PathVariable String activityName) {
-        List<LocalDate> dates = locationRecommendationService.getAvailableDates(activityName);
-        return ResponseEntity.ok(dates);
-    }
-
-    @GetMapping("/activities/{activityName}/dates/{date}/times")
-    public ResponseEntity<List<LocalTime>> getAvailableTimes(
-            @PathVariable String activityName,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<LocalTime> times = locationRecommendationService.getAvailableTimes(activityName, date);
-        return ResponseEntity.ok(times);
-    }
-
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Creative Space Finder API is running. Weather data is for visualization only.");
+    @GetMapping("/zones")
+    public ResponseEntity<List<String>> getAvailableZones() {
+        List<String> zones = locationRecommendationService.getAvailableZones();
+        return ResponseEntity.ok(zones);
     }
 }
