@@ -1,1 +1,50 @@
+# k8s/Backend/backend-deployment.tmpl
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manhattan-backend
+  labels:
+    app: backend
+spec:
+  replicas: 1 # Or your desired replica count
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend-container
+        image: ${IMAGE_URL} 
+        ports:
+        - containerPort: 8080 # Your application's port
+        env:
+        # --- Database Configuration (from your-database-secret) ---
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: your-database-secret # Secret name
+              key: SPRING_DATASOURCE_URL 
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: your-database-secret
+              key: SPRING_DATASOURCE_USERNAME # Key within that secret
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: your-database-secret
+              key: SPRING_DATASOURCE_PASSWORD 
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME 
+          value: "org.postgresql.Driver"
 
+        # --- OpenWeather API Key (from openweather-api-key-secret) ---
+        # Assuming your OpenWeather secret is named 'openweather-api-key-secret'
+        # and contains a key 'OPENWEATHER_API_KEY' as per previous instructions.
+        - name: OPENWEATHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openweather-api-key-secret # Ensure this is the correct secret name
+              key: OPENWEATHER_API_KEY # Ensure this is the correct key within that secret
