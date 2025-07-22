@@ -28,6 +28,17 @@ public interface LocationActivityScoreRepository extends JpaRepository<LocationA
                 String activityName,
                 Pageable pageable
         );
+        //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
+     
+          @Query("""
+               SELECT l
+               FROM LocationActivityScore l
+               WHERE LOWER(l.activity.name) = LOWER(:activityName)
+               ORDER BY l.museScore DESC
+               """)
+          Page<LocationActivityScore> findTopByActivityNameIgnoreDateTime(
+                  @Param("activityName") String activityName,
+                  Pageable pageable);
 
 
     // ——————————————————————————————————————————
