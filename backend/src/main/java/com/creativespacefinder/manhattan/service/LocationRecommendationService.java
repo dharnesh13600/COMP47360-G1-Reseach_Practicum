@@ -405,7 +405,7 @@ public class LocationRecommendationService {
 
     protected PredictionResponse[] callMLModelBatch(List<Map<String,Object>> bodies) {
         RestTemplate r = new RestTemplate();
-        return r.postForObject("http://localhost:8000/predict_batch", bodies, PredictionResponse[].class);
+        return r.postForObject("http://34.94.101.102:8080/predict_batch", bodies, PredictionResponse[].class);
     }
 
     public List<Activity> getAllActivities() {
