@@ -1,6 +1,10 @@
 // src/main/java/com/creativespacefinder/manhattan/repository/LocationActivityScoreRepository.java
 package com.creativespacefinder.manhattan.repository;
 
+//added by dharnesh for unit-testing
+import org.springframework.data.domain.Page;
+
+
 import com.creativespacefinder.manhattan.entity.LocationActivityScore;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
