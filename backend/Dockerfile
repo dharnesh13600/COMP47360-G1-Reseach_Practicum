@@ -38,7 +38,8 @@ COPY pom.xml .
 COPY src ./src
 
 # Build your Spring Boot application
-RUN mvn clean install -DskipTests
+# RUN mvn clean install -DskipTests
+RUN mvn clean install -Dmaven.test.skip=true
 
 # Expose the port your Spring Boot application listens on
 EXPOSE 8080

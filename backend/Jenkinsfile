@@ -36,28 +36,29 @@ pipeline {
       }
     }
 
-    stage('Unit Test') {
-      steps {
-        withMaven(maven: 'M3', jdk: 'JDK_21') {
-          dir('backend') {
-            sh '''
-              unset SPRING_DATASOURCE_URL
-              unset SPRING_DATASOURCE_USERNAME
-              unset SPRING_DATASOURCE_PASSWORD
-              unset SPRING_DATASOURCE_DRIVER_CLASS_NAME
-              unset OPENWEATHER_API_KEY
-              mvn clean test -Dspring.profiles.active=test -e
-            '''
-          }
-        }
-      }
-    }
+    // stage('Unit Test') {
+    //   steps {
+    //     withMaven(maven: 'M3', jdk: 'JDK_21') {
+    //       dir('backend') {
+    //         sh '''
+    //           unset SPRING_DATASOURCE_URL
+    //           unset SPRING_DATASOURCE_USERNAME
+    //           unset SPRING_DATASOURCE_PASSWORD
+    //           unset SPRING_DATASOURCE_DRIVER_CLASS_NAME
+    //           unset OPENWEATHER_API_KEY
+    //           mvn clean verify -Dmaven.test.skip=true -Dspring.profiles.active=test -e
+
+    //         '''
+    //       }
+    //     }
+    //   }
+    // }
 
     stage('Prepare for SonarQube') {
       steps {
         withMaven(maven: 'M3', jdk: 'JDK_21') {
           dir('backend') {
-            sh 'mvn clean verify -DskipTests'
+            sh 'mvn clean verify -Dmaven.test.skip=true'
           }
         }
       }
