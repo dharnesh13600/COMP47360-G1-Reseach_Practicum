@@ -11,6 +11,7 @@ import com.creativespacefinder.manhattan.repository.ActivityRepository;
 import com.creativespacefinder.manhattan.repository.LocationActivityScoreRepository;
 import com.creativespacefinder.manhattan.repository.MLPredictionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value; 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,9 @@ public class LocationRecommendationService {
 
     @Autowired
     private AnalyticsService analyticsService;
+
+    @Value("${ml.predict.url}")               // <<< ADDED
+    private String mlPredictUrl;              // <<< ADDED
 
     private static final Map<String, List<String>> MANHATTAN_ZONES = new HashMap<>();
     static {
