@@ -9,7 +9,7 @@ metadata:
 spec:
   rules:
   - host: manhattanmuse.art
-  - http:
+    http:
       paths:
       - path: /
         pathType: Prefix
@@ -18,3 +18,13 @@ spec:
             name: frontend-svc
             port:
               number: 80
+  - host: www.manhattanmuse.art
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-svc
+                port:
+                  number: 80
