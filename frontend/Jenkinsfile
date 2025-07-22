@@ -14,7 +14,7 @@ pipeline{
         // artifact registry components
         
         AR_REGION = "europe-west2"
-        AR_REPO = "manhattan-muse-frontend"
+        AR_REPO = "manhattan-muse-project"
 
         IMAGE_TAG = "${BRANCH_NAME}-${BUILD_ID}"
         IMAGE_URI = "${AR_REGION}-docker.pkg.dev/${GCP_PROJECT}/${AR_REPO}/frontend:${IMAGE_TAG}"
