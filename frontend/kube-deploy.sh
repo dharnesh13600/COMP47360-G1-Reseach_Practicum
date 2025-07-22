@@ -9,7 +9,8 @@ set -e
 : "${LOCATION:?LOCATION (zone) must be set}"
 : "${IMAGE_URI:?IMAGE_URI (full repo URI) must be set}"
 
-GCP_KEYFILE_PATH="$1"
+# GCP_KEYFILE_PATH="$1"
+GCP_KEYFILE_PATH="${GCP_KEYFILE}" 
 
 echo "DEBUG (in kube-deploy.sh): GCP_KEYFILE_PATH is: ${GCP_KEYFILE_PATH}"
 test -f "${GCP_KEYFILE_PATH}" && echo "DEBUG (in kube-deploy.sh): Key file exists and is a regular file." || echo "DEBUG (in kube-deploy.sh): Key file does NOT exist or is not a regular file."
@@ -19,7 +20,7 @@ test -r "${GCP_KEYFILE_PATH}" && echo "DEBUG (in kube-deploy.sh): Key file is re
 echo "*** setting up kubernetes access based on service account token ***";
 
 # gcloud auth activate-service-account --key-file=${GCP_KEYFILE} --project=${GCP_PROJECT}
-gcloud auth activate-service-account --key-file="${GCP_KEYFILE_PATH}" --project="${PROJECT_ID}"
+gcloud auth activate-service-account --key-file="${GCP_KEYFILE_PATH}" --project="${GCP_PROJECT}"
 # gcloud container clusters get-credentials ${CLUSTER_NAME} --zone=${LOCATION}
 gcloud container clusters get-credentials "${CLUSTER_NAME}" --zone="${LOCATION}"
 

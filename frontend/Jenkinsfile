@@ -69,6 +69,12 @@ pipeline{
           withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GCP_KEYFILE')]) {
 
             sh '''
+              set -euo pipefail
+              echo "Key file: $GCP_KEYFILE"
+
+              gcloud auth activate-service-account --key-file="$GCP_KEYFILE"
+              gcloud config set project "$GCP_PROJECT"
+              gcloud container clusters get-credentials "$CLUSTER_NAME" --zone "$LOCATION"
 
               chmod +x frontend/kube-deploy.sh
               
