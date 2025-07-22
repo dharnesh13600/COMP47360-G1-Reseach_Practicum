@@ -1,10 +1,6 @@
 // src/main/java/com/creativespacefinder/manhattan/repository/LocationActivityScoreRepository.java
 package com.creativespacefinder.manhattan.repository;
 
-//added by dharnesh for unit-testing
-import org.springframework.data.domain.Page;
-
-
 import com.creativespacefinder.manhattan.entity.LocationActivityScore;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,28 +17,28 @@ import java.util.UUID;
 public interface LocationActivityScoreRepository extends JpaRepository<LocationActivityScore, UUID> {
 
 
-     //(added by Dharnesh for unit testing) Top 10 scores for an activity at a specific date/time, sorted by museScore desc
-        List<LocationActivityScore> findTop10ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
-                String activityName,
-                LocalDate eventDate,
-                LocalTime eventTime
-        );
-        //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
-        List<LocationActivityScore> findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc(
-                String activityName,
-                Pageable pageable
-        );
-        //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
+     // //(added by Dharnesh for unit testing) Top 10 scores for an activity at a specific date/time, sorted by museScore desc
+     //    List<LocationActivityScore> findTop10ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
+     //            String activityName,
+     //            LocalDate eventDate,
+     //            LocalTime eventTime
+     //    );
+     //    //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
+     //    List<LocationActivityScore> findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc(
+     //            String activityName,
+     //            Pageable pageable
+     //    );
+        // //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
      
-          @Query("""
-               SELECT l
-               FROM LocationActivityScore l
-               WHERE LOWER(l.activity.name) = LOWER(:activityName)
-               ORDER BY l.museScore DESC
-               """)
-          Page<LocationActivityScore> findTopByActivityNameIgnoreDateTime(
-                  @Param("activityName") String activityName,
-                  Pageable pageable);
+        //   @Query("""
+        //        SELECT l
+        //        FROM LocationActivityScore l
+        //        WHERE LOWER(l.activity.name) = LOWER(:activityName)
+        //        ORDER BY l.museScore DESC
+        //        """)
+        //   Page<LocationActivityScore> findTopByActivityNameIgnoreDateTime(
+        //           @Param("activityName") String activityName,
+        //           Pageable pageable);
 
 
     // ——————————————————————————————————————————
