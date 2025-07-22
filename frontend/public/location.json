@@ -1,0 +1,101 @@
+
+{
+  "locations": [
+    {
+      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+      "zoneName": "Washington Square Park: Arch Plaza",
+      "latitude": 40.7312185,
+      "longitude": -73.9970929,
+      "combinedScore": 5.03,
+      "activityScore": 4.14,
+      "museScore": null,
+      "crowdScore": null,
+      "estimatedCrowdNumber": null,
+      "scoreBreakdown": {
+        "activityScore": 4.14,
+        "museScore": null,
+        "crowdScore": null,
+        "explanation": "Combined score: 70% Activity Score + 30% Crowd Score (inverted) - MuseScore not available"
+      }
+    },
+    {
+      "id": "1947f53a-1b20-4c68-a06d-1606efac5aa5",
+      "zoneName": "Bryant Park: Stage Performance",
+      "latitude": 40.7548472,
+      "longitude": -73.9841117,
+      "combinedScore": 4.99,
+      "activityScore": 4.30,
+      "museScore": null,
+      "crowdScore": null,
+      "estimatedCrowdNumber": null,
+      "scoreBreakdown": {
+        "activityScore": 4.30,
+        "museScore": null,
+        "crowdScore": null,
+        "explanation": "Combined score: 70% Activity Score + 30% Crowd Score (inverted) - MuseScore not available"
+      }
+    },
+    {
+      "id": "2cbf69e0-bc5c-4d89-8dda-c75bbc6c44f7",
+      "zoneName": "WEST END AVENUE between WEST 86 STREET and WEST 87 STREET",
+      "latitude": 40.7883655,
+      "longitude": -73.9745122,
+      "combinedScore": 5.69,
+      "activityScore": 4.36,
+      "museScore": null,
+      "crowdScore": null,
+      "estimatedCrowdNumber": null,
+      "scoreBreakdown": {
+        "activityScore": 4.36,
+        "museScore": null,
+        "crowdScore": null,
+        "explanation": "Combined score: 70% Activity Score + 30% Crowd Score (inverted) - MuseScore not available"
+      }
+    },
+    {
+      "id": "a262331c-8144-4c7b-b59b-06d21690c95d",
+      "zoneName": "8 AVENUE Manhattan, New York",
+      "latitude": 40.8164207,
+      "longitude": -73.9466177,
+      "combinedScore": 9.17,
+      "activityScore": 8.88,
+      "museScore": null,
+      "crowdScore": null,
+      "estimatedCrowdNumber": null,
+      "scoreBreakdown": {
+        "activityScore": 8.88,
+        "museScore": null,
+        "crowdScore": null,
+        "explanation": "Combined score: 70% Activity Score + 30% Crowd Score (inverted) - MuseScore not available"
+      }
+    },
+    {
+      "id": "afb93f10-2dec-4acb-a048-ab5f8493903a",
+      "zoneName": "FREDERICK DOUGLASS BOULEVARD Manhattan, New York",
+      "latitude": 40.8164207,
+      "longitude": -73.9466177,
+      "combinedScore": 9.10,
+      "activityScore": 8.74,
+      "museScore": null,
+      "crowdScore": null,
+      "estimatedCrowdNumber": null,
+      "scoreBreakdown": {
+        "activityScore": 8.74,
+        "museScore": null,
+        "crowdScore": null,
+        "explanation": "Combined score: 70% Activity Score + 30% Crowd Score (inverted) - MuseScore not available"
+      }
+    }
+  ],
+  "weather": {
+    "dateTime": "2023-06-27T15:00:00",
+    "temperature": 70.00,
+    "condition": "Clear",
+    "description": "clear sky",
+    "formattedDateTime": "2023-06-27 15:00",
+    "note": "This weather data is for visualization only and does not influence location recommendations"
+  },
+  "activity": "Street photography",
+  "requestedDateTime": "2023-06-27T15:00",
+  "totalResults": 5
+}

@@ -1,0 +1,147 @@
+pipeline {
+  agent any
+
+  environment {
+    // JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
+    JAVA_HOME                     = '/opt/jdk/openjdk-21'
+    GCR_CREDS                     = 'gcr-credentials'
+    GCP_SA_KEY                    = 'gcp-sa-key'
+
+    AR_PROJECT                    = "manhattan-muse"
+    AR_REGION                     = "europe-west2"
+    AR_REPO_NAME                  = "manhattan-muse-backend"
+    PROJECT_ID                    = "${AR_PROJECT}"
+    CLUSTER_NAME                  = "cluster-1"
+    LOCATION                      = "us-west2-a"
+    SONAR_TOKEN                   = "sqp_54fb3425a4ea1d6454a9c76de8cc44028bc47ef2"
+
+    SPRING_DATASOURCE_URL                = "jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
+    SPRING_DATASOURCE_USERNAME           = "postgres.yfigmcasvrvubowgxauv"
+    SPRING_DATASOURCE_PASSWORD           = "Leinster1492!!"
+    SPRING_DATASOURCE_DRIVER_CLASS_NAME  = "org.postgresql.Driver"
+    OPENWEATHER_API_KEY                  = "0c11eb81e09f3b3fa2b68762ce31a632"
+
+    IMAGE_TAG                    = "${BRANCH_NAME}-${BUILD_ID}"
+    GCP_ACCOUNTNAME              = "your-service-account@${AR_PROJECT}.iam.gserviceaccount.com"
+  }
+
+  // triggers {
+  //   pollSCM('H/5 * * * *')
+  // }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    // stage('Unit Test') {
+    //   steps {
+    //     withMaven(maven: 'M3', jdk: 'JDK_21') {
+    //       dir('backend') {
+    //         sh '''
+    //           unset SPRING_DATASOURCE_URL
+    //           unset SPRING_DATASOURCE_USERNAME
+    //           unset SPRING_DATASOURCE_PASSWORD
+    //           unset SPRING_DATASOURCE_DRIVER_CLASS_NAME
+    //           unset OPENWEATHER_API_KEY
+    //           mvn clean verify -Dmaven.test.skip=true -Dspring.profiles.active=test -e
+
+    //         '''
+    //       }
+    //     }
+    //   }
+    // }
+
+    stage('Prepare for SonarQube') {
+      steps {
+        withMaven(maven: 'M3', jdk: 'JDK_21') {
+          dir('backend') {
+            sh 'mvn clean verify -Dmaven.test.skip=true'
+          }
+        }
+      }
+    }
+
+    stage('SonarQube Analysis') {
+      steps {
+        withMaven(maven: 'M3', jdk: 'JDK_21') {
+          dir('backend') {
+            withSonarQubeEnv('SonarQube') {
+              
+              sh '''
+                mvn sonar:sonar \
+                  -Dsonar.login=${SONAR_TOKEN} \
+                  -Dsonar.projectKey=manhattan \
+                  -Dsonar.projectName="manhattan" \
+              '''
+            }
+          }
+        }
+      }
+    }
+
+    // Uncomment below if skipping tests explicitly needed
+    /*
+    stage('Maven Build (Skip Tests)') {
+      steps {
+        withMaven(maven: 'M3', jdk: 'JDK_21') {
+          dir('backend') {
+            sh 'echo "Attempting to skip tests with multiple flags..."'
+            sh 'mvn clean install -DskipTests -Dmaven.test.skip=true'
+          }
+        }
+      }
+    }
+    */
+
+    stage('Docker Build & Push') {
+      steps {
+        script {
+          docker.withRegistry("https://${AR_REGION}-docker.pkg.dev/${AR_PROJECT}/${AR_REPO_NAME}", "${GCR_CREDS}") {
+            sh 'chmod +x backend/gcp-docker.sh'
+            sh """
+              export AR_PROJECT="${AR_PROJECT}"
+              export AR_REGION="${AR_REGION}"
+              export AR_REPO_NAME="${AR_REPO_NAME}"
+              export IMAGE_TAG="${IMAGE_TAG}"
+              backend/gcp-docker.sh
+            """
+          }
+        }
+      }
+    }
+
+    stage('Deploy to GKE') {
+      steps {
+        withCredentials([file(credentialsId: "${GCP_SA_KEY}", variable: 'KEYFILE_PATH')]) {
+          sh 'chmod +x backend/kube-deploy.sh'
+          sh """
+            export PROJECT_ID="${PROJECT_ID}"
+            export CLUSTER_NAME="${CLUSTER_NAME}"
+            export LOCATION="${LOCATION}"
+            export GCP_ACCOUNTNAME="${GCP_ACCOUNTNAME}"
+            export IMAGE_URL="${AR_REGION}-docker.pkg.dev/${AR_PROJECT}/${AR_REPO_NAME}/backend:latest"
+            backend/kube-deploy.sh "${KEYFILE_PATH}"
+          """
+        }
+      }
+    }
+
+    stage('Quality Gate') {
+      steps {
+        waitForQualityGate abortPipeline: true
+      }
+    }
+  }
+
+  post {
+    success {
+      echo " Backend deployed: ${IMAGE_TAG}"
+    }
+    failure {
+      echo " Backend pipeline failed"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+.draw03{
+    position: relative;
+    z-index: 100000;
+  stroke-dasharray: 1000;     /* Approximate total path length */
+  stroke-dashoffset: 1000;
+  animation: drawPath 8s ease forwards;
+}
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (max-width:900px) {
+.draw03{
+    display: none;
+    }
+}

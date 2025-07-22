@@ -1,11 +1,6 @@
 spring:
   application:
     name: creative-space-finder
-  web:
-    cors:
-      allowed-origins: "*"
-      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-      allowed-headers: "*"
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -13,7 +8,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
     hikari:
-      # ULTRA CONSERVATIVE for Supabase free tier - PRODUCTION READY
+      # ULTRA CONSERVATIVE for Supabase connections as it is free
       maximum-pool-size: 1           # Only 1 connection total
       minimum-idle: 0                # No idle connections ever
       connection-timeout: 10000      # 10 seconds
@@ -56,6 +51,17 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
 
+  # Session configuration for admin authentication
+  session:
+    store-type: memory
+    timeout: 24h
+
+# Admin credentials configuration - SECURE WITH ENVIRONMENT VARIABLES
+admin:
+  username: ${ADMIN_USERNAME}
+  password:
+    hash: ${ADMIN_PASSWORD_HASH}
+
 openweather:
   api-key: ${OPENWEATHER_API_KEY}
 
@@ -63,6 +69,12 @@ server:
   port: 8080
   servlet:
     context-path: /
+    session:
+      tracking-modes: cookie
+      cookie:
+        secure: false  # Set to true in production with HTTPS
+        http-only: true
+        max-age: 86400  # 24 hours
   # CRITICAL: Proper shutdown handling
   shutdown: graceful
   tomcat:
@@ -89,4 +101,10 @@ management:
     health:
       show-details: always
     shutdown:
-      enabled: true                  # Enable graceful shutdown endpoint
+      enabled: true
+      
+# >>> ADDED BLOCK FOR ML SERVICE URL <<<
+ml:
+  predict:
+    url: ${ML_PREDICT_URL:http://ml-service.default.svc.cluster.local:8000/predict_batch}
+# <<< END ADDED BLOCK >>>
