@@ -9,6 +9,12 @@ set -e
 : "${LOCATION:?LOCATION (zone) must be set}"
 : "${IMAGE_URI:?IMAGE_URI (full repo URI) must be set}"
 
+GCP_KEYFILE_PATH="$1"
+
+echo "DEBUG (in kube-deploy.sh): GCP_KEYFILE_PATH is: ${GCP_KEYFILE_PATH}"
+test -f "${GCP_KEYFILE_PATH}" && echo "DEBUG (in kube-deploy.sh): Key file exists and is a regular file." || echo "DEBUG (in kube-deploy.sh): Key file does NOT exist or is not a regular file."
+test -r "${GCP_KEYFILE_PATH}" && echo "DEBUG (in kube-deploy.sh): Key file is readable." || echo "DEBUG (in kube-deploy.sh): Key file is NOT readable."
+
 #configure kubernetes access
 echo "*** setting up kubernetes access based on service account token ***";
 
