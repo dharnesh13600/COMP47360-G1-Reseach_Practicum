@@ -16,6 +16,20 @@ import java.util.UUID;
 @Repository
 public interface LocationActivityScoreRepository extends JpaRepository<LocationActivityScore, UUID> {
 
+
+     //(added by Dharnesh for unit testing) Top 10 scores for an activity at a specific date/time, sorted by museScore desc
+        List<LocationActivityScore> findTop10ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
+                String activityName,
+                LocalDate eventDate,
+                LocalTime eventTime
+        );
+        //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
+        List<LocationActivityScore> findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc(
+                String activityName,
+                Pageable pageable
+        );
+
+
     // ——————————————————————————————————————————
     // PERFORMANCE FIX: Two-step query to avoid DISTINCT + FETCH issues
     // ——————————————————————————————————————————
