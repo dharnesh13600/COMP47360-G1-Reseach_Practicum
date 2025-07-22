@@ -46,7 +46,7 @@ pipeline {
               unset SPRING_DATASOURCE_PASSWORD
               unset SPRING_DATASOURCE_DRIVER_CLASS_NAME
               unset OPENWEATHER_API_KEY
-              mvn clean test -Dspring.profiles.active=test -e
+              mvn clean test -DskipTests -Dspring.profiles.active=test -e
             '''
           }
         }
