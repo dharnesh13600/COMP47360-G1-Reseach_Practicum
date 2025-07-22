@@ -58,7 +58,7 @@ pipeline {
       steps {
         withMaven(maven: 'M3', jdk: 'JDK_21') {
           dir('backend') {
-            sh 'mvn clean verify -DskipTests'
+            sh 'mvn clean verify -Dmaven.test.skip=true'
           }
         }
       }
