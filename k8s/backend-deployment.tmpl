@@ -1,4 +1,4 @@
-# k8s/Backend/backend-deployment.tmpl
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     app: backend
 spec:
-  replicas: 1 # Or your desired replica count
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -17,34 +17,37 @@ spec:
     spec:
       containers:
       - name: backend-container
-        image: ${IMAGE_URL} 
+        image: ${IMAGE_URL}
         ports:
-        - containerPort: 8080 # Your application's port
+        - containerPort: 8080
         env:
         # --- Database Configuration (from your-database-secret) ---
         - name: SPRING_DATASOURCE_URL
           valueFrom:
             secretKeyRef:
-              name: your-database-secret # Secret name
-              key: SPRING_DATASOURCE_URL 
+              name: your-database-secret
+              key: SPRING_DATASOURCE_URL
         - name: SPRING_DATASOURCE_USERNAME
           valueFrom:
             secretKeyRef:
               name: your-database-secret
-              key: SPRING_DATASOURCE_USERNAME # Key within that secret
+              key: SPRING_DATASOURCE_USERNAME
         - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
             secretKeyRef:
               name: your-database-secret
-              key: SPRING_DATASOURCE_PASSWORD 
-        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME 
+              key: SPRING_DATASOURCE_PASSWORD
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
           value: "org.postgresql.Driver"
 
-        # --- OpenWeather API Key (from openweather-api-key-secret) ---
-        # Assuming your OpenWeather secret is named 'openweather-api-key-secret'
-        # and contains a key 'OPENWEATHER_API_KEY' as per previous instructions.
+        # --- OpenWeather API Key ---
         - name: OPENWEATHER_API_KEY
           valueFrom:
             secretKeyRef:
-              name: openweather-api-key-secret # Ensure this is the correct secret name
-              key: OPENWEATHER_API_KEY # Ensure this is the correct key within that secret
+              name: openweather-api-key-secret
+              key: OPENWEATHER_API_KEY
+
+        # === HARD-CODED ML URL (added) ===
+        - name: ML_PREDICT_URL
+          value: "http://34.94.101.102:8080/predict_batch"
+        # ================================
