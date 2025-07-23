@@ -56,8 +56,8 @@
     width: 50px;
     position: absolute;
     padding: 5px;
-    bottom: -1 !important;
-    right: -25 !important;
+    bottom: -1px !important;
+    right: -25px !important;
 }
 .comparison-panel.collapsed .panel-header{
     width: 130px;
