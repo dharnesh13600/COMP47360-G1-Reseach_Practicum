@@ -1,6 +1,7 @@
 package com.creativespacefinder.manhattan.repository;
 
 import org.springframework.test.context.ActiveProfiles;   // added
+import org.springframework.test.context.TestPropertySource;
 
 import com.creativespacefinder.manhattan.entity.Activity;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
+@TestPropertySource("classpath:application-test.yaml")
 @DataJpaTest
 class ActivityRepositoryTest {
 

@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles; //added by dharnesh for hibernate to create schema at test startup
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@ActiveProfiles("test")
 
 class LocationActivityScoreRepositoryTest {
 
@@ -102,10 +105,12 @@ class LocationActivityScoreRepositoryTest {
     }
 
     @Test
-    void findTopByActivityNameIgnoreDateTime() {
-        Pageable pageable = PageRequest.of(0, 5);
-        List<LocationActivityScore> results = locationActivityScoreRepository
-                .findTopByActivityNameIgnoreDateTime(hikingActivity.getName(), pageable);
+       void findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc() {
+            Pageable pageable = PageRequest.of(0, 5);
+            List<LocationActivityScore> results = locationActivityScoreRepository
+                    .findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc(
+                            hikingActivity.getName(), pageable
+                    );
 
         assertNotNull(results);
         // This assertion will fail until you fix the repository query
