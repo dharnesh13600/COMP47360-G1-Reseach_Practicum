@@ -61,8 +61,8 @@
 }
 .comparison-panel.collapsed .panel-header{
     width: 130px;
-    bottom: -1;
-    right: -25;
+    bottom: -1px;
+    right: -25px;
 }
 .collapse-toggle-button{
    background-color: #4B8382;
@@ -137,15 +137,15 @@
     border: none;
     padding:0;
     position: absolute;
-    right: 10;
-    top:3;
+    right: 10px;
+    top:3px;
     cursor: pointer;
 }
 .comparison-count{
     position: absolute;
     display: block;
-    bottom:4;
-    left: 20;
+    bottom:4px;
+    left: 20px;
     font-size: 11px;
     font-family: var(--ff-overpass);
     font-weight: bold;

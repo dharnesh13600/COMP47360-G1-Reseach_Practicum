@@ -240,7 +240,7 @@ useEffect(() => {
  
     map.flyTo({
       center: [selectedLocation.longitude, selectedLocation.latitude],
-      zoom: 18,
+      zoom: 14,
       pitch: 60,
       bearing: 0,
       duration: 3000,
@@ -419,7 +419,7 @@ const addToComparison = (loc) => {
   }
         mapRef.current.easeTo({
           center: [loc.longitude, loc.latitude],
-          zoom: 18,          
+          zoom: 16,          
           pitch: 60,        
           bearing: currentBearing + 360,
           duration: 3000,   
