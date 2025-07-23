@@ -359,6 +359,7 @@ const showCollapsed = isSmall || isLarge;
           className={styles.sidebarContainer}
           >
 
+              <div className={styles.dropdownTopMob}>
                 <div
                 className={styles.activityWrapper}
                 > 
@@ -398,11 +399,187 @@ const showCollapsed = isSmall || isLarge;
                           }
                         </>
     )}/>
+              </div>
+                               <div className={styles.readableTimeContainer}>
+                        <div
+                className={styles.dateWrapper}
+                >
+                    
+                    
+                     
+                    
+                     
+                      <DropdownDate buttonText={ <span className={`${styles.buttonTextWrapper} ${selectedDate ? styles.selectedItem : ''} ${styles.otherContent}}`}>{selectedDate ? (isToday(selectedDate) ? 'Today' : selectedDate) : 'Date'}
+                      {selectedDate && (
+                        <AiOutlineClose
+                          size={16}
+                          onClick={(e)=>{
+                            e.stopPropagation();
+                            setSelectedDate(null);
+                            setSubmitted(false);
+                            setWeather(null);
+                          }}
+                          className={`${styles.clearIcon} `}
+                          />
+                      )}
+                      </span>}
+                      selectedDate={selectedDate}
+                      content={(close)=>(<>
+                        {dates.map(date=>(
+                          
+ 
+<DateItem key={date} onClick={()=>{setSelectedDate(date);requestAnimationFrame(close); setSubmitted(false);}} className={date === selectedDate ? styles.selectedItem : ''}>
+                            {isToday(date) ? 'Today' : date}
+                            </DateItem>
+
+                          
+                        )
+
+                        )}
+                        </>)} />
+           
+                   
+                    
+                    </div>
+                 
+                 <div  className={styles.timeWrapper}>
+                             <DropdownTime buttonText={<span className={`${styles.buttonTextWrapper} ${selectedTime ? styles.selectedItem : ''}`}>{selectedTime || "Time"}{selectedTime && (
+                        <AiOutlineClose
+                          size={16}
+                          onClick={(e)=>{
+                            e.stopPropagation();
+                            setSelectedTime(null);
+                            setSubmitted(false);
+                            setWeather(null);
+                          }}
+                          className={styles.clearIcon}
+                          />
+                      )}</span>} 
+                      selectedTime={selectedTime}
+                      content={(close)=>(<>
+              {times.length === 0 && <div className={styles.dateEmptyText}>Select date</div>}
+              {times.map(time=>(
+                <TimeItem key={time} onClick={()=>{setSelectedTime(time);setSubmitted(false);close();}}>
+                  {time}
+                </TimeItem>
+              ))}
+              </>)} /> 
+                </div>
+                    
+
+                </div>
+                <button className={styles.subButtonMob} onClick={handleSubmit}>
+   <FaCheck />
+</button>
+                <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
+            
+                
+          {isLarge && (
+<div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
+    {weather && (
+      <>
+     
+    <img
+      src={icon}
+      alt={weather.condition}
+      width={32}
+      height={32}
+      style={{ marginRight: '8px' }}
+    />
+    <span>{temp}°F</span>
+     </>
+    )}
+  </div>
+    )}  
                    
                     
                
                 </div>
-                <div className={styles.readableTimeContainer}>
+                  <div className={styles.locationBottomSection}>
+                          <div className={styles.locationHeader}>
+                    <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
+                      <p className={styles.recommendation}>Recommended</p>
+                      <p className={styles.area}>Area</p>
+                    </div>
+                      
+                     <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
+                     {!showLocations && (
+                        <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+                     )} 
+                     {showLocations && (
+                   
+ <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" fill="#52767E" strokeLinejoin="round"/>
+</svg>
+
+                     )}
+                      </button> 
+<span className={`${styles.manualSelection} ${showLocations ? styles.inactive  :styles.active}`}>Select Area</span>
+                  </div>
+                {!submitted && showLocations && (
+                     <div className={styles.noRecommendations}>
+  Please submit your choices to view the recommended areas
+</div>
+                )}
+                 {submitted && showLocations && (
+                   <div className={styles.locationListContainer}>
+  {visibleLocations.map((location,index) => (
+    <div key={location.id} className={`${styles.locationItem} ${
+      visibleIndexes.includes(index) ? styles.show : ''
+    }`} onClick={()=>onLocationSelect(location)}>
+      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>
+   {cleanAndTruncate(location.zoneName, 3)}
+ </span>
+       
+      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
+    </div>
+  ))}
+  {
+   locations.length>5 && (isSmall || isLarge) &&(
+      <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
+        {showAllLocations ?  
+         (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg>)
+         :
+
+(<span><svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.9" d="M3 2.93237L13.1739 10.0677L22.5 2.93237" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+</svg></span>)
+}
+      </button>
+    )
+  }
+
+</div>
+
+ 
+                 )} 
+                 {!showLocations && (
+                  <div className={styles.suggestedLocations}>
+                      <span>Select Area</span>
+                       <div className={styles.suggestedItems}>
+                        
+     
+  
+                        {manhattanNeighborhoods.map(area=>(
+                 <div key={area} className={styles.suggestedAreas} onClick={()=>{handleZoneClick(area)}}>
+        {area}
+      </div>
+              ))}
+                       
+                       </div>
+                        
+             
+                    </div>
+                 )}
+                  
+                </div>
+                {/* <div className={styles.readableTimeContainer}>
                         <div
                 className={styles.dateWrapper}
                 >
@@ -472,11 +649,11 @@ const showCollapsed = isSmall || isLarge;
               ))}
               </>)} /> 
                 </div>
-                </div>
+                </div> */}
                 
-                <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
+                {/* <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button> */}
                  
-  <div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
+  {/* <div className={`${styles.weatherDisplay} ${submitted && weather ? styles.show : ''}`}>
     {weather && (
       <>
      
@@ -490,92 +667,11 @@ const showCollapsed = isSmall || isLarge;
     <span>{temp}°F</span>
      </>
     )}
-  </div>
+  </div> */}
 
                 
                   
-                    <div className={styles.locationHeader}>
-                    <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
-                      <p className={styles.recommendation}>Recommended</p>
-                      <p className={styles.area}>Area</p>
-                    </div>
-                      
-                     <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
-                     {!showLocations && (
-                        <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
-                     )} 
-                     {showLocations && (
-                   
- <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" fill="#52767E" strokeLinejoin="round"/>
-</svg>
-
-                     )}
-                      </button> 
-<span className={`${styles.manualSelection} ${showLocations ? styles.inactive  :styles.active}`}>Select Area</span>
-                  </div>
-                {!submitted && showLocations && (
-                     <div className={styles.noRecommendations}>
-  Please submit your choices to view the recommended areas
-</div>
-                )}
-                 {submitted && showLocations && (
-                   <div className={styles.locationListContainer}>
-  {visibleLocations.map((location,index) => (
-    <div key={location.id} className={`${styles.locationItem} ${
-      visibleIndexes.includes(index) ? styles.show : ''
-    }`} onClick={()=>onLocationSelect(location)}>
-      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>
-   {cleanAndTruncate(location.zoneName, 3)}
- </span>
-       
-      <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
-    </div>
-  ))}
-  {
-    locations.length>5 && (
-      <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
-        {showAllLocations ?  
-         (<svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
-</svg>)
-         :
-
-(<span><svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path opacity="0.9" d="M3 2.93237L13.1739 10.0677L22.5 2.93237" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
-</svg></span>)
-}
-      </button>
-    )
-  }
-
-</div>
-
- 
-                 )} 
-                 {!showLocations && (
-                  <div className={styles.suggestedLocations}>
-                      <span>Select Area</span>
-                       <div className={styles.suggestedItems}>
-                        
-     
-  
-                        {manhattanNeighborhoods.map(area=>(
-                 <div key={area} className={styles.suggestedAreas} onClick={()=>{handleZoneClick(area)}}>
-        {area}
-      </div>
-              ))}
-                       
-                       </div>
-                        
-             
-                    </div>
-                 )}
-                  
+              
                     
           </div>
     </>
