@@ -232,7 +232,7 @@ const [clearMarkers, setClearMarkers] = useState(false);
   // Sidebar visible list
   const visibleLocations = !showAllLocations
     ? submittedLocations.slice(0, 5)
-    : submittedLocations;
+    : submittedLocations.slice(0,7);
 
   // Handle activity/date/time submission
   const handleSubmit = (locations) => {

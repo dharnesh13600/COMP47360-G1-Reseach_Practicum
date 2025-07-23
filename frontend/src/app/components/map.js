@@ -120,7 +120,7 @@ useEffect(() => {
 
 
 const viewConfigs = [
-  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:10,bearing:30},
+  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:10,bearing:20},
   { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
   { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 10, bearing: -10 },
 ];

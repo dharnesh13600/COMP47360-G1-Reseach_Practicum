@@ -4,6 +4,7 @@ import styles from '../styles/sidebar.module.css';
 import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
+import { FaCheck } from 'react-icons/fa';
 
 // importing dropdown components
 import Dropdown from './dropdowns/actDropdown';
@@ -351,10 +352,27 @@ const isMedium = width >= 629 && width < 900;
 const isLarge = width >= 900;
 
 const showCollapsed = isSmall || isLarge;
-
-
+useEffect(() => {
+    setShowLocations(!isSmall);
+  }, [isSmall, setShowLocations]);
+const maxItems = showAllLocations ? visibleLocations.length : 7;
     return(
           <>
+          <div className={`${styles.weatherDisplay} ${styles.weatherSmall} ${submitted && weather ? styles.show : ''}`}>
+    {weather && (
+      <>
+     
+    <img
+      src={icon}
+      alt={weather.condition}
+      width={32}
+      height={32}
+      style={{ marginRight: '8px' }}
+    />
+    <span>{temp}°F</span>
+     </>
+    )}
+  </div>
           <div 
           className={styles.sidebarContainer}
           >
@@ -495,6 +513,8 @@ const showCollapsed = isSmall || isLarge;
                     
                
                 </div>
+               
+            
                   <div className={styles.locationBottomSection}>
                           <div className={styles.locationHeader}>
                     <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
@@ -520,14 +540,14 @@ const showCollapsed = isSmall || isLarge;
                       </button> 
 <span className={`${styles.manualSelection} ${showLocations ? styles.inactive  :styles.active}`}>Select Area</span>
                   </div>
-                {!submitted && showLocations && (
+                {  !submitted && showLocations && (
                      <div className={styles.noRecommendations}>
   Please submit your choices to view the recommended areas
 </div>
                 )}
                  {submitted && showLocations && (
-                   <div className={styles.locationListContainer}>
-  {visibleLocations.map((location,index) => (
+                   <div className={`${styles.locationListContainer}`}>
+  {visibleLocations.slice(0, maxItems).map((location,index) => (
     <div key={location.id} className={`${styles.locationItem} ${
       visibleIndexes.includes(index) ? styles.show : ''
     }`} onClick={()=>onLocationSelect(location)}>
@@ -562,7 +582,7 @@ const showCollapsed = isSmall || isLarge;
                  {!showLocations && (
                   <div className={styles.suggestedLocations}>
                       <span>Select Area</span>
-                       <div className={styles.suggestedItems}>
+                       <div className={`${styles.suggestedItems}${isSmall && showAllLocations ? styles.compact : ''}`}>
                         
      
   
