@@ -10,11 +10,11 @@ export const metadata = {
   icons: {
     icon: [
       {
-        url: '/icon.png',
+        url: '/favicon.ico',
         sizes: 'any',
       }
     ],
-    shortcut: '/icon.png',
+    shortcut: '/favicon.ico',
   },
 };
 export default function RootLayout({ children }) {
