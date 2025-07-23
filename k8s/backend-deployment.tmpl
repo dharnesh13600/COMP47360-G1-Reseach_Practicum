@@ -47,6 +47,18 @@ spec:
               name: openweather-api-key-secret
               key: OPENWEATHER_API_KEY
 
+        # --- Admin credentials (new) ---
+        - name: ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: admin-credentials
+              key: ADMIN_USERNAME
+        - name: ADMIN_PASSWORD_HASH
+          valueFrom:
+            secretKeyRef:
+              name: admin-credentials
+              key: ADMIN_PASSWORD_HASH
+
         # === HARD-CODED ML URL (added) ===
         - name: ML_PREDICT_URL
           value: "http://34.94.101.102:8080/predict_batch"
