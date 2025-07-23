@@ -123,9 +123,9 @@ export default function Header(){
                             <div className="menuOverlay">
                                 <nav>
                                     <ul>
-                                        <li className='nav-home'><a href="/">Home</a></li>
-                                        <li className='nav-map'><a href="/map">Map</a></li>
-                                        <li className='nav-about'><a href="/about">About</a></li>
+                                        <li className='nav-home'><Link href="/">Home</Link></li>
+                                        <li className='nav-map'><Link href="/map">Map</Link></li> 
+                                        <li className='nav-about'><Link href="/about">About</Link></li>
                                     </ul>
                                 </nav>
                             </div>
