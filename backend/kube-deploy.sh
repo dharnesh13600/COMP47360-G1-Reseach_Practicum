@@ -27,13 +27,14 @@ envsubst < "k8s/backend-deployment.tmpl" > "./output/backend-deployment.yaml"
 
 # Assuming you also want to name the service file consistently:
 env IMAGE_URL="${IMAGE_URL}" \
+
 envsubst < "k8s/backend-service.tmpl" > "./output/backend-service.yaml"
+envsubst < k8s/ingress.tmpl > k8s/ingress.yaml;
 
 # Assuming ingress.tmpl is also directly under k8s/ and the output name is ingress.yaml
 # If ingress.tmpl is not present in your k8s folder as per the screenshot, you might remove this line
 # env IMAGE_URL="${IMAGE_URL}" \
 # envsubst < "k8s/ingress.tmpl" > "./output/ingress.yaml"
-
 
 echo "*** Deploying Docker container and setting up the service and ingress ***"
 # Note: --validate=false and --insecure-skip-tls-verify=true are not recommended for production
@@ -41,6 +42,7 @@ echo "*** Deploying Docker container and setting up the service and ingress ***"
 # kubectl apply -f "./output/backend-service.yaml" --validate=false --insecure-skip-tls-verify=true
 kubectl apply -f "./output/backend-deployment.yaml"
 kubectl apply -f "./output/backend-service.yaml"
+kubectl apply -f "./output/ingress.yaml"
 
 # kubectl apply -f "./output/ingress.yaml" --validate=false --insecure-skip-tls-verify=true
 
