@@ -455,7 +455,7 @@ if (compareBtn) {
   compareBtn.addEventListener('click', () => {
     addToComparison({
       id: loc.id || index,
-      locName: loc.name || `location name`,
+      locName: (loc.zoneName || `location name`).split(' ').slice(0, 3).join(' '),
       selectedLat: loc.latitude,
       selectedLong: loc.longitude,
       museScore: loc.museScore,
@@ -486,7 +486,7 @@ if (compareBtn) {
   markersRef.current = [];
 
   const zone=item;
-
+ zoneLocations.forEach((zone, index) => {
     const el = document.createElement('img');
     el.src           = iconMap[zone.crowdLevel] || iconMap.default;
     el.style.width   = '30px';
@@ -607,7 +607,7 @@ if (compareBtn) {
   compareBtn.addEventListener('click', () => {
     addToComparison({
       id: zone.id || index,
-      locName: zone.name || `zone name`,
+      locName: (zone.zoneName || `zone name`).split(' ').slice(0, 3).join(' '),
       selectedLat: zone.latitude,
       selectedLong: zone.longitude,
       museScore: zone.museScore,
@@ -615,6 +615,7 @@ if (compareBtn) {
       crowdStatus: zone.crowdLevel
     });
   });
+
 }
       
 
@@ -628,20 +629,18 @@ if (compareBtn) {
   
 
     
- 
+    });
 
 
-   
+  }
 
-  };
   });
-    
+
 
   return () => {
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
   };
-
   }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations]);
 
 
