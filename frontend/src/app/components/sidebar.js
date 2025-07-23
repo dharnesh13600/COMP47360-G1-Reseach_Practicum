@@ -1,3 +1,6 @@
+
+
+
 'use client';
 import { useEffect, useRef, useState } from "react";
 import styles from '../styles/sidebar.module.css';
@@ -16,10 +19,8 @@ import DateItem from "@/helper/dateItem.js";
 import DropdownTime from "./dropdowns/timeDropdown";
 import TimeItem from "@/helper/timeItem";
 
-import { fetchActivities } from "../api/fetchActivities/route";
-import { fetchZones } from "../api/zones/route";
-import { fetchDateTimes } from "../api/fetchDateTimes/route";
-import { fetchWeather } from "../api/weather/route";
+
+
 import { useWeather } from "./useWeather";
 
 export default function SideBar({ 
@@ -120,29 +121,45 @@ function cleanAndTruncate(str, n = 3) {
     : words.slice(0, n).join(' ');
 }
 
-// API fetch effects
-useEffect(()=>{
-  async function getActivities(){
-    const data=await fetchActivities();
+async function fetchActivities() {
+  const res = await fetch('/api/fetchActivities');
+  if (!res.ok) throw new Error('Failed to fetch activities');
+  return res.json();
+}
+
+useEffect(() => {
+  async function getActivities() {
+    const data = await fetchActivities();
     setActivities(data);
   }
   getActivities();
-},[]);
+}, []);
 
+async function fetchZones() {
+  const res = await fetch('/api/zones');
+  if (!res.ok) throw new Error('Failed to fetch zones');
+  return res.json();
+}
 useEffect(() => {
-  if (zonesLoaded) return; 
-  
+  if (zonesLoaded) return;
+
   async function getZones() {
     try {
       const data = await fetchZones();
       setManhattan(data);
-      setZonesLoaded(true); 
-    } catch (error) {
-      console.error('Error fetching zones:', error);
+      setZonesLoaded(true);
+    } catch (err) {
+      console.error('Error fetching zones:', err);
     }
   }
+
   getZones();
 }, [zonesLoaded]);
+async function fetchDateTimes() {
+  const res = await fetch('/api/fetchDateTimes');
+  if (!res.ok) throw new Error('Failed to fetch date-times');
+  return res.json();
+}
 
 useEffect(()=>{
   async function getDate(){
@@ -199,6 +216,18 @@ useEffect(()=>{
   matchTime();
 },[selectedDate]);
 
+
+async function fetchWeather(date, time) {
+  const res = await fetch('/api/fetchWeather', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selectedDate: date, selectedTime: time })
+  });
+
+  if (!res.ok) throw new Error('Failed to fetch weather');
+
+  return res.json();
+}
 // retrieve weather info by passing selected date and selected time to getWeather
 useEffect(()=>{
   if (!submitted || !selectedDate || !selectedTime){
@@ -217,17 +246,14 @@ useEffect(()=>{
   getWeather();
 },[submitted,selectedDate,selectedTime]);
 
+
+
+
 const {icon,temp}=useWeather(weather || {});
-
-
-useEffect(() => {
-  // Pass selectedTime to parent whenever it changes
-  onSelectedTimeChange(selectedTime);
-}, [selectedTime, onSelectedTimeChange]);
 
 // setting the payload for post request to backend
 async function handleSubmit(){
-  if(!activityChoice || !selectedDate || !selectedTime){
+  if(!activityChoice.name || !selectedDate || !selectedTime){
     alert("Please select activity, date and time");
     return;
   }
@@ -237,14 +263,14 @@ async function handleSubmit(){
     const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
 
     const payload={
-      activity:activityChoice,
+      activity:activityChoice.name,
       dateTime:readableTimeJson,
     };
 
     const res = await fetch('/api/fetchLocations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ activity: activityChoice, dateTime: readableTimeJson }),
+      body: JSON.stringify({ activity: activityChoice.name, dateTime: readableTimeJson }),
     });
     
     if (!res.ok) {
@@ -282,7 +308,7 @@ async function handleZoneClick(area){
     console.log(activityChoice);
 
     const payload={
-      activity:activityChoice,
+      activity:activityChoice.name,
       dateTime:readableTimeJson,
       selectedZone:area,
     }
@@ -355,7 +381,7 @@ const ActivityDropdown = ({ className = "" }) => (
       ref={dropRef} 
       buttonText={
         <span className={`${styles.buttonTextWrapper} ${activityChoice ? styles.selectedItem : ''}`}>
-          {activityChoice || 'Select Activity'}
+          {activityChoice?.name || 'Select Activity'}
           {activityChoice && (
             <AiOutlineClose
               size={16}
@@ -372,15 +398,20 @@ const ActivityDropdown = ({ className = "" }) => (
       activityChoice={activityChoice}
       content={(close)=>(   
         <>
-          {activities.map((activity) => (
-            <DropdownItem 
-              key={activity}
-              onClick={()=>{setChoice(activity); setSubmitted(false); close();}} 
-              className={activity === activityChoice ? styles.selectedItem : ''}
-            >
-              {activity}
-            </DropdownItem> 
-          ))}
+          
+          {activities.map(activity => (
+  <DropdownItem
+    key={activity.id}
+    onClick={() => {
+      setChoice(activity); 
+      setSubmitted(false); 
+      close();
+    }}
+    className={activityChoice?.id === activity.id ? styles.selectedItem : ''}
+  >
+    {activity.name}
+  </DropdownItem>
+))}
         </>
       )}
     />
@@ -514,7 +545,7 @@ const ZoneSelection = () => (
   <div className={styles.suggestedLocations}>
     <span>Select Area</span>
     <div className={`${styles.suggestedItems}${isSmall && showAllLocations ? styles.compact : ''}`}>
-      {manhattanNeighborhoods.map(area => {
+      {/* {manhattanNeighborhoods.map(area => {
         console.log("Rendering area:", area);
         return (
           <div
@@ -527,7 +558,22 @@ const ZoneSelection = () => (
             {area}
           </div>
         );
-      })}
+      })} */}
+     {manhattanNeighborhoods.map(area => {
+  console.log(typeof area, area); // <-- 👈 ADD THIS LINE HERE
+
+  return (
+    <div
+      key={area}
+      className={styles.suggestedAreas}
+      onClick={() => {
+        handleZoneClick(area);
+      }}
+    >
+      {area}
+    </div>
+  );
+})}
     </div>
   </div>
 );
@@ -663,7 +709,7 @@ return (
           {!showLocations && <ZoneSelection />}
         </div>
       </div>
-    )}
-  </>
+    )}
+  </>
 );
 }
