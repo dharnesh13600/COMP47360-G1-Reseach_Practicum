@@ -26,7 +26,6 @@ export default function ComparisonStack({ stack, clearStack, removeItem }) {
                     </div>
                 ))}
                 <button onClick={clearStack} className="clear-button">Clear All</button>
-                                                {/* Header with count */}
             <div className="comparison-count">
                 {stack.length}/3
             </div>

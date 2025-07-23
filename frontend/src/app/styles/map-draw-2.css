@@ -30,7 +30,7 @@ stroke-dasharray: 500;     /* Approximate total path length */
   }
 }
 
-@media (max-width:1050px){
+@media (max-width:1128px){
 .draw-map02{
     display: none;
 }

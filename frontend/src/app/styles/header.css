@@ -27,7 +27,9 @@ body{
   display:none;
   margin-bottom: 25px;
 }
-
+.navigation-item-container{
+  display:none;
+}
   .navigation-item{
 
     font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
@@ -357,15 +359,13 @@ body{
 }
 
 
-
 /* Header responsiveness */
 @media(min-width:700px){
-     .logo-div-mobile{
+ 
+  .logo-div-mobile{
   display:none;
 }
-.logo-div-map{
-  display:none;
-}
+
  .menuIcon{
   display:none;
 }
@@ -433,6 +433,7 @@ body{
 }
  
  .navigation-item-container{
+  display:block;
   padding-inline: 5rem;
 }
  .navigation-list{
@@ -463,3 +464,4 @@ body{
 
 
 }
+

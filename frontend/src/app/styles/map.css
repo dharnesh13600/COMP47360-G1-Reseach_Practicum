@@ -73,6 +73,7 @@
 
 
   .navigation-item-map{
+    display: none;
     font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
   }
 
@@ -95,11 +96,6 @@
 .menuIcon.open .bottom {
     transform: rotate(-45deg) translate(2px, -6px);
 }
-
-@media (max-width:425px) {
-  
-
- 
 .logo-div-map{
  display:none;
 }
@@ -109,7 +105,11 @@
  .navigation-container-map,.logo-div-desktop,.logo{
   display:none;
 } 
+.logoMap{
+  display:none;
 }
+ 
+
 @media (min-width:700px){
 
    .navigation-wrapper-map {
@@ -379,10 +379,18 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
   z-index: 5000;
 }
 
-
 }
 
 @media(min-width:900px){
+   .logoMobile{
+  display: none;
+}
+.logo-div-map,.logoMap{
+ display:block;
+}
+.menuIcon{
+ display: none;
+}
   
 .logoHidden {
   display: none;
@@ -390,17 +398,9 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 .logo-div-mobile{
   display:none;
 }
-.logo-div-map{
-  display:none;
-}
- .menuIcon{
-  display:none;
-}
-.logo-div-desktop,.logo{
-  display:block;
-}
 
  .navigation-container-map{
+  display:block;
   padding-inline: 5rem;
 }
  .navigation-list-map{
@@ -410,10 +410,12 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
   color:var(--on-surface-1);
   font-weight: 700;
   font-family: var(--ff-inter);
-  margin-top: 5px;
-} .menuIcon{
-  display:none;
-}
+  margin-top: 3px;
+} 
+  .navigation-item-map{
+    display: inline-block;
+      font-size: clamp(1rem, 1vw + 0.2rem, 0.2rem);
+  }
 .logo{
   height:auto;
   width:270px;
@@ -494,19 +496,26 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 }
 
  .navigation-container-map{
+  display: block;
   padding-inline: 3rem;
 }
  .navigation-list-map{
   display: flex;
   gap:3rem !important;
-  margin-top: 5px;
+   margin-top: -15px;
   font-size: 17px;
 }
 }
 
 
   
-
+@media (min-width:1100px){
+   .logo-div-map{
+    top: 30px;
+    left:5px;
+    min-width: 210px;
+  }
+}
 
 
 
@@ -560,10 +569,21 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
  .navigation-list-map{
   display: flex;
   gap:3rem !important;
-  margin-top: 5px;
+  margin-top: -15px;
   font-size: 15px;
 }
+.navigation-item-map{
+  margin-top: 5px;
 }
+.navigation-list-map>.nav-home,
+.navigation-list-map>.nav-about,
+.navigation-list-map>.nav-map
+{
+  margin-top:-2px !important;
+}
+}
+
+
 
 
 

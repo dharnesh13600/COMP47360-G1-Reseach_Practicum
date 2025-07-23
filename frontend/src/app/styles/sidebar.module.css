@@ -28,6 +28,11 @@ justify-content: center;
     
       
 }
+.locationListContainer.compact {
+  max-height: 120px;      /* or however tall you want the collapsed list */
+  overflow-y: auto;
+}
+
 .weatherLarge {
     display: none;
   }
@@ -277,7 +282,7 @@ animation: fadeSlideIn 0.4s forwards ease;
     background: var(--background, #fff);
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
     padding: 0.5rem 0.2rem;
-   
+ 
     display: flex;
 flex-direction: column;
 align-items: center;
@@ -460,8 +465,8 @@ max-width:430px;
   display: block;
 align-items: center;
 justify-content: center;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.8rem;
   transition: color 0.3s ease, transform 0.1s ease;
 }
 
