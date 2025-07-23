@@ -5,7 +5,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.global-static-ip-name: "manhattan-ingress-ip"
-    kubernetes.io/ingress.allow-http: "true"
+    networking.gke.io/managed-certificates: "manhattan-cert"
+    kubernetes.io/ingress.allow-http: "true"   # or "false" later
 spec:
   rules:
   - host: manhattanmuse.art
@@ -18,6 +19,13 @@ spec:
             name: frontend-svc
             port:
               number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-svc
+            port:
+              number: 8080
   - host: www.manhattanmuse.art
     http:
       paths:
@@ -28,3 +36,10 @@ spec:
             name: frontend-svc
             port:
               number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-svc
+            port:
+              number: 8080
