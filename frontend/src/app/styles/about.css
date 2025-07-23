@@ -35,7 +35,7 @@ body {
     flex-direction: column;
     justify-content: center;
     gap: 7vw;
-    font-family: var(--ff-inter);
+    font-family: var(--ff-overpass);
     font-size: 13px;
     color: var(--subway-bg);
 }
@@ -57,7 +57,7 @@ body {
 }
 .about-text{
     padding-right: 20%;
-    font-family: var(--ff-inter);
+    font-family: var(--ff-overpass);
     font-size: 15px;
     font-weight: 400;
     line-height: 25px;

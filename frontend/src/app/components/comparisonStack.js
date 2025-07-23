@@ -8,7 +8,9 @@ export default function ComparisonStack({ stack, clearStack, removeItem }) {
     if (!stack.length) return null;
 
     return (
-        <div className={`comparison-panel ${isCollapsed ? 'collapsed' : ''}`}>
+        <>
+        <div className={`comparison-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className={`comparison-panel ${isCollapsed ? 'collapsed' : ''}`}>
 
             <div className={`comparison-items ${isCollapsed ? 'collapsed' : ''}`}>
                 {stack.map(item => (
@@ -39,5 +41,9 @@ export default function ComparisonStack({ stack, clearStack, removeItem }) {
                 </button>
             </div>
         </div>
+        </div>
+        
+        </>
+        
     );
 }
