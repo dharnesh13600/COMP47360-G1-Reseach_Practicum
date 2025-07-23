@@ -20,7 +20,11 @@
 .mapboxgl-canvas {
   pointer-events: all !important;
 }
-
+.mapboxgl-ctrl-top-right {
+  top: 20px;
+  right: 10px;
+  z-index: 2;
+}
 .reset-button {
     position: absolute;
     bottom: 50px;
@@ -579,11 +583,6 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 .navigation-list-map>.nav-about,
 .navigation-list-map>.nav-map
 {
-  margin-top:-2px !important;
+  margin-top:-2px !important;
 }
 }
-
-
-
-
-
