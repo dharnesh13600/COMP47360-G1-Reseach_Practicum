@@ -37,6 +37,7 @@ export default function SideBar({
   clearMarkers,
   setClearMarkers
 }){
+  console.log('SideBar component mounted/re-rendered');
 
 // useStates for retrieving from api endpoints
 const [activities, setActivities] = useState([]);
@@ -65,6 +66,8 @@ const [submitted, setSubmitted] = useState(false);
 const [showMore,setShowMore]=useState(false);
 const [visibleIndexes, setVisibleIndexes] = useState([]);
 const [zone, setZone]=useState(null);
+const [zonesLoaded, setZonesLoaded] = useState(false);
+
 
 // Screen size detection
 const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 900);
@@ -126,13 +129,20 @@ useEffect(()=>{
   getActivities();
 },[]);
 
-useEffect(()=>{
-  async function getZones(){
-    const data=await fetchZones();
-    setManhattan(data);
+useEffect(() => {
+  if (zonesLoaded) return; 
+  
+  async function getZones() {
+    try {
+      const data = await fetchZones();
+      setManhattan(data);
+      setZonesLoaded(true); 
+    } catch (error) {
+      console.error('Error fetching zones:', error);
+    }
   }
   getZones();
-},[]);
+}, [zonesLoaded]);
 
 useEffect(()=>{
   async function getDate(){
@@ -208,6 +218,11 @@ useEffect(()=>{
 },[submitted,selectedDate,selectedTime]);
 
 const {icon,temp}=useWeather(weather || {});
+
+useEffect(() => {
+  // Pass selectedTime to parent whenever it changes
+  onSelectedTimeChange(selectedTime);
+}, [selectedTime, onSelectedTimeChange]);
 
 // setting the payload for post request to backend
 async function handleSubmit(){
@@ -489,14 +504,24 @@ const ZoneSelection = () => (
   <div className={styles.suggestedLocations}>
     <span>Select Area</span>
     <div className={`${styles.suggestedItems}${isSmall && showAllLocations ? styles.compact : ''}`}>
-      {manhattanNeighborhoods.map(area=>(
-        <div key={area} className={styles.suggestedAreas} onClick={()=>{handleZoneClick(area)}}>
-          {area}
-        </div>
-      ))}
+      {manhattanNeighborhoods.map(area => {
+        console.log("Rendering area:", area);
+        return (
+          <div
+            key={area}
+            className={styles.suggestedAreas}
+            onClick={() => {
+              handleZoneClick(area);
+            }}
+          >
+            {area}
+          </div>
+        );
+      })}
     </div>
   </div>
 );
+
 
 return (
   <>

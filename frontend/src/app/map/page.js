@@ -210,7 +210,7 @@
 
 
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import '../styles/map-draw-1.css';
 import '../styles/map-draw-2.css';
@@ -229,10 +229,13 @@ export default function MapPage() {
   // Toggle which set of markers to show
   const [showLocations, setShowLocations] = useState(true);
 const [clearMarkers, setClearMarkers] = useState(false);
+const [selectedTime, setSelectedTime] = useState(null);
   // Sidebar visible list
-  const visibleLocations = !showAllLocations
+const visibleLocations = useMemo(() => {
+  return !showAllLocations
     ? submittedLocations.slice(0, 5)
-    : submittedLocations.slice(0,7);
+    : submittedLocations.slice(0, 7);
+}, [showAllLocations, submittedLocations]);
 
   // Handle activity/date/time submission
   const handleSubmit = (locations) => {
@@ -265,8 +268,8 @@ const [clearMarkers, setClearMarkers] = useState(false);
        setShowLocations={setShowLocations}
         clearMarkers={clearMarkers}
        setClearMarkers={setClearMarkers}
-        zones={[]}                
-        onSelectedTimeChange={() => {}}
+        zones={[]}               
+         onSelectedTimeChange={setSelectedTime}
         onSubmit={handleSubmit}
         onLocationSelect={setSelectedLocation}
       onZoneResults={(zoneJson, areaName) => {
@@ -283,7 +286,7 @@ const [clearMarkers, setClearMarkers] = useState(false);
         submitted={submitted}
         locations={submittedLocations}
         selectedLocation={selectedLocation}
-        selectedTime={null}         
+        selectedTime={selectedTime}         
         selectedZone={selectedZone}
         zoneLocations={zoneLocations}
         showLocations={showLocations}
