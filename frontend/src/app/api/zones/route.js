@@ -1,7 +1,8 @@
 export async function fetchZones(){
-    const res=await fetch("GET /api/recommendations/zones");
+    const res=await fetch("http://34.94.236.85/api/recommendations/zones");
     const json=await res.json();
-    const activities=json.map(item=>item.activity);
-    return activities;
+      const zones = json;
+    
+    return zones;
 
 }
