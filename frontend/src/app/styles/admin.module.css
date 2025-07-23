@@ -1,0 +1,132 @@
+/* Admin Dashboard Specific Styles */
+
+.dashboardContainer {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.header {
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navigationTab {
+  transition: all 0.2s ease-in-out;
+}
+
+.navigationTab:hover {
+  transform: translateY(-1px);
+}
+
+.cardHover {
+  transition: all 0.3s ease-in-out;
+}
+
+.cardHover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.statusIndicator.healthy {
+  background-color: #10b981;
+}
+
+.statusIndicator.error {
+  background-color: #ef4444;
+}
+
+.statusIndicator.warning {
+  background-color: #f59e0b;
+}
+
+.progressBar {
+  transition: width 0.3s ease-in-out;
+}
+
+.loadingSpinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tableRow {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.tableRow:hover {
+  background-color: #f9fafb;
+}
+
+.metricCard {
+  transition: all 0.2s ease-in-out;
+}
+
+.metricCard:hover {
+  transform: scale(1.02);
+}
+
+.alertBanner {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navigationTabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+  }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .dashboardContainer {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+  
+  .header {
+    background-color: #1f2937;
+    border-bottom-color: #374151;
+  }
+}
+
+
+
+.max-w-md.w-full{
+ border: red solid;
+}

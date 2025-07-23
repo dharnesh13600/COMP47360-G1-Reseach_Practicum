@@ -326,7 +326,7 @@ useEffect(() => {
     markersRef.current = [];
 
     const toDraw = showLocations
-  ? (showAllLocations ? locations : locations.slice(0, 5))
+  ? (showAllLocations ? locations.slice(0, 7)  : locations.slice(0, 5))
   : zoneLocations;
 
   toDraw.forEach((item, index) => {

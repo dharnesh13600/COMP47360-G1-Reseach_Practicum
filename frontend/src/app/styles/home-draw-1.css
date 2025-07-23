@@ -1,6 +1,6 @@
 .draw01 {
   position: absolute;
-  top: -7%;                /* Adjust this to position the line visually */
+  top: -40px;                /* Adjust this to position the line visually */
   left: 0%;
   width: 12vw;
   aspect-ratio: 200 / 350;  
