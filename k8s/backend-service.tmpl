@@ -1,15 +1,17 @@
+# k8s/backend-service.tmpl
 apiVersion: v1
 kind: Service
 metadata:
   name: backend-svc
+  annotations:
+    cloud.google.com/backend-config: '{"default":"backend-hc"}'
   labels:
     app: backend
 spec:
   selector:
     app: backend
   ports:
-  - protocol: TCP
+  - name: http
     port: 80
     targetPort: 8080
-    name: http
-  type: LoadBalancer
+  type: ClusterIP
