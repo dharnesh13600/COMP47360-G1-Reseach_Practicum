@@ -2,7 +2,7 @@
 
 'use client';
 
-import mapboxgl from 'mapbox-gl';
+
 import {useRef,useEffect,useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
@@ -16,15 +16,7 @@ import { parse, format } from 'date-fns';
 
 import Image from 'next/image';
 
-
-
-
-const useMapbox = process.env.NEXT_PUBLIC_USE_MAPBOX==='true';
-
-if (useMapbox) {
-  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-}
-
+import mapboxgl from 'mapbox-gl';
 const INITIAL_CENTER =[
 
  -74.000, 40.7526
@@ -33,32 +25,19 @@ const INITIAL_CENTER =[
 
 const INITIAL_ZOOM=11.57
 
-
-
-
-const viewConfigs = [
-  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:0,bearing:30},
-  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
-  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 10, bearing: -10 },
-];
-function getViewConfig() {
-  const width = window.innerWidth;
-
-  // find all configs where minWidth <= width
-  const applicableConfigs = viewConfigs.filter(cfg => width >= cfg.minWidth);
-
-  if (applicableConfigs.length > 0) {
-    // pick the one with largest minWidth
-    return applicableConfigs.reduce((prev, curr) =>
-      curr.minWidth > prev.minWidth ? curr : prev
-    );
-  }
-
-  // fallback
-  return viewConfigs[0];
+ const useMapbox = process.env.NEXT_PUBLIC_USE_MAPBOX==='true';
+ 
+if (useMapbox) {
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 }
+const iconMap = {
+  Quiet: 'quiet-pin.png',
+  Moderate: 'moderate-pin.png',
+  Busy: 'busy_pin.png',
+  default: 'quiet-pin.png'
+};
 
-export default function Map({ submitted, locations, selectedLocation,selectedTime }){
+export default function Map({ submitted, locations, selectedLocation,selectedTime,selectedZone ,zoneLocations,showLocations,clearMarkers,showAllLocations}){
 const popupRef = useRef();
 const [showMarkers, setShowMarkers] = useState(false);
 
@@ -118,19 +97,49 @@ function getStyleFromSelectedTime(selectedTime) {
 
   if (!selectedTime) return DAY_STYLE;
 
-  const parsed = parse(selectedTime.trim(), 'h:mm ', new Date());
+  const parsed = parse(selectedTime.trim(), 'HH:mm', new Date());
   const hour = parsed.getHours();
 
   return hour >= 18 ? NIGHT_STYLE : DAY_STYLE;
 }
+// initializing mapbox
 
-
-    useEffect(() => {
+useEffect(() => {
+       const mapboxgl = require('mapbox-gl');
+     
     if (!useMapbox) return;
 
     if (mapRef.current) return;
 
-     
+    
+
+
+
+
+
+
+
+const viewConfigs = [
+  { minWidth: 320, zoom: 10.30, center: INITIAL_CENTER ,pitch:10,bearing:30},
+  { minWidth: 768, zoom: 11, center: INITIAL_CENTER, pitch: 50, bearing: 30 },
+  { minWidth: 900, zoom: 11.75, center: INITIAL_CENTER, pitch: 10, bearing: -10 },
+];
+function getViewConfig() {
+  const width = window.innerWidth;
+
+  // find all configs where minWidth <= width
+  const applicableConfigs = viewConfigs.filter(cfg => width >= cfg.minWidth);
+
+  if (applicableConfigs.length > 0) {
+    // pick the one with largest minWidth
+    return applicableConfigs.reduce((prev, curr) =>
+      curr.minWidth > prev.minWidth ? curr : prev
+    );
+  }
+
+  // fallback
+  return viewConfigs[0];
+}
     
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -261,31 +270,86 @@ useEffect(() => {
 
   }, [selectedLocation]);
 
+  useEffect(() => {
+    if (!selectedZone|| !mapRef.current) return;
+
+    const map = mapRef.current;
+
+    if (selectedZone.longitude == null || selectedZone.latitude == null) return;
+
+  
+ 
+    map.flyTo({
+      center: [selectedZone.longitude, selectedZone.latitude],
+      zoom: 14,
+      pitch: 60,
+      bearing: 0,
+      duration: 3000,
+      easing: t => t,
+    });
+
+   if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    } 
+   
+  
+
+  
+    const marker = markersRef.current.find(m => {
+      const lngLat = m.getLngLat();
+      return (
+        Math.abs(lngLat.lng - selectedLocation.longitude) < 0.0001 &&
+        Math.abs(lngLat.lat - selectedLocation.latitude) < 0.0001
+      );
+    });
+
+    if (marker) {
+      marker.getPopup().addTo(map);
+      activePopupRef.current = marker.getPopup();
+    }
+
+  }, [selectedZone]);
+
+
 
   useEffect(() => {
-  // if (!mapRef.current || !locations.length) return;
-  if (!mapRef.current || !(locations?.length > 0)) return;
+    if (!mapRef.current) return;
 
-  // Remove existing markers
+    if (!submitted || clearMarkers ) {
   markersRef.current.forEach(m => m.remove());
   markersRef.current = [];
+  return;
+}
 
-   locations.forEach((location, index) => {
-      const el = document.createElement('div');
-      el.className = 'numbered-marker';
-      el.innerHTML = `<div class="pinShape"><div class="number">${index+1}</div></div>`;
+    markersRef.current.forEach(m => m.remove());
+    markersRef.current = [];
 
-      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+    const toDraw = showLocations
+  ? (showAllLocations ? locations : locations.slice(0, 5))
+  : zoneLocations;
+
+  toDraw.forEach((item, index) => {
+    if (showLocations) {
+      const loc=item;
+        const el = document.createElement('div');
+        el.className = 'numbered-marker';
+        el.innerHTML = `
+          <div class="pinShape">
+            <div class="number">${index+1}</div>
+          </div>
+        `;
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
     <div class="popup-card">
     <div class="popup-header">
     <span class="info-icon" title="Muse Score: visitor rating. Crowd Estimate: number of visitors. Status: how busy it feels.">i</span>
   </div>
     <div class="muse-score ">Muse Score</div>
-    <div class="muse-value">8/10</div>
+    <div class="muse-value">${loc.museScore}/10</div>
     <div class="estimate-crowd-label ">Estimate Crowd  </div>
-    <div class="estimate-crowd">4537</div>
+    <div class="estimate-crowd">${loc.estimatedCrowdNumber}</div>
     <div class="crowd-label ">Crowd Status </div>
-    <div class="crowd-status">Busy</div>
+    <div class="crowd-status">${loc.crowdLevel}</div>
     <div class="directions">
     <img class="directions-image" src="/directions-icon.png" alt="Directions" />
     <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
@@ -311,22 +375,22 @@ useEffect(() => {
     </div>
   </div>
 `);
-      
-const addToComparison = (location) => {
+
+const addToComparison = (loc) => {
   setComparisonStack(prev => {
-    if (prev.find(item => item.id === location.id)) return prev; // prevent duplicates
+    if (prev.find(item => item.id === loc.id)) return prev; // prevent duplicates
     if (prev.length >= 3) return prev; // max 5
-    return [...prev, location];
+    return [...prev, loc];
   });
 };
 
- const marker=new mapboxgl.Marker(el)
-        .setLngLat([location.longitude, location.latitude])
-        .setPopup(popup)
-        .addTo(mapRef.current);
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat([loc.longitude, loc.latitude])
+          .setPopup(popup)
+          .addTo(mapRef.current);
           markersRef.current.push(marker);
-          
- el.addEventListener('click', () => {
+        
+         el.addEventListener('click', () => {
         const currentBearing = mapRef.current.getBearing();
       const currentZoom = mapRef.current.getZoom();
 
@@ -354,7 +418,7 @@ const addToComparison = (location) => {
     activePopupRef.current = null;
   }
         mapRef.current.easeTo({
-          center: [location.longitude, location.latitude],
+          center: [loc.longitude, loc.latitude],
           zoom: 18,          
           pitch: 60,        
           bearing: currentBearing + 360,
@@ -381,7 +445,7 @@ popup.on('open', () => {
 const btn = document.getElementById(`gmaps-${index}`);
   if (btn) {
     btn.addEventListener('click', () => {
-      openInGoogleMaps(location.latitude, location.longitude);
+      openInGoogleMaps(loc.latitude, loc.longitude);
     });
   }
 //// COMPARE BUTTON  
@@ -390,13 +454,13 @@ const compareBtn = document.getElementById(`compare-${index}`);
 if (compareBtn) {
   compareBtn.addEventListener('click', () => {
     addToComparison({
-      id: location.id || index,
-      locName: location.name || `location name`,
-      selectedLat: location.latitude,
-      selectedLong: location.longitude,
-      museScore: location.museScore,
-      estimateCrowd: location.estimateCrowd ,
-      crowdStatus: location.crowdStatus 
+      id: loc.id || index,
+      locName: loc.name || `location name`,
+      selectedLat: loc.latitude,
+      selectedLong: loc.longitude,
+      museScore: loc.museScore,
+      estimateCrowd: loc.estimatedCrowdNumber ,
+      crowdStatus: loc.crowdLevel
     });
   });
 }
@@ -413,8 +477,172 @@ if (compareBtn) {
   
 
     
+  
+
+    } 
+    else {
+   
+  markersRef.current.forEach(m => m.remove());
+  markersRef.current = [];
+
+  const zone=item;
+
+    const el = document.createElement('img');
+    el.src           = iconMap[zone.crowdLevel] || iconMap.default;
+    el.style.width   = '30px';
+    el.style.height  = '40px';
+    el.style.cursor  = 'pointer';
+
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+    <div class="popup-card">
+    <div class="popup-header">
+    <span class="info-icon" title="Muse Score: visitor rating. Crowd Estimate: number of visitors. Status: how busy it feels.">i</span>
+  </div>
+    <div class="muse-score ">Muse Score</div>
+    <div class="muse-value">${zone.museScore}/10</div>
+    <div class="estimate-crowd-label ">Estimate Crowd  </div>
+    <div class="estimate-crowd">${zone.estimatedCrowdNumber}</div>
+    <div class="crowd-label ">Crowd Status </div>
+    <div class="crowd-status">${zone.crowdLevel}</div>
+    <div class="directions">
+    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
+    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
+    </div>
+
+    <!-- ComparisonStack placeholder directly under the Directions button -->
+    <button class="compare-button" id="compare-${index}">
+<svg class="compare-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+    Add to Compare
+    </button>
+
+    <div class="tooltip">
+    <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
+    the most suitable location for your activity according to busyness 
+    and past events in each location. <br><br>
+
+    Don't want to use our Muse Score? Use our predicted <b> Estimate Crowd</b> and <b> Crowd Status </b> the best time to be your best self,
+    whether in the crowd or in a peaceful corner.
+
+    </p>
+    </div>
+  </div>
+`);
+const addToComparison = (zone) => {
+  setComparisonStack(prev => {
+    if (prev.find(item => item.id === zone.id)) return prev; // prevent duplicates
+    if (prev.length >= 3) return prev; // max 5
+    return [...prev, zone];
   });
-}, [locations]);
+};
+    const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([ zone.longitude, zone.latitude ])
+      .setPopup(popup)
+      .addTo(mapRef.current);
+ markersRef.current.push(marker);
+  
+  el.addEventListener('click', () => {
+        const currentBearing = mapRef.current.getBearing();
+      const currentZoom = mapRef.current.getZoom();
+
+    
+        
+      if (
+  lastClickedMarkerRef.current &&
+  lastClickedMarkerRef.current === marker
+) {if (activePopupRef.current) {
+      activePopupRef.current.remove();
+      activePopupRef.current = null;
+    } 
+    mapRef.current.flyTo({
+    center: INITIAL_CENTER,
+    zoom: INITIAL_ZOOM,
+    pitch: 0,
+    bearing: 0,
+    duration: 3000
+  });
+  lastClickedMarkerRef.current = null;
+  return;
+  }
+ if (activePopupRef.current) {
+    activePopupRef.current.remove();
+    activePopupRef.current = null;
+  }
+        mapRef.current.easeTo({
+          center: [zone.longitude, zone.latitude],
+          zoom: 18,          
+          pitch: 60,        
+          bearing: currentBearing + 360,
+          duration: 3000,   
+          easing: t => t    
+        });
+marker.getPopup().addTo(mapRef.current);
+  activePopupRef.current = marker.getPopup();
+  lastClickedMarkerRef.current = marker;
+});
+popup.on('open', () => {
+    const popupEl = popup.getElement();
+    const icon = popupEl.querySelector('.info-icon');
+    const tooltip = popupEl.querySelector('.tooltip');
+
+    if (!icon || !tooltip) return;
+
+    icon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = tooltip.style.display === 'block';
+      tooltip.style.display = isVisible ? 'none' : 'block';
+    });
+   
+const btn = document.getElementById(`gmaps-${index}`);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      openInGoogleMaps(zone.latitude, zone.longitude);
+    });
+  }
+//// COMPARE BUTTON  
+const compareBtn = document.getElementById(`compare-${index}`);
+
+if (compareBtn) {
+  compareBtn.addEventListener('click', () => {
+    addToComparison({
+      id: zone.id || index,
+      locName: zone.name || `zone name`,
+      selectedLat: zone.latitude,
+      selectedLong: zone.longitude,
+      museScore: zone.museScore,
+      estimateCrowd: zone.estimatedCrowdNumber ,
+      crowdStatus: zone.crowdLevel
+    });
+  });
+}
+      
+
+
+      });
+ 
+
+
+ 
+
+  
+
+    
+ 
+
+
+   
+
+  };
+  });
+    
+
+  return () => {
+    markersRef.current.forEach(m => m.remove());
+    markersRef.current = [];
+  };
+
+  }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations]);
 
 
   if (!useMapbox) {

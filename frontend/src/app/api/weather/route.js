@@ -10,13 +10,13 @@ export async function fetchWeather(selectedDate,selectedTime){
 
         const dateObj= parse(
                 `${selectedDate} ${selectedTime}`,
-                "MMMM d h:mm",
+                "MMMM d HH:mm",
                 new Date()
         );
 
         const isoDateTime=format(dateObj,"yyyy-MM-dd'T'HH:mm:ss");
 
-        const url=`http://34.94.195.103/api/forecast?datetime=${isoDateTime}`;
+        const url=`http://34.94.236.85/api/forecast?datetime=${isoDateTime}`;
         const res=await fetch(url);
         const data=await res.json();
 

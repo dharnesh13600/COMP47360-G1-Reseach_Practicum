@@ -24,7 +24,8 @@ import { fetchDateTimes } from "../api/fetchDateTimes/route";
 import { fetchWeather } from "../api/weather/route";
 
 import { useWeather } from "./useWeather";
-export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLocations,showAllLocations,setShowAllLocations ,onSelectedTimeChange}){
+export default function SideBar({ onLocationSelect, onSubmit,locations,visibleLocations,showAllLocations,setShowAllLocations ,zones,onSelectedTimeChange,onZoneResults, showLocations, setShowLocations,clearMarkers,
+  setClearMarkers}){
 
 
 // useStates for  retrieving from api endpoints
@@ -70,7 +71,31 @@ const isToday=(dateStr)=>{
   return dateStr===todayStr;
   
 };
-// creating activity array items for Activity dropdown
+const handleToggleClick = () => {
+  setClearMarkers(true);
+   setShowLocations((prev) => !prev);
+ };
+
+function sanitizeName(str) {
+  return str
+
+    .replace(/,/g, ' ')
+
+    .replace(/\b(Manhattan|New York|And|Between)\b/gi, '')
+
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function cleanAndTruncate(str, n = 3) {
+  const cleaned = sanitizeName(str);
+  const words = cleaned.split(/\s+/);
+  return words.length <= n
+    ? cleaned
+    : words.slice(0, n).join(' ') ;
+}
+
+
 useEffect(()=>{
     async function getActivities(){
       const data=await fetchActivities();
@@ -121,7 +146,7 @@ async function getTime(){
 
        data.forEach(entry =>{
         const timeObj=new Date(entry);
-        const timeStr=format(timeObj,'h:mm ');
+        const timeStr=format(timeObj,'HH:mm ');
         timeSet.add(timeStr);
       });
        const times=Array.from(timeSet);
@@ -144,10 +169,10 @@ useEffect(()=>{
        data.forEach(entry=>{
     const readableDate= new Date(entry);
     const dateStr=format(readableDate,'MMMM d');
-    const timeStr=format(readableDate,'h:mm ');
+    const timeStr=format(readableDate,'HH:mm');
 
     if (dateStr==selectedDate){
-      const timeStr=format(readableDate, 'h:mm ');
+      const timeStr=format(readableDate, 'HH:mm');
       matchingTimes.add(timeStr);
     }
   });
@@ -189,10 +214,7 @@ const {icon,temp}=useWeather(weather || {});
 
 
 
-const [isVisible, setIsVisible]=useState(false);
-const handleToggleClick=()=>{
-  setIsVisible(prev => !prev);
-};
+
 
 
 
@@ -204,7 +226,7 @@ if(!activityChoice || !selectedDate || !selectedTime){
 }
   setSubmitted(true);
 try{
- const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm', new Date());
+ const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d HH:mm', new Date());
 const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
 
 const payload={
@@ -212,18 +234,23 @@ const payload={
   dateTime:readableTimeJson,
 };
 
-const res=await fetch('/api/recommendations',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify(payload),
-  });
+
+const res = await fetch('/api/fetchLocations', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ activity: activityChoice,
+                         dateTime: readableTimeJson }),
+});
+if (!res.ok) {
+  console.error('Fetch failed', await res.text());
+  return;
+}
+const { locations } = await res.json();
+onSubmit(locations);   
 
 console.log("📬 Response Status:", res.status, res.statusText);
 console.log("📬 Response OK:", res.ok);
 console.log("📬 Response Headers:", [...res.headers.entries()]);
-
 
 
   if(!res.ok){
@@ -231,17 +258,7 @@ console.log("📬 Response Headers:", [...res.headers.entries()]);
     return;
   }
 
-const text = await res.text();
-    if (!text) {
-      console.error("Empty response received");
-      return;
-    }
 
-    const data = JSON.parse(text);
-    console.log("Success:", data);
-
-    // FIXED: Pass the actual data instead of undefined 'locations'
-    onSubmit(data);
     
 }
  catch(error){
@@ -251,10 +268,14 @@ const text = await res.text();
 };
 
 async function handleZoneClick(area){
+  if (!selectedDate || !selectedTime) {
+    alert('Please select a date AND time before choosing a zone.');
+    return;
+  }
 setZone(area);
 
 try{
-const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d h:mm', new Date());
+const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d HH:mm', new Date());
 const readableTimeJson =format(date, "yyyy-MM-dd'T'HH:mm");
 console.log(activityChoice);
 
@@ -266,7 +287,7 @@ const payload={
 
 console.log("Submitting with zone: ",payload);
 
-const res=await fetch('/api/recommendations',{
+const res=await fetch('/api/fetchLocations',{
   method:'POST',
   headers:{'Content-Type':'application/json'},
   body:JSON.stringify(payload),
@@ -276,20 +297,22 @@ const res=await fetch('/api/recommendations',{
     console.error("HTTP Error:", res.status, res.statusText);
     return;
   }
- const text = await res.text();
-    if (!text) {
-      console.error("Empty response received");
-      return;
-    }
+
 const data=await res.json();
+if (!data) {
+  console.error("Empty response received");
+  return;
+}
 console.log("Zone success: ", data);
+
+ onZoneResults?.(data, area);
 }
 
 catch (error) {
     console.error("Error in handleZoneClick:", error);
   }
 
-
+   
 };
 
 
@@ -472,19 +495,19 @@ const showCollapsed = isSmall || isLarge;
                 
                   
                     <div className={styles.locationHeader}>
-                    <div className={`${styles.recArea} ${isVisible ? styles.active : styles.inactive}`}>
+                    <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
                       <p className={styles.recommendation}>Recommended</p>
                       <p className={styles.area}>Area</p>
                     </div>
                       
                      <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
-                     {isVisible && (
+                     {!showLocations && (
                         <svg  width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 <path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
                      )} 
-                     {!isVisible && (
+                     {showLocations && (
                    
  <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
@@ -493,20 +516,23 @@ const showCollapsed = isSmall || isLarge;
 
                      )}
                       </button> 
-<span className={`${styles.manualSelection} ${isVisible ? styles.inactive  :styles.active}`}>Select Area</span>
+<span className={`${styles.manualSelection} ${showLocations ? styles.inactive  :styles.active}`}>Select Area</span>
                   </div>
-                {!submitted && !isVisible && (
+                {!submitted && showLocations && (
                      <div className={styles.noRecommendations}>
   Please submit your choices to view the recommended areas
 </div>
                 )}
-                 {submitted && !isVisible && (
+                 {submitted && showLocations && (
                    <div className={styles.locationListContainer}>
-  {(showAllLocations?locations :locations.slice(0,5)).map((location,index) => (
+  {visibleLocations.map((location,index) => (
     <div key={location.id} className={`${styles.locationItem} ${
       visibleIndexes.includes(index) ? styles.show : ''
     }`} onClick={()=>onLocationSelect(location)}>
-      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>{location.zoneName}</span>
+      <span className={styles.index}>{index+1}</span><span className={styles.locationName}>
+   {cleanAndTruncate(location.zoneName, 3)}
+ </span>
+       
       <span><Image className='photo' src='/search.png' alt='d' width={30} height={25}/></span>
     </div>
   ))}
@@ -531,7 +557,7 @@ const showCollapsed = isSmall || isLarge;
 
  
                  )} 
-                 {isVisible && (
+                 {!showLocations && (
                   <div className={styles.suggestedLocations}>
                       <span>Select Area</span>
                        <div className={styles.suggestedItems}>
@@ -539,7 +565,7 @@ const showCollapsed = isSmall || isLarge;
      
   
                         {manhattanNeighborhoods.map(area=>(
-                 <div key={area} className={styles.suggestedAreas} onClick={()=>handleZoneClick(area)}>
+                 <div key={area} className={styles.suggestedAreas} onClick={()=>{handleZoneClick(area)}}>
         {area}
       </div>
               ))}
