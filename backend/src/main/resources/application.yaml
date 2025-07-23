@@ -1,100 +1,6 @@
-# spring:
-#   application:
-#     name: creative-space-finder
-#   web:
-#     cors:
-#       allowed-origins: "*"
-#       allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-#       allowed-headers: "*"
-
-#   datasource:
-#     url: ${SPRING_DATASOURCE_URL}
-#     username: ${SPRING_DATASOURCE_USERNAME}
-#     password: ${SPRING_DATASOURCE_PASSWORD}
-#     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
-#     hikari:
-#       # ULTRA CONSERVATIVE for Supabase free tier - PRODUCTION READY
-#       maximum-pool-size: 1           # Only 1 connection total
-#       minimum-idle: 0                # No idle connections ever
-#       connection-timeout: 10000      # 10 seconds
-#       idle-timeout: 10000            # Close idle connections after 10 seconds
-#       max-lifetime: 120000           # Force close connections after 2 minutes
-#       leak-detection-threshold: 15000 # 15 seconds leak detection
-#       # Connection validation
-#       connection-test-query: SELECT 1
-#       validation-timeout: 3000       # 3 seconds validation
-#       auto-commit: true              # Explicit auto-commit
-#       pool-name: "ProductionHikariPool"     # Production pool name
-#       # CRITICAL: Aggressive connection cleanup
-#       keepalive-time: 0              # No keepalive pings
-#       initialization-fail-timeout: 1 # Fail fast on startup issues
-
-#   cache:
-#     caffeine:
-#       spec: maximumSize=1000,expireAfterWrite=24h
-
-#   jpa:
-#     hibernate:
-#       ddl-auto: validate             # Changed from 'none' to 'validate' for safety
-#     show-sql: false                  # Disable SQL logging to reduce noise
-#     open-in-view: false              # CRITICAL: Prevents connection leaks
-#     properties:
-#       hibernate:
-#         dialect: org.hibernate.dialect.PostgreSQLDialect  # Explicit dialect to avoid JDBC metadata lookup
-#         jdbc:
-#           time_zone: UTC
-#           batch_size: 20             # Batch operations for efficiency
-#         connection:
-#           provider_disables_autocommit: false  # Ensure autocommit works
-#         # CRITICAL: Reduce connection usage during startup
-#         temp:
-#           use_jdbc_metadata_defaults: false
-#         boot:
-#           allow_jdbc_metadata_access: false
-
-#   # CRITICAL: Graceful shutdown handling
-#   lifecycle:
-#     timeout-per-shutdown-phase: 30s
-
-# openweather:
-#   api-key: ${OPENWEATHER_API_KEY}
-
-# server:
-#   port: 8080
-#   servlet:
-#     context-path: /
-#   # CRITICAL: Proper shutdown handling
-#   shutdown: graceful
-#   tomcat:
-#     connection-timeout: 20000
-#     max-connections: 50
-
-# # Reduce logging noise but keep essential debugging
-# logging:
-#   level:
-#     com.creativespacefinder.manhattan: INFO
-#     org.springframework.web: INFO           # Reduced from DEBUG
-#     org.hibernate.SQL: WARN                 # Reduced from DEBUG
-#     org.hibernate.orm.deprecation: WARN     # Suppress deprecation warnings
-#     com.zaxxer.hikari: INFO                 # Reduced from DEBUG
-#     com.zaxxer.hikari.pool: WARN            # Only show warnings for pool issues
-
-# # Management endpoints for monitoring
-# management:
-#   endpoints:
-#     web:
-#       exposure:
-#         include: health,info,metrics,shutdown
-#   endpoint:
-
 spring:
   application:
     name: creative-space-finder
-  web:
-    cors:
-      allowed-origins: "*"
-      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-      allowed-headers: "*"
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -102,18 +8,21 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
     hikari:
-      maximum-pool-size: 1
-      minimum-idle: 0
-      connection-timeout: 10000
-      idle-timeout: 10000
-      max-lifetime: 120000
-      leak-detection-threshold: 15000
+      # ULTRA CONSERVATIVE for Supabase connections as it is free
+      maximum-pool-size: 1           # Only 1 connection total
+      minimum-idle: 0                # No idle connections ever
+      connection-timeout: 10000      # 10 seconds
+      idle-timeout: 10000            # Close idle connections after 10 seconds
+      max-lifetime: 120000           # Force close connections after 2 minutes
+      leak-detection-threshold: 15000 # 15 seconds leak detection
+      # Connection validation
       connection-test-query: SELECT 1
-      validation-timeout: 3000
-      auto-commit: true
-      pool-name: "ProductionHikariPool"
-      keepalive-time: 0
-      initialization-fail-timeout: 1
+      validation-timeout: 3000       # 3 seconds validation
+      auto-commit: true              # Explicit auto-commit
+      pool-name: "ProductionHikariPool"     # Production pool name
+      # CRITICAL: Aggressive connection cleanup
+      keepalive-time: 0              # No keepalive pings
+      initialization-fail-timeout: 1 # Fail fast on startup issues
 
   cache:
     caffeine:
@@ -121,24 +30,37 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: false
-    open-in-view: false
+      ddl-auto: validate             # Changed from 'none' to 'validate' for safety
+    show-sql: false                  # Disable SQL logging to reduce noise
+    open-in-view: false              # CRITICAL: Prevents connection leaks
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # Explicit dialect to avoid JDBC metadata lookup
         jdbc:
           time_zone: UTC
-          batch_size: 20
+          batch_size: 20             # Batch operations for efficiency
         connection:
-          provider_disables_autocommit: false
+          provider_disables_autocommit: false  # Ensure autocommit works
+        # CRITICAL: Reduce connection usage during startup
         temp:
           use_jdbc_metadata_defaults: false
         boot:
           allow_jdbc_metadata_access: false
 
+  # CRITICAL: Graceful shutdown handling
   lifecycle:
     timeout-per-shutdown-phase: 30s
+
+  # Session configuration for admin authentication
+  session:
+    store-type: memory
+    timeout: 24h
+
+# Admin credentials configuration - SECURE WITH ENVIRONMENT VARIABLES
+admin:
+  username: ${ADMIN_USERNAME}
+  password:
+    hash: ${ADMIN_PASSWORD_HASH}
 
 openweather:
   api-key: ${OPENWEATHER_API_KEY}
@@ -147,20 +69,29 @@ server:
   port: 8080
   servlet:
     context-path: /
+    session:
+      tracking-modes: cookie
+      cookie:
+        secure: false  # Set to true in production with HTTPS
+        http-only: true
+        max-age: 86400  # 24 hours
+  # CRITICAL: Proper shutdown handling
   shutdown: graceful
   tomcat:
     connection-timeout: 20000
     max-connections: 50
 
+# Reduce logging noise but keep essential debugging
 logging:
   level:
     com.creativespacefinder.manhattan: INFO
-    org.springframework.web: INFO
-    org.hibernate.SQL: WARN
-    org.hibernate.orm.deprecation: WARN
-    com.zaxxer.hikari: INFO
-    com.zaxxer.hikari.pool: WARN
+    org.springframework.web: INFO           # Reduced from DEBUG
+    org.hibernate.SQL: WARN                 # Reduced from DEBUG
+    org.hibernate.orm.deprecation: WARN     # Suppress deprecation warnings
+    com.zaxxer.hikari: INFO                 # Reduced from DEBUG
+    com.zaxxer.hikari.pool: WARN            # Only show warnings for pool issues
 
+# Management endpoints for monitoring
 management:
   endpoints:
     web:
@@ -171,14 +102,9 @@ management:
       show-details: always
     shutdown:
       enabled: true
-
+      
 # >>> ADDED BLOCK FOR ML SERVICE URL <<<
 ml:
   predict:
     url: ${ML_PREDICT_URL:http://ml-service.default.svc.cluster.local:8000/predict_batch}
 # <<< END ADDED BLOCK >>>
-
-#     health:
-#       show-details: always
-#     shutdown:
-#       enabled: true                  # Enable graceful shutdown endpoint
