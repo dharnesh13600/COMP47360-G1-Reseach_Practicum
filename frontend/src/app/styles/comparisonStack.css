@@ -50,14 +50,14 @@
     opacity: 0;
     transform: translateX(10px);
     padding: 0;
-    pointer-events: none; /* Prevent interaction when collapsed */
+    pointer-events: none; 
 }
 .panel-header{
     width: 50px;
     position: absolute;
     padding: 5px;
-    bottom: -1;
-    right: -25;
+    bottom: -1 !important;
+    right: -25 !important;
 }
 .comparison-panel.collapsed .panel-header{
     width: 130px;
