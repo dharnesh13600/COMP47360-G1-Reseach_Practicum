@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -59,7 +58,6 @@ spec:
               name: admin-credentials
               key: ADMIN_PASSWORD_HASH
 
-        # === HARD-CODED ML URL (added) ===
+        # === ML Predict URL (was pointing at external LB) ===
         - name: ML_PREDICT_URL
-          value: "http://34.94.101.102:8080/predict_batch"
-        # ================================
+          value: "http://data-analytics-service:8080/predict_batch"
