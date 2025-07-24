@@ -2,7 +2,7 @@
 import BodyWrapper from '../components/bodyWrapper'; 
 import Header from "../components/header";
 import PageTransitionWrapper from '../components/PageTransitionWrapper'; 
-import '../globals.css';
+import './globals.css';
 
 
 export const metadata = {
