@@ -10,6 +10,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+//added by dharnesh for ml model
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
