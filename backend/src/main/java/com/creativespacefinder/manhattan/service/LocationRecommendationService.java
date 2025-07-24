@@ -407,11 +407,23 @@ public class LocationRecommendationService {
         return EARTH_RADIUS * c;
     }
 
+    // protected PredictionResponse[] callMLModelBatch(List<Map<String,Object>> bodies) {
+    //     RestTemplate r = new RestTemplate();
+    //     return r.postForObject("http://34.94.101.102:8080/predict_batch", bodies, PredictionResponse[].class);
+    // }
+    
+    // added by dharnesh for injecting ML predict URL instead of hard-coding
+    
     protected PredictionResponse[] callMLModelBatch(List<Map<String,Object>> bodies) {
-        RestTemplate r = new RestTemplate();
-        return r.postForObject("http://34.94.101.102:8080/predict_batch", bodies, PredictionResponse[].class);
+        // ← CHANGED: use injected URL instead of hard-coded IP
+       RestTemplate r = new RestTemplate();
+        return r.postForObject(
+            mlPredictUrl,                      // ← CHANGED to use env var
+            bodies,
+            PredictionResponse[].class
+        );
     }
-
+        // ----------------
     public List<Activity> getAllActivities() {
         return activityRepository.findAll();
     }

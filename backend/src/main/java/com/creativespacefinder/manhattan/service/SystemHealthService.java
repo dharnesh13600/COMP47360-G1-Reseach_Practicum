@@ -19,6 +19,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+
 @Service
 public class SystemHealthService {
 
@@ -42,7 +44,12 @@ public class SystemHealthService {
 
     @Autowired
     private WeatherForecastService weatherForecastService;
-
+    
+    //// added by dharnesh for injecting ML predict URL instead of hard-coding
+    @Value("${ml.predict.url}")
+    private String mlPredictUrl;
+    // ----------------
+    
     private final RestTemplate restTemplate = new RestTemplate();
     private static final long startTime = System.currentTimeMillis();
 
@@ -192,8 +199,10 @@ public class SystemHealthService {
             );
 
             long startTime = System.currentTimeMillis();
+            // ← CHANGED: use injected URL instead of hard-coded IP (by dharnesh)
             var response = restTemplate.postForObject(
-                    "http://34.94.101.102:8080/predict_batch",
+                     mlPredictUrl, 
+                     //-----------
                     testPayload,
                     Object[].class
             );
