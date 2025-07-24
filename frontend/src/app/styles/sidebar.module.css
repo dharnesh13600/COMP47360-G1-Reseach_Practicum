@@ -789,7 +789,7 @@ grid-auto-columns: 169px;
     max-width: 100%;
     padding: 0.5rem;
     white-space: nowrap;
-    max-height: 250px;
+    max-height: 200px;
 }
 
 /* Medium screens: Only show scroll when expanded */
@@ -1038,7 +1038,7 @@ div.vl{
   align-items: center;
   
   /* Desktop properties - no scroll by default */
-  max-height: 280px; /* Height to comfortably fit ~5 items */
+  max-height: 250px; /* Height to comfortably fit ~5 items */
   overflow-y: hidden; /* No scroll by default */
   overflow-x: hidden;
   

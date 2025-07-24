@@ -144,7 +144,7 @@
  
   cursor: pointer;
   width: 28px;
-  height: 30px;  /* Taller pin */
+  height: 30px;  
   z-index:9999;
 }
 .pinShape {
@@ -160,7 +160,7 @@
 .pinShape::after {
   content: "";
   position: absolute;
-  bottom: -9px;  /* Just below the circle */
+  bottom: -9px; 
   left: 50%;
   transform: translateX(-50%);
   width: 0;
