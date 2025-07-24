@@ -560,8 +560,8 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
 
 .logo{
   height:auto;
-  width:300px;
-  min-width: 270px;
+  width:420px;
+  min-width: 420px;
   margin-top: 7vh;
   margin-left: 8vh;
  
@@ -573,8 +573,8 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
  .navigation-list-map{
   display: flex;
   gap:3rem !important;
-  margin-top: -15px;
-  font-size: 15px;
+  margin-top: -18px;
+  margin-right: -80px;
 }
 .navigation-item-map{
   margin-top: 5px;
