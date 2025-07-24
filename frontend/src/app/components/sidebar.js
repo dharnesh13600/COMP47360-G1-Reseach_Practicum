@@ -221,7 +221,7 @@ useEffect(() => {
 }, [selectedTime, onSelectedTimeChange]);
 
 async function fetchWeather(date, time) {
-  const res = await fetch('/api/forecast?datetime=', {
+  const res = await fetch('/api/fetchWeather', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedDate: date, selectedTime: time })
@@ -270,7 +270,7 @@ async function handleSubmit(){
       dateTime:readableTimeJson,
     };
 
-    const res = await fetch('/api/recommendations', {
+    const res = await fetch('https://manhattanmuse.art/api/recommendations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ activity: activityChoice.name, dateTime: readableTimeJson }),
@@ -318,7 +318,7 @@ async function handleZoneClick(area){
 
     console.log("Submitting with zone: ",payload);
 
-    const res=await fetch('/api/recommendations',{
+    const res=await fetch('https://manhattanmuse.art/api/recommendations',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload),
