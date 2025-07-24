@@ -15,7 +15,7 @@ export async function GET() {
     const res = await fetch(`${process.env.BACKEND_API_URL}/forecast/available-datetimes`, {
       headers: {
         'Content-Type': 'application/json',
-        // Add auth headers if needed
+       
       },
     });
 
