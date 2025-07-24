@@ -7,7 +7,6 @@
 
 'use client';
 
-import '../globals.css';
 import MapDraw from '../components/map-draw-1.js'
 import MapDraw02 from '../components/map-draw-2.js'
 import '../styles/map-draw-1.css'

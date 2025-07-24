@@ -8,7 +8,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 import ComparisonStack from './comparisonStack.js';
 
-import '../globals.css';
 
 import { maxTime } from 'date-fns/constants';
 import { parse, format } from 'date-fns';
