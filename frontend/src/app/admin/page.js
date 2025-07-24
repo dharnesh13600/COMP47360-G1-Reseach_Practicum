@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
   // Check if user is already authenticated when page loads
   useEffect(() => {
     checkExistingAuth();
-  }, []);
+  }, [checkExistingAuth]);
 
   const checkExistingAuth = async () => {
     try {
@@ -188,7 +188,13 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-blue-600 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed transition-colors"
+              style={{
+                backgroundColor: loading ? '#d1d5db' : '#9ca3af',
+                color: '#ffffff'
+              }}
+              onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#6b7280')}
+              onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#9ca3af')}
             >
               {loading ? (
                 <div className="flex items-center">
