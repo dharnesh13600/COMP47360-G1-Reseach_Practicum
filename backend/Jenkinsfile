@@ -116,13 +116,17 @@ pipeline {
     stage('Deploy to GKE') {
       steps {
         withCredentials([file(credentialsId: "${GCP_SA_KEY}", variable: 'KEYFILE_PATH')]) {
+          script {
+            // use the branch-specific tag, not latest
+            env.IMAGE_URL = "${AR_REGION}-docker.pkg.dev/${AR_PROJECT}/${AR_REPO_NAME}/backend:${IMAGE_TAG}"
+          }
           sh 'chmod +x backend/kube-deploy.sh'
           sh """
             export PROJECT_ID="${PROJECT_ID}"
             export CLUSTER_NAME="${CLUSTER_NAME}"
             export LOCATION="${LOCATION}"
             export GCP_ACCOUNTNAME="${GCP_ACCOUNTNAME}"
-            export IMAGE_URL="${AR_REGION}-docker.pkg.dev/${AR_PROJECT}/${AR_REPO_NAME}/backend:latest"
+            export IMAGE_URL="${IMAGE_URL}"
             backend/kube-deploy.sh "${KEYFILE_PATH}"
           """
         }
