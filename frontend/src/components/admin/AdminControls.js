@@ -59,7 +59,10 @@ const AdminControls = ({ setActiveTab }) => {
         <button 
           onClick={loadAdminData}
           disabled={loading}
-          className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded flex items-center"
+          className="text-white px-4 py-2 rounded flex items-center disabled:opacity-50"
+          style={{backgroundColor: loading ? '#93c5fd' : '#3b82f6'}}
+          onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#2563eb')}
+          onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#3b82f6')}
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -86,7 +89,10 @@ const AdminControls = ({ setActiveTab }) => {
             <button 
               onClick={handleWarmCache}
               disabled={operationLoading || loading}
-              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-3 rounded flex items-center justify-center transition-colors"
+              className="w-full text-white px-4 py-3 rounded flex items-center justify-center transition-colors disabled:opacity-50"
+              style={{backgroundColor: operationLoading || loading ? '#93c5fd' : '#3b82f6'}}
+              onMouseEnter={(e) => !operationLoading && !loading && (e.target.style.backgroundColor = '#2563eb')}
+              onMouseLeave={(e) => !operationLoading && !loading && (e.target.style.backgroundColor = '#3b82f6')}
             >
               {operationLoading ? (
                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -127,8 +133,10 @@ const AdminControls = ({ setActiveTab }) => {
           <div className="space-y-4">
             <button 
               onClick={() => setActiveTab('health')}
-              className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors active:text-orange-500"
-
+              className="w-full text-white px-4 py-3 rounded flex items-center justify-center transition-colors"
+              style={{backgroundColor: '#10b981'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#10b981'}
             >
               <Heart className="h-4 w-4 mr-2" />
               Check System Health
@@ -136,7 +144,10 @@ const AdminControls = ({ setActiveTab }) => {
             
             <button 
               onClick={() => setActiveTab('analytics')}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors active:text-orange-500"
+              className="w-full text-white px-4 py-3 rounded flex items-center justify-center transition-colors"
+              style={{backgroundColor: '#8b5cf6'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
             >
               <BarChart3 className="h-4 w-4 mr-2" />
               View Analytics

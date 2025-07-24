@@ -69,7 +69,10 @@ const HealthMonitor = () => {
           <button 
             onClick={loadHealthData}
             disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded flex items-center"
+            className="text-white px-4 py-2 rounded flex items-center disabled:opacity-50"
+            style={{backgroundColor: loading ? '#93c5fd' : '#3b82f6'}}
+            onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#2563eb')}
+            onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#3b82f6')}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -152,12 +155,15 @@ const HealthMonitor = () => {
                       <span className="font-medium">{data.health.database.connectionPool.maxPoolSize}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{
-                          width: `${(data.health.database.connectionPool.totalConnections / data.health.database.connectionPool.maxPoolSize) * 100}%`
-                        }}
-                      />
+                      <div className="w-full rounded-full h-2" style={{backgroundColor: '#e5e7eb'}}>
+                        <div 
+                          className="h-2 rounded-full" 
+                          style={{
+                            width: `${(data.health.database.connectionPool.totalConnections / data.health.database.connectionPool.maxPoolSize) * 100}%`,
+                            backgroundColor: '#2563eb'
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -183,10 +189,15 @@ const HealthMonitor = () => {
                       <span className="font-medium">{data.health.database.dataStatistics.mlPredictionLogs}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-green-600 h-2 rounded-full" 
-                        style={{width: `${data.health.database.dataStatistics.mlCoveragePercentage}%`}}
-                      />
+                      <div className="w-full rounded-full h-2" style={{backgroundColor: '#e5e7eb'}}>
+                        <div 
+                          className="h-2 rounded-full" 
+                          style={{
+                            width: `${data.health.database.dataStatistics.mlCoveragePercentage}%`,
+                            backgroundColor: '#059669'
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -348,18 +359,19 @@ const HealthMonitor = () => {
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-3">
-                        <div 
-                          className={`h-3 rounded-full ${
-                            data.health.resources.memory.heapUtilizationPercent > 80 
-                              ? 'bg-red-500' 
-                              : data.health.resources.memory.heapUtilizationPercent > 60 
-                                ? 'bg-yellow-500' 
-                                : 'bg-green-500'
-                          }`}
-                          style={{
-                            width: `${Math.min(data.health.resources.memory.heapUtilizationPercent, 100)}%`
-                          }}
-                        />
+                        <div className="w-full rounded-full h-3" style={{backgroundColor: '#e5e7eb'}}>
+                          <div 
+                            className="h-3 rounded-full"
+                            style={{
+                              width: `${Math.min(data.health.resources.memory.heapUtilizationPercent, 100)}%`,
+                              backgroundColor: data.health.resources.memory.heapUtilizationPercent > 80 
+                                ? '#ef4444' 
+                                : data.health.resources.memory.heapUtilizationPercent > 60 
+                                  ? '#eab308' 
+                                  : '#10b981'
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   )}

@@ -51,7 +51,10 @@ const AnalyticsDashboard = () => {
         <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
         <button 
           onClick={loadAnalyticsData}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
+          className="text-white px-4 py-2 rounded flex items-center"
+          style={{backgroundColor: '#3b82f6'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
         >
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
@@ -170,6 +173,7 @@ const AnalyticsDashboard = () => {
         </div>
       )}
 
+      
       {/* Hourly Patterns */}
       {data['hourly-patterns'] && (
         <div className="bg-white p-6 rounded-lg shadow">
@@ -182,8 +186,13 @@ const AnalyticsDashboard = () => {
               return (
                 <div key={index} className="text-center">
                   <div 
-                    className="bg-blue-500 rounded mb-1 mx-auto transition-all hover:bg-blue-600" 
-                    style={{height: `${height}px`, width: '20px'}}
+                    style={{
+                      height: `${height}px`,
+                      width: '20px',
+                      backgroundColor: '#3b82f6',
+                      margin: '0 auto 4px auto',
+                      borderRadius: '4px'
+                    }}
                     title={`${pattern.hour}:00 - ${pattern.totalRequests} requests`}
                   />
                   <div className="text-xs text-gray-600">{pattern.hour}:00</div>

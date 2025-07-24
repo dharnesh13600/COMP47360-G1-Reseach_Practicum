@@ -242,8 +242,7 @@ div.vl{
 }
 
 .locationItem {
-  padding-top: 3px;
-  padding-bottom: 3px;
+
   padding-inline: 0;
   width:100%;
   margin-bottom: 4px;
@@ -290,8 +289,7 @@ div.vl{
  border-radius: inherit;
  padding-inline:0px;
  width:100%;
- padding-top:5px;
- padding-bottom:5px;
+
  text-transform: lowercase;
  display: flex;
  justify-content:center;
@@ -483,15 +481,9 @@ transition: 0.3s ease;
   text-align: center;
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeSlideIn 0.6s forwards ease;
+ 
 }
 
-@keyframes fadeSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 .dateEmptyText{
   font-size: 12px;
@@ -608,9 +600,7 @@ flex-wrap: wrap;
 
 }
 
-/* .activityWrapper{
-   align-self: flex-start;
-} */
+
 .subButtonMob{
  display: none;
 }
@@ -989,7 +979,7 @@ div.vl{
   align-items: center;
   justify-content: center;
   gap: 8px;
-  opacity: 0;
+  opacity:0;
   transform: translateY(-10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
   position: static; 
@@ -1067,8 +1057,7 @@ div.vl{
 }
 
 .locationItem {
-  padding-top: 3px;
-  padding-bottom: 3px;
+  
   padding-inline: 0.2rem;
   width:100%;
   margin-bottom: 4px;
@@ -1090,9 +1079,8 @@ div.vl{
   overflow: hidden;
   transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
   
-  /* Prevent items from getting squished */
-  flex-shrink: 0;
-  min-height: 35px;
+flex-shrink: 0;
+  min-height: 35px; 
 }
 .locationItem.show {
   opacity: 1;
@@ -1117,8 +1105,7 @@ div.vl{
  border-radius: inherit;
  padding-inline:12px;
  width:100%;
- padding-top:3px;
- padding-bottom:3px;
+
  text-transform: lowercase;
  display: flex;
  justify-content: center;
