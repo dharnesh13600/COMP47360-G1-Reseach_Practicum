@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminDashboard from '../../../components/admin/AdminDashboard';
 import '../../styles/admin.module.css'
@@ -13,38 +13,33 @@ export default function AdminDashboardPage() {
     checkAuthentication();
   }, []);
 
-  const checkAuthentication = () => {
+ const checkAuthentication = useCallback(() => {
     try {
       const isLoggedIn = localStorage.getItem('adminAuthenticated') === 'true';
       const loginTime = localStorage.getItem('adminLoginTime');
-      
+
       if (isLoggedIn && loginTime) {
-        // Check if login is still valid (24 hours)
         const twentyFourHours = 24 * 60 * 60 * 1000;
         const now = Date.now();
         const timeSinceLogin = now - parseInt(loginTime);
-        
+
         if (timeSinceLogin < twentyFourHours) {
           setIsAuthenticated(true);
         } else {
-          // Session expired
           localStorage.removeItem('adminAuthenticated');
           localStorage.removeItem('adminLoginTime');
           router.push('/admin');
         }
       } else {
-        // Not logged in
         router.push('/admin');
       }
     } catch (error) {
-      // If localStorage is not available or there's an error, redirect to login
       console.error('Auth check error:', error);
       router.push('/admin');
     }
-    
-    setLoading(false);
-  };
 
+    setLoading(false);
+  }, [router]);
   const handleLogout = () => {
     localStorage.removeItem('adminAuthenticated');
     localStorage.removeItem('adminLoginTime');
@@ -67,7 +62,7 @@ export default function AdminDashboardPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-4">You don't have permission to access this page.</p>
+          <p className="text-gray-600 mb-4">You don&apos;t have permission to access this page.</p>
           <button 
             onClick={() => router.push('/admin')}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
