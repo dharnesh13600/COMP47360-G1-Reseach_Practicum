@@ -1,6 +1,3 @@
-
-
-
 'use client';
 export const BACKEND_BASE = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 import {useEffect,useRef,useState} from "react";
@@ -583,10 +580,10 @@ return (
               <DateDropdown />
               <TimeDropdown />
             </div>
-            <button className={styles.subButtonMob} onClick={handleSubmit}>
+            <button className={styles.subButtonMob} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>
               <FaCheck />
             </button>
-            <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
+            <button className={styles.buttonStyle} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>Submit</button>
           </div>
           
           <div className={styles.locationBottomSection}>
@@ -655,10 +652,10 @@ return (
             <DateDropdown />
             <TimeDropdown />
           </div>
-          <button className={styles.subButtonMob} onClick={handleSubmit}>
+          <button className={styles.subButtonMob} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>
             <FaCheck />
           </button>
-          <button className={styles.buttonStyle} onClick={handleSubmit}>Submit</button>
+          <button className={styles.buttonStyle} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>Submit</button>
           
           {isLarge && <WeatherDisplay />}
         </div>
