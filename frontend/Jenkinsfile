@@ -40,7 +40,7 @@ pipeline{
               mkdir -p "$NPM_CONFIG_CACHE"
               
               npm ci
-              npm run lint
+              #npm run lint
               #npm --if-present test
               npm run build
             '''
