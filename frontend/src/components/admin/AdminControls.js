@@ -127,7 +127,8 @@ const AdminControls = ({ setActiveTab }) => {
           <div className="space-y-4">
             <button 
               onClick={() => setActiveTab('health')}
-              className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors"
+              className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors active:text-orange-500"
+
             >
               <Heart className="h-4 w-4 mr-2" />
               Check System Health
@@ -135,7 +136,7 @@ const AdminControls = ({ setActiveTab }) => {
             
             <button 
               onClick={() => setActiveTab('analytics')}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors"
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded flex items-center justify-center transition-colors active:text-orange-500"
             >
               <BarChart3 className="h-4 w-4 mr-2" />
               View Analytics

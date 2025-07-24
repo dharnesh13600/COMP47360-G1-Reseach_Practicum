@@ -5,7 +5,8 @@ const DashboardHome = ({ setActiveTab }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div 
-        className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer transform hover:scale-105"
+       className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl hover:text-black active:text-orange-500 transition-all duration-200 ease-in-out cursor-pointer transform hover:scale-105"
+
         onClick={() => setActiveTab('analytics')}
       >
         <div className="flex items-center justify-center mb-4">
