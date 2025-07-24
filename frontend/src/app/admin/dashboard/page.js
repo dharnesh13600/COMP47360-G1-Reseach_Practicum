@@ -14,7 +14,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     validateSession();
-  }, []);
+  }, [validateSession]);
 
   const validateSession = useCallback(async () => {
     try {
