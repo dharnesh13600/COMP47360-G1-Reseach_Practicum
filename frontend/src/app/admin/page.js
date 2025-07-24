@@ -5,7 +5,8 @@ import { Activity, Lock, User, Eye, EyeOff } from 'lucide-react';
 import '../styles/admin.module.css';
 import '../styles/layout.css';
 // API configuration
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080/api';
+// const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080/api';
+const API_BASE = `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api`; 
 
 export default function AdminLoginPage() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });

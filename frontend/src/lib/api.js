@@ -1,5 +1,7 @@
 // Base API configuration
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080/api';
+const API_BASE = `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api`; 
+// const API_BASE = process.env.NEXT_PUBLIC_BACKEND_API_URL; 
+
 
 console.log('🔧 API Base URL:', API_BASE);
 
