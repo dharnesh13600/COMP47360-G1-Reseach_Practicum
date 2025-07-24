@@ -215,7 +215,10 @@ useEffect(()=>{
   }
   matchTime();
 },[selectedDate]);
-
+useEffect(() => {
+  // Pass selectedTime to parent whenever it changes
+  onSelectedTimeChange(selectedTime);
+}, [selectedTime, onSelectedTimeChange]);
 
 async function fetchWeather(date, time) {
   const res = await fetch('/api/fetchWeather', {
@@ -372,7 +375,7 @@ useEffect(() => {
   }
 }, [isDesktop]);
 
-const maxItems = showAllLocations ? visibleLocations.length : 7;
+const maxItems = showAllLocations ? visibleLocations.length : 5;
 
 // Common dropdown components
 const ActivityDropdown = ({ className = "" }) => (

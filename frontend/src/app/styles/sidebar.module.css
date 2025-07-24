@@ -1117,8 +1117,8 @@ div.vl{
  border-radius: inherit;
  padding-inline:12px;
  width:100%;
- padding-top:5px;
- padding-bottom:5px;
+ padding-top:3px;
+ padding-bottom:3px;
  text-transform: lowercase;
  display: flex;
  justify-content: center;

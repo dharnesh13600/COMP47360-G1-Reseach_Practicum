@@ -56,6 +56,7 @@ const [showMarkers, setShowMarkers] = useState(false);
 
 const lastClickedMarkerRef = useRef(null);
 
+const navigationControlRef = useRef(null);
 
 const removeItem = (id) => {
   setComparisonStack(prev => prev.filter(item => item.id !== id));
@@ -149,8 +150,8 @@ function getViewConfig() {
       pitch:50,
       bearing:-20
     });
-
-mapRef.current.addControl(new mapboxgl.NavigationControl());
+navigationControlRef.current = new mapboxgl.NavigationControl();
+mapRef.current.addControl(navigationControlRef.current, 'top-right');
 const adjustView = () => {
   const config = getViewConfig();
    if (!mapRef.current) return;
@@ -222,10 +223,17 @@ useEffect(() => {
 
   const styleUrl = getStyleFromSelectedTime(selectedTime);
   mapRef.current.setStyle(styleUrl);
+mapRef.current.on('style.load', () => {
+    if (!navigationControlRef.current) {
+      navigationControlRef.current = new mapboxgl.NavigationControl();
+    }
 
-
-  mapRef.current.on('style.load', () => {
-    mapRef.current.addControl(new mapboxgl.NavigationControl());
+    // Check if control already exists
+    const controls = mapRef.current._controls || [];
+    const alreadyAdded = controls.includes(navigationControlRef.current);
+    if (!alreadyAdded) {
+      mapRef.current.addControl(navigationControlRef.current, 'top-right');
+    }
   });
 }, [selectedTime]);
 
@@ -326,7 +334,7 @@ useEffect(() => {
     markersRef.current = [];
 
     const toDraw = showLocations
-  ? (showAllLocations ? locations.slice(0, 7)  : locations.slice(0, 5))
+  ? (showAllLocations ? locations.slice(0, 10)  : locations.slice(0, 5))
   : zoneLocations;
 
   toDraw.forEach((item, index) => {
