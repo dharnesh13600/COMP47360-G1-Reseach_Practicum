@@ -24,74 +24,115 @@ const AdminDashboard = ({ onLogout }) => {
   };
 
   // Logout Modal Component (inline)
-  const LogoutModal = () => {
-    if (!showLogoutModal) return null;
+const LogoutModal = () => {
+  if (!showLogoutModal) return null;
 
-    return (
-      <div className="fixed inset-0 z-50 overflow-y-auto">
-        {/* Backdrop */}
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        }}
+        onClick={handleLogoutCancel}
+      ></div>
+      
+      {/* Modal */}
+      <div className="flex min-h-full items-center justify-center p-4">
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" 
-          onClick={handleLogoutCancel}
-        ></div>
-        
-        {/* Modal */}
-        <div className="flex min-h-full items-center justify-center p-4">
-          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-            {/* Close button */}
-            <div className="absolute right-0 top-0 pr-4 pt-4">
-              <button
-                type="button"
-                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={handleLogoutCancel}
-              >
-                <span className="sr-only">Close</span>
-                <X className="h-6 w-6" />
-              </button>
-            </div>
+          className="relative transform overflow-hidden rounded-lg shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '24px'
+          }}
+        >
+          {/* Close button */}
+          <div className="absolute right-0 top-0 pr-4 pt-4">
+            <button
+              type="button"
+              className="rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#9ca3af'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#6b7280'}
+              onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+              onClick={handleLogoutCancel}
+            >
+              <span className="sr-only">Close</span>
+              <X className="h-6 w-6" />
+            </button>
+          </div>
 
-            {/* Content */}
-            <div className="sm:flex sm:items-start">
-              {/* Icon */}
-              <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                <LogOut className="h-6 w-6 text-blue-600" />
-              </div>
-              
-              {/* Text */}
-              <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                <h3 className="text-base font-semibold leading-6 text-gray-900">
-                  Sign out of Admin Dashboard
-                </h3>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
-  Are you sure you want to sign out? You&apos;ll need to log in again to access the admin dashboard.
-</p>
-                </div>
+          {/* Content */}
+          <div className="sm:flex sm:items-start">
+            {/* Icon */}
+            <div 
+              className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
+              style={{backgroundColor: '#dbeafe'}}
+            >
+              <LogOut className="h-6 w-6" style={{color: '#2563eb'}} />
+            </div>
+            
+            {/* Text */}
+            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 
+                className="text-base font-semibold leading-6"
+                style={{color: '#111827'}}
+              >
+                Sign out of Admin Dashboard
+              </h3>
+              <div className="mt-2">
+                <p 
+                  className="text-sm"
+                  style={{color: '#6b7280'}}
+                >
+                  Are you sure you want to sign out? You'll need to log in again to access the admin dashboard.
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Buttons */}
-            <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-              <button
-                type="button"
-                className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto transition-colors"
-                onClick={handleLogoutConfirm}
-              >
-                Sign Out
-              </button>
-              <button
-                type="button"
-                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto transition-colors"
-                onClick={handleLogoutCancel}
-              >
-                Cancel
-              </button>
-            </div>
+          {/* Buttons */}
+          <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              className="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto transition-colors"
+              style={{
+                backgroundColor: '#2563eb',
+                color: '#ffffff'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#3b82f6'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+              onClick={handleLogoutConfirm}
+            >
+              Sign Out
+            </button>
+            <button
+              type="button"
+              className="mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:w-auto transition-colors"
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#111827',
+                border: '1px solid #d1d5db'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
+              onClick={handleLogoutCancel}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   return (
     <div className="min-h-screen bg-gray-100">

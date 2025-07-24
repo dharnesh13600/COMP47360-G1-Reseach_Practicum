@@ -143,7 +143,7 @@
   .numbered-marker {
  
   cursor: pointer;
-  width: 30px;
+  width: 28px;
   height: 30px;  /* Taller pin */
   z-index:9999;
 }
@@ -178,12 +178,12 @@
   z-index: 2;
   transform: translate(-50%, -50%);
   color: #52767E;
-  font-size: 18px;
+  font-size: 13px;
   font-weight: bold;
-  width: 19px;
-  height: 15px;
-  padding-bottom: 6px;
-  padding-left: 1px;
+  width: 17px;
+  height: 12px;
+  padding-bottom: 7px;
+  padding-left: 0.2px;
   border-radius: 50%;
   background: #FFF2E5;
   text-align: center;
@@ -358,9 +358,19 @@ font-weight: 600;
   flex-direction: column;
   margin-top: 10px;
 }
+.directions-button{
+   font-family: var(--ff-overpass);
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+  color: #2c6d6e;
+  text-decoration: underline;
+  z-index: 5000;
+}
 .directions-button:hover{
   cursor: pointer; 
   color: var(--on-surface-low-contrast);
+ 
 }
 
 .directions-image{
