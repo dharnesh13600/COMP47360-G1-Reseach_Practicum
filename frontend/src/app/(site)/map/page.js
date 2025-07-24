@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect,useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import '../styles/map-draw-1.css';
-import '../styles/map-draw-2.css';
+import '@/app/styles/map-draw-1.css';
+import '@/app/styles/map-draw-2.css';
 
 const Map = dynamic(() => import('@/app/components/map'), { ssr: false });
 const SideBar = dynamic(() => import('@/app/components/sidebar'), { ssr: false });

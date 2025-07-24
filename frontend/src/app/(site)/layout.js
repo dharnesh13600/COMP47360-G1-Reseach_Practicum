@@ -1,8 +1,9 @@
 
-import BodyWrapper from './components/bodyWrapper'; 
-import Header from "./components/header";
-import PageTransitionWrapper from './components/PageTransitionWrapper'; 
-import './globals.css';
+import BodyWrapper from '../components/bodyWrapper'; 
+import Header from "../components/header";
+import PageTransitionWrapper from '../components/PageTransitionWrapper'; 
+import '../globals.css';
+
 
 export const metadata = {
   title: 'Manhattan Muse',
@@ -18,6 +19,7 @@ export const metadata = {
   },
 };
 export default function RootLayout({ children }) {
+
  
   return (
    <html lang="en">
