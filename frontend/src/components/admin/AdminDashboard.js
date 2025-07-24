@@ -64,8 +64,8 @@ const AdminDashboard = ({ onLogout }) => {
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Are you sure you want to sign out? You'll need to log in again to access the admin dashboard.
-                  </p>
+  Are you sure you want to sign out? You&apos;ll need to log in again to access the admin dashboard.
+</p>
                 </div>
               </div>
             </div>
