@@ -2,10 +2,9 @@
 
 
 'use client';
-
 export const BACKEND_BASE = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-import { useEffect, useRef, useState } from "react";
-import styles from '../styles/sidebar.module.css';
+import {useEffect,useRef,useState} from "react";
+import styles from '../styles/sidebar.module.css'
 import Image from'next/image';
 import {parse,format} from 'date-fns';
 import {AiOutlineClose} from 'react-icons/ai';
@@ -349,7 +348,7 @@ useEffect(() => {
   if (submitted) {
     setVisibleIndexes([]);
     visibleLocations.forEach((_, i) => {
-      let delay=200 +i*200;
+      let delay=50 +i*200;
       setTimeout(() => {
         setVisibleIndexes(prev => [...prev, i]);
       }, delay);
@@ -551,20 +550,7 @@ const ZoneSelection = () => (
   <div className={styles.suggestedLocations}>
     <span>Select Area</span>
     <div className={`${styles.suggestedItems}${isSmall && showAllLocations ? styles.compact : ''}`}>
-      {/* {manhattanNeighborhoods.map(area => {
-        console.log("Rendering area:", area);
-        return (
-          <div
-            key={area}
-            className={styles.suggestedAreas}
-            onClick={() => {
-              handleZoneClick(area);
-            }}
-          >
-            {area}
-          </div>
-        );
-      })} */}
+    
      {manhattanNeighborhoods.map(area => {
   console.log(typeof area, area); 
 
@@ -643,7 +629,6 @@ return (
               </span>
             </div>
             
-            {/* Mobile location content - controlled by showLocationContent state */}
             {showLocationContent && (
               <>
                 {!submitted && showLocations && (
