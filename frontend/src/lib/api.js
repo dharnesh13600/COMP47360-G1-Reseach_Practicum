@@ -86,6 +86,7 @@ export const fetchAdminData = async () => {
   try {
     const response = await fetch(`${API_BASE}/admin/cache-status`, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -122,6 +123,7 @@ export const warmCache = async () => {
   try {
     const response = await fetch(`${API_BASE}/admin/warm-cache`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
