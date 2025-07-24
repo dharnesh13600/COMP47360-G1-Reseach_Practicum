@@ -122,7 +122,7 @@ function cleanAndTruncate(str, n = 3) {
 }
 
 async function fetchActivities() {
-  const res = await fetch('/api/fetchActivities');
+  const res = await fetch('/api/recommendations/activities');
   if (!res.ok) throw new Error('Failed to fetch activities');
   return res.json();
 }
@@ -136,7 +136,7 @@ useEffect(() => {
 }, []);
 
 async function fetchZones() {
-  const res = await fetch('/api/zones');
+  const res = await fetch('/api/recommendations/zones');
   if (!res.ok) throw new Error('Failed to fetch zones');
   return res.json();
 }
@@ -156,7 +156,7 @@ useEffect(() => {
   getZones();
 }, [zonesLoaded]);
 async function fetchDateTimes() {
-  const res = await fetch('/api/fetchDateTimes');
+  const res = await fetch('/api/forecast/available-datetimes');
   if (!res.ok) throw new Error('Failed to fetch date-times');
   return res.json();
 }
@@ -221,10 +221,12 @@ useEffect(() => {
 }, [selectedTime, onSelectedTimeChange]);
 
 async function fetchWeather(date, time) {
-  const res = await fetch('/api/fetchWeather', {
-    method: 'POST',
+  const dateObj = parse(`${date} ${time}`, 'MMMM d HH:mm', new Date());
+  const isoDateTime = format(dateObj, "yyyy-MM-dd'T'HH:mm:ss");
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/forecast?datetime=${isoDateTime}`, {
+    method: 'GET',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ selectedDate: date, selectedTime: time })
   });
 
   if (!res.ok) throw new Error('Failed to fetch weather');
@@ -270,7 +272,7 @@ async function handleSubmit(){
       dateTime:readableTimeJson,
     };
 
-    const res = await fetch('/api/fetchLocations', {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/recommendations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ activity: activityChoice.name, dateTime: readableTimeJson }),
@@ -318,7 +320,7 @@ async function handleZoneClick(area){
 
     console.log("Submitting with zone: ",payload);
 
-    const res=await fetch('/api/fetchLocations',{
+    const res=await fetch(`${process.env.BACKEND_API_URL}/recommendations`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload),
