@@ -495,7 +495,7 @@ const WeatherDisplay = ({ className = "" }) => (
   <div className={`${styles.weatherDisplay} ${className} ${submitted && weather ? styles.show : ''}`}>
     {weather && (
       <>
-        <img
+        <Image
           src={icon}
           alt={weather.condition}
           width={32}
@@ -509,7 +509,7 @@ const WeatherDisplay = ({ className = "" }) => (
 );
 
 const LocationsList = () => (
-  <div className={styles.locationListContainer}>
+ <div className={`${styles.locationListContainer} ${showAllLocations ? styles.expanded : ''}`}>
     {visibleLocations.slice(0, maxItems).map((location,index) => (
       <div 
         key={location.id} 
@@ -560,7 +560,7 @@ const ZoneSelection = () => (
         );
       })} */}
      {manhattanNeighborhoods.map(area => {
-  console.log(typeof area, area); // <-- 👈 ADD THIS LINE HERE
+  console.log(typeof area, area); 
 
   return (
     <div

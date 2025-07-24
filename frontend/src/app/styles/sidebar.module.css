@@ -1,4 +1,4 @@
-  .sidebarContainer{
+.sidebarContainer{
     width:100%;
     background-color: transparent;
 
@@ -44,7 +44,11 @@ justify-content: center;
 }
 .locationListContainer.compact {
   max-height: 120px;      /* or however tall you want the collapsed list */
-  overflow-y: auto;
+  overflow-y: hidden; /* No scroll by default */
+}
+
+.locationListContainer.compact.expanded {
+  overflow-y: auto; /* Only scroll when expanded */
 }
 
 .weatherLarge {
@@ -203,12 +207,38 @@ div.vl{
 .locationListContainer {
     margin-top:1rem;
   padding-inline: 20px;
-
   border-radius: 12px;
       display:flex;
   flex-direction: column;
-  
   align-items: center;
+  
+  /* Fixed container height - no scroll by default */
+  max-height: 250px;
+  overflow-y: hidden; /* No scroll by default */
+  overflow-x: hidden;
+  
+  /* Optional: Add custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+/* Only show scroll when expanded (more than 5 locations) */
+.locationListContainer.expanded {
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for webkit browsers */
+.locationListContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.locationListContainer::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+}
+
+.locationListContainer::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .locationItem {
@@ -232,6 +262,10 @@ div.vl{
   transform:translateY(-10px);
   transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
    max-width: 335px;
+   
+   /* Prevent items from getting squished */
+   flex-shrink: 0;
+   min-height: 35px;
 }
 .locationItem.show {
   opacity: 1;
@@ -284,7 +318,7 @@ animation: fadeSlideIn 0.4s forwards ease;
  flex-direction: column;
  align-items: center;
  width:max-content;
-
+font-family: var(--ff-overpass);
  
 }
  .locationBottomSection {
@@ -305,7 +339,7 @@ align-items: center;
 
   .locationBottomSection .locationListContainer {
     /* max-height: 350px;  */
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
     
   }
@@ -362,12 +396,14 @@ align-items: center;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
- 
   color: var(--subway-bg);
   border: 1px solid #ddd;
 max-width:430px;
-
-
+transition: 0.3s ease;
+}
+.suggestedAreas:hover{
+  cursor:pointer;
+  transform: translateY(-1.5px);
 }
 
 .active{
@@ -665,6 +701,24 @@ flex-wrap: wrap;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: hidden; /* No scroll by default */
+}
+
+.locationListContainer.compact.expanded {
+  overflow-y: auto; /* Only scroll when expanded */
+}
+
+/* Mobile specific adjustments */
+.locationBottomSection .locationListContainer {
+    max-height: 250px; /* Same fixed height as desktop */
+    margin-bottom: 1rem;
+    overflow-y: hidden; /* No scroll by default */
+    overflow-x: hidden;
+}
+
+/* Mobile: Only show scroll when expanded */
+.locationBottomSection .locationListContainer.expanded {
+    overflow-y: auto;
 }
 }
 @media (min-width:629px) and (max-width:900px){
@@ -739,23 +793,29 @@ grid-auto-columns: 169px;
     grid-auto-flow: column;
     grid-template-rows: repeat(5, auto); 
     grid-auto-columns: 300px; 
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow-x: hidden; /* No scroll by default */
+    overflow-y: hidden; /* No scroll by default */
     gap: 0.5rem;
     max-width: 100%;
     padding: 0.5rem;
     white-space: nowrap;
-    height:calc(200px -0.5rem);
+    max-height: 250px;
 }
- .locationItem {
+
+/* Medium screens: Only show scroll when expanded */
+.locationListContainer.expanded {
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.locationItem {
     width: auto;
     max-width: unset;
-  }
-  .locationListContainer>button {
+}
 
+.locationListContainer>button {
   display: none;
 }
-  
 
 }
 /* sidebar responsive */
@@ -764,12 +824,14 @@ grid-auto-columns: 169px;
   .sidebarContainer{
     width:280px;
      min-height: 510px;  
+    max-height: 85vh; /* Constrain sidebar to viewport */
     height:auto; 
     border-radius: 56px;
     background-color: var(--background);
     box-shadow: 0 4px 20.5px 3px #00000025;
     padding-inline:20px;
     padding-top: 50px;
+    padding-bottom: 20px; /* Add bottom padding */
    
     display: flex;
     flex-direction: column;
@@ -778,12 +840,34 @@ grid-auto-columns: 169px;
     top:160px;
     left:50px;
     z-index:10;
-  margin-bottom: 0;
+    margin-bottom: 0;
+    overflow: hidden; /* Prevent sidebar overflow */
 }
  .locationListContainer>button {
   border: 0;
   background: none;
   display: block;
+  width:100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.showMoreBtn {
+  border: 0;
+  background: none;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease, transform 0.1s ease;
+  cursor: pointer;
+  padding: 0.5rem;
 }
 
 
@@ -861,6 +945,10 @@ align-content: center;
     z-index:10;
     background: transparent;
      box-shadow: 0 0 0 0;
+     flex: 1; /* Allow it to grow and fill remaining space */
+     display: flex;
+     flex-direction: column;
+     overflow: hidden; /* Prevent overflow */
 }
   .locationBottomSection .locationListContainer {
     
@@ -958,6 +1046,24 @@ div.vl{
   flex-direction: column;
   
   align-items: center;
+  
+  /* Desktop properties - no scroll by default */
+  max-height: 280px; /* Height to comfortably fit ~5 items */
+  overflow-y: hidden; /* No scroll by default */
+  overflow-x: hidden;
+  
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  
+  /* Ensure it takes available space but doesn't overflow */
+  flex: 1;
+  min-height: 0; /* Allow shrinking */
+}
+
+/* Desktop: Only show scroll when expanded (more than 5 locations) */
+.locationListContainer.expanded {
+  overflow-y: auto;
 }
 
 .locationItem {
@@ -983,6 +1089,10 @@ div.vl{
   transform:translateY(-10px);
   overflow: hidden;
   transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
+  
+  /* Prevent items from getting squished */
+  flex-shrink: 0;
+  min-height: 35px;
 }
 .locationItem.show {
   opacity: 1;
@@ -1209,21 +1319,6 @@ width:190px;
   width:100%;
 }
 
-.locationListContainer>button {
-  
-  width:100%;
-  justify-content: center;
-  display: block;
-align-items: center;
-justify-content: center;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  transition: color 0.3s ease, transform 0.1s ease;
-}
-
-.locationListContainer>button:hover{
-cursor: pointer;
-}
   .weatherSmall {
     display: none;
   }

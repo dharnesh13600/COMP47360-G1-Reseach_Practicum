@@ -3,7 +3,7 @@
 'use client';
 
 
-import {useRef,useEffect,useState} from 'react';
+import {useRef,useEffect,useState,useCallback} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 import ComparisonStack from './comparisonStack.js';
@@ -81,7 +81,7 @@ async function fetchPlaceId(lat, lng) {
 }
 
 
-const openInGoogleMaps = async (lat, lng) => {
+const openInGoogleMaps = useCallback(async (lat, lng) => {
   try {
     const placeId = await fetchPlaceId(lat, lng);
     window.open(`https://www.google.com/maps/place/?q=place_id:${placeId}`, '_blank');
@@ -89,7 +89,7 @@ const openInGoogleMaps = async (lat, lng) => {
     console.error(err);
     alert("Could not find place in Google Maps.");
   }
-};
+}, []);
 
 function getStyleFromSelectedTime(selectedTime) {
   const DAY_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL;
@@ -268,7 +268,7 @@ useEffect(() => {
       activePopupRef.current = marker.getPopup();
     }
 
-  }, [selectedLocation]);
+  }, [selectedLocation?.latitude, selectedLocation?.longitude]);
 
   useEffect(() => {
     if (!selectedZone|| !mapRef.current) return;
@@ -641,7 +641,7 @@ if (compareBtn) {
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
   };
-  }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations]);
+  }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations, openInGoogleMaps]);
 
 
   if (!useMapbox) {
