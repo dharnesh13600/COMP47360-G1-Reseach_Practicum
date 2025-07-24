@@ -193,7 +193,7 @@ public class SystemHealthService {
 
             long startTime = System.currentTimeMillis();
             var response = restTemplate.postForObject(
-                    "http://localhost:8000/predict_batch",
+                    "http://34.94.101.102:8080/predict_batch",
                     testPayload,
                     Object[].class
             );
