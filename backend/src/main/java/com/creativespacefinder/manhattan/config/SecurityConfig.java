@@ -25,6 +25,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/forecast/**").permitAll()
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/api/admin/login").permitAll()
+                        .requestMatchers("/api/admin/validate-session").permitAll()
+                        .requestMatchers("/api/admin/logout").permitAll()
                         .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().permitAll()
                 )
