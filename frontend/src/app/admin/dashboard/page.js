@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminDashboard from '../../../components/admin/AdminDashboard';
 import '../../styles/admin.module.css'
@@ -14,9 +14,9 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     validateSession();
-  }, [validateSession]);
+  }, []);
 
-  const validateSession = useCallback(async () => {
+  const validateSession = async () => {
     try {
       console.log('🔍 Validating session with backend...');
       
@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  };
 
   const handleLogout = async () => {
     try {

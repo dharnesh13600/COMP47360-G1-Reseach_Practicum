@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
   // Check if user is already authenticated when page loads
   useEffect(() => {
     checkExistingAuth();
-  }, [checkExistingAuth]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkExistingAuth = async () => {
     try {
