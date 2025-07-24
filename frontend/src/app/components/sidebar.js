@@ -2,6 +2,8 @@
 
 
 'use client';
+
+export const BACKEND_BASE = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 import { useEffect, useRef, useState } from "react";
 import styles from '../styles/sidebar.module.css';
 import Image from'next/image';
@@ -18,7 +20,6 @@ import DateItem from "@/helper/dateItem.js";
 
 import DropdownTime from "./dropdowns/timeDropdown";
 import TimeItem from "@/helper/timeItem";
-
 
 
 import { useWeather } from "./useWeather";
@@ -38,7 +39,7 @@ export default function SideBar({
   clearMarkers,
   setClearMarkers
 }){
-  console.log('SideBar component mounted/re-rendered');
+  
 
 // useStates for retrieving from api endpoints
 const [activities, setActivities] = useState([]);
@@ -122,7 +123,7 @@ function cleanAndTruncate(str, n = 3) {
 }
 
 async function fetchActivities() {
-  const res = await fetch('/api/recommendations/activities');
+  const res = await fetch(`${BACKEND_BASE}/api/recommendations/activities`);
   if (!res.ok) throw new Error('Failed to fetch activities');
   return res.json();
 }
@@ -136,7 +137,7 @@ useEffect(() => {
 }, []);
 
 async function fetchZones() {
-  const res = await fetch('/api/recommendations/zones');
+  const res = await fetch(`${BACKEND_BASE}/api/recommendations/zones`);
   if (!res.ok) throw new Error('Failed to fetch zones');
   return res.json();
 }
@@ -156,7 +157,7 @@ useEffect(() => {
   getZones();
 }, [zonesLoaded]);
 async function fetchDateTimes() {
-  const res = await fetch('/api/forecast/available-datetimes');
+  const res = await fetch(`${BACKEND_BASE}/api/forecast/available-datetimes`);
   if (!res.ok) throw new Error('Failed to fetch date-times');
   return res.json();
 }
@@ -224,7 +225,7 @@ async function fetchWeather(date, time) {
   const dateObj = parse(`${date} ${time}`, 'MMMM d HH:mm', new Date());
   const isoDateTime = format(dateObj, "yyyy-MM-dd'T'HH:mm:ss");
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/forecast?datetime=${isoDateTime}`, {
+  const res = await fetch(`${BACKEND_BASE}/api/forecast?datetime=${isoDateTime}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -272,7 +273,7 @@ async function handleSubmit(){
       dateTime:readableTimeJson,
     };
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/recommendations`, {
+    const res = await fetch(`${BACKEND_BASE}/api/recommendations` ,{
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ activity: activityChoice.name, dateTime: readableTimeJson }),
@@ -320,7 +321,7 @@ async function handleZoneClick(area){
 
     console.log("Submitting with zone: ",payload);
 
-    const res=await fetch(`${process.env.BACKEND_API_URL}/recommendations`,{
+    const res=await fetch(`${BACKEND_BASE}/api/recommendations`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload),
