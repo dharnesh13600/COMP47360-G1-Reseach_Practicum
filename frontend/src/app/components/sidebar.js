@@ -122,7 +122,7 @@ function cleanAndTruncate(str, n = 3) {
 }
 
 async function fetchActivities() {
-  const res = await fetch('/api/fetchActivities');
+  const res = await fetch('/api/recommendations/activities');
   if (!res.ok) throw new Error('Failed to fetch activities');
   return res.json();
 }
@@ -136,7 +136,7 @@ useEffect(() => {
 }, []);
 
 async function fetchZones() {
-  const res = await fetch('/api/zones');
+  const res = await fetch('/api/recommendations/zones');
   if (!res.ok) throw new Error('Failed to fetch zones');
   return res.json();
 }
@@ -156,7 +156,7 @@ useEffect(() => {
   getZones();
 }, [zonesLoaded]);
 async function fetchDateTimes() {
-  const res = await fetch('/api/fetchDateTimes');
+  const res = await fetch('/api/forecast/available-datetimes');
   if (!res.ok) throw new Error('Failed to fetch date-times');
   return res.json();
 }
@@ -215,10 +215,13 @@ useEffect(()=>{
   }
   matchTime();
 },[selectedDate]);
-
+useEffect(() => {
+  // Pass selectedTime to parent whenever it changes
+  onSelectedTimeChange(selectedTime);
+}, [selectedTime, onSelectedTimeChange]);
 
 async function fetchWeather(date, time) {
-  const res = await fetch('/api/fetchWeather', {
+  const res = await fetch('/api/forecast?datetime=', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedDate: date, selectedTime: time })
@@ -267,7 +270,7 @@ async function handleSubmit(){
       dateTime:readableTimeJson,
     };
 
-    const res = await fetch('/api/fetchLocations', {
+    const res = await fetch('/api/recommendations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ activity: activityChoice.name, dateTime: readableTimeJson }),
@@ -315,7 +318,7 @@ async function handleZoneClick(area){
 
     console.log("Submitting with zone: ",payload);
 
-    const res=await fetch('/api/fetchLocations',{
+    const res=await fetch('/api/recommendations',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload),
@@ -372,7 +375,7 @@ useEffect(() => {
   }
 }, [isDesktop]);
 
-const maxItems = showAllLocations ? visibleLocations.length : 7;
+const maxItems = showAllLocations ? visibleLocations.length : 5;
 
 // Common dropdown components
 const ActivityDropdown = ({ className = "" }) => (
@@ -495,7 +498,7 @@ const WeatherDisplay = ({ className = "" }) => (
   <div className={`${styles.weatherDisplay} ${className} ${submitted && weather ? styles.show : ''}`}>
     {weather && (
       <>
-        <img
+        <Image
           src={icon}
           alt={weather.condition}
           width={32}
@@ -509,7 +512,7 @@ const WeatherDisplay = ({ className = "" }) => (
 );
 
 const LocationsList = () => (
-  <div className={styles.locationListContainer}>
+ <div className={`${styles.locationListContainer} ${showAllLocations ? styles.expanded : ''}`}>
     {visibleLocations.slice(0, maxItems).map((location,index) => (
       <div 
         key={location.id} 
@@ -560,7 +563,7 @@ const ZoneSelection = () => (
         );
       })} */}
      {manhattanNeighborhoods.map(area => {
-  console.log(typeof area, area); // <-- 👈 ADD THIS LINE HERE
+  console.log(typeof area, area); 
 
   return (
     <div

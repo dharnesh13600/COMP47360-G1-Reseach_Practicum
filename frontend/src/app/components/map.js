@@ -3,7 +3,7 @@
 'use client';
 
 
-import {useRef,useEffect,useState} from 'react';
+import {useRef,useEffect,useState,useCallback} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 import ComparisonStack from './comparisonStack.js';
@@ -56,6 +56,7 @@ const [showMarkers, setShowMarkers] = useState(false);
 
 const lastClickedMarkerRef = useRef(null);
 
+const navigationControlRef = useRef(null);
 
 const removeItem = (id) => {
   setComparisonStack(prev => prev.filter(item => item.id !== id));
@@ -81,7 +82,7 @@ async function fetchPlaceId(lat, lng) {
 }
 
 
-const openInGoogleMaps = async (lat, lng) => {
+const openInGoogleMaps = useCallback(async (lat, lng) => {
   try {
     const placeId = await fetchPlaceId(lat, lng);
     window.open(`https://www.google.com/maps/place/?q=place_id:${placeId}`, '_blank');
@@ -89,7 +90,7 @@ const openInGoogleMaps = async (lat, lng) => {
     console.error(err);
     alert("Could not find place in Google Maps.");
   }
-};
+}, []);
 
 function getStyleFromSelectedTime(selectedTime) {
   const DAY_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL;
@@ -149,8 +150,8 @@ function getViewConfig() {
       pitch:50,
       bearing:-20
     });
-
-mapRef.current.addControl(new mapboxgl.NavigationControl());
+navigationControlRef.current = new mapboxgl.NavigationControl();
+mapRef.current.addControl(navigationControlRef.current, 'top-right');
 const adjustView = () => {
   const config = getViewConfig();
    if (!mapRef.current) return;
@@ -222,10 +223,17 @@ useEffect(() => {
 
   const styleUrl = getStyleFromSelectedTime(selectedTime);
   mapRef.current.setStyle(styleUrl);
+mapRef.current.on('style.load', () => {
+    if (!navigationControlRef.current) {
+      navigationControlRef.current = new mapboxgl.NavigationControl();
+    }
 
-
-  mapRef.current.on('style.load', () => {
-    mapRef.current.addControl(new mapboxgl.NavigationControl());
+    // Check if control already exists
+    const controls = mapRef.current._controls || [];
+    const alreadyAdded = controls.includes(navigationControlRef.current);
+    if (!alreadyAdded) {
+      mapRef.current.addControl(navigationControlRef.current, 'top-right');
+    }
   });
 }, [selectedTime]);
 
@@ -268,7 +276,7 @@ useEffect(() => {
       activePopupRef.current = marker.getPopup();
     }
 
-  }, [selectedLocation]);
+  }, [selectedLocation?.latitude, selectedLocation?.longitude]);
 
   useEffect(() => {
     if (!selectedZone|| !mapRef.current) return;
@@ -326,7 +334,7 @@ useEffect(() => {
     markersRef.current = [];
 
     const toDraw = showLocations
-  ? (showAllLocations ? locations.slice(0, 7)  : locations.slice(0, 5))
+  ? (showAllLocations ? locations.slice(0, 10)  : locations.slice(0, 5))
   : zoneLocations;
 
   toDraw.forEach((item, index) => {
@@ -641,7 +649,7 @@ if (compareBtn) {
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
   };
-  }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations]);
+  }, [submitted,clearMarkers,showLocations, locations, zoneLocations, showAllLocations, openInGoogleMaps]);
 
 
   if (!useMapbox) {

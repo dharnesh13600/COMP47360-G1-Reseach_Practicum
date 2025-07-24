@@ -23,7 +23,7 @@ const [selectedTime, setSelectedTime] = useState(null);
 const visibleLocations = useMemo(() => {
   return !showAllLocations
     ? submittedLocations.slice(0, 5)
-    : submittedLocations.slice(0, 7);
+    : submittedLocations.slice(0, 10);
 }, [showAllLocations, submittedLocations]);
 
   // Handle activity/date/time submission
@@ -73,7 +73,7 @@ const visibleLocations = useMemo(() => {
 
       <Map
         submitted={submitted}
-        locations={submittedLocations}
+        locations={visibleLocations}
         selectedLocation={selectedLocation}
         selectedTime={selectedTime}         
         selectedZone={selectedZone}
