@@ -58,6 +58,6 @@ spec:
               name: admin-credentials
               key: ADMIN_PASSWORD_HASH
 
-        # === ML Predict URL (was pointing at external LB) ===
+        # === ML Predict URL (now using in-cluster Service DNS) ===
         - name: ML_PREDICT_URL
-          value: "http://data-analytics-service:8080/predict_batch"
+          value: "http://data-analytics-service:8080/predict_batch"  # ← CHANGED from external IP
