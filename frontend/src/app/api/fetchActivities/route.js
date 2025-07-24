@@ -15,7 +15,7 @@ export async function GET() {
   try {
     const res = await fetch(`${process.env.BACKEND_API_URL}/recommendations/activities`, {
       headers: {
-        method: 'GET',
+        
         'Content-Type': 'application/json',
       },
     });
