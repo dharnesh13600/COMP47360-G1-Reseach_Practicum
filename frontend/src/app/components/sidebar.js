@@ -122,7 +122,7 @@ function cleanAndTruncate(str, n = 3) {
 }
 
 async function fetchActivities() {
-  const res = await fetch('/api/fetchActivities');
+  const res = await fetch('/api/recommendations/activities');
   if (!res.ok) throw new Error('Failed to fetch activities');
   return res.json();
 }
@@ -136,7 +136,7 @@ useEffect(() => {
 }, []);
 
 async function fetchZones() {
-  const res = await fetch('/api/zones');
+  const res = await fetch('/api/recommendations/zones');
   if (!res.ok) throw new Error('Failed to fetch zones');
   return res.json();
 }
@@ -156,7 +156,7 @@ useEffect(() => {
   getZones();
 }, [zonesLoaded]);
 async function fetchDateTimes() {
-  const res = await fetch('/api/fetchDateTimes');
+  const res = await fetch('/api/forecast/available-datetimes');
   if (!res.ok) throw new Error('Failed to fetch date-times');
   return res.json();
 }
