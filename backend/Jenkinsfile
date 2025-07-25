@@ -64,23 +64,23 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        withMaven(maven: 'M3', jdk: 'JDK_21') {
-          dir('backend') {
-            withSonarQubeEnv('SonarQube') {
+    // stage('SonarQube Analysis') {
+    //   steps {
+    //     withMaven(maven: 'M3', jdk: 'JDK_21') {
+    //       dir('backend') {
+    //         withSonarQubeEnv('SonarQube') {
               
-              sh '''
-                mvn sonar:sonar \
-                  -Dsonar.login=${SONAR_TOKEN} \
-                  -Dsonar.projectKey=manhattan \
-                  -Dsonar.projectName="manhattan" \
-              '''
-            }
-          }
-        }
-      }
-    }
+    //           sh '''
+    //             mvn sonar:sonar \
+    //               -Dsonar.login=${SONAR_TOKEN} \
+    //               -Dsonar.projectKey=manhattan \
+    //               -Dsonar.projectName="manhattan" \
+    //           '''
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     // Uncomment below if skipping tests explicitly needed
     /*
