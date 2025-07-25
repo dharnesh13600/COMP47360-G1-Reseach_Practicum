@@ -1,7 +1,6 @@
 spring:
   application:
     name: creative-space-finder
-
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -24,9 +23,13 @@ spring:
       keepalive-time: 0              # No keepalive pings
       initialization-fail-timeout: 1 # Fail fast on startup issues
 
+  # CACHE CONFIGURATION - FIXED FOR PROPER CACHE HIT DETECTION
   cache:
+    type: caffeine
     caffeine:
-      spec: maximumSize=1000,expireAfterWrite=24h
+      spec: maximumSize=1000,expireAfterWrite=24h,recordStats
+    cache-names:
+      - recommendations
 
   jpa:
     hibernate:
@@ -56,6 +59,16 @@ spring:
     store-type: memory
     timeout: 24h
 
+  # ASYNC TASK EXECUTION (Required for cache warming)
+  task:
+    execution:
+      pool:
+        core-size: 2
+        max-size: 5
+        queue-capacity: 10
+        thread-name-prefix: "async-"
+        keep-alive: 60s
+
 # Admin credentials configuration - SECURE WITH ENVIRONMENT VARIABLES
 admin:
   username: ${ADMIN_USERNAME}
@@ -78,10 +91,17 @@ server:
   # CRITICAL: Proper shutdown handling
   shutdown: graceful
   tomcat:
-    connection-timeout: 20000
+    # UPDATED: Separate timeouts for different scenarios
+    connection-timeout: 30000        # 30 seconds for regular requests
     max-connections: 50
+    threads:
+      max: 200
+      min-spare: 10
+    # IMPORTANT: These settings allow for longer admin operations
+    processor-cache: 200
+    accept-count: 100
 
-# Reduce logging noise but keep essential debugging
+# ENHANCED LOGGING FOR DEBUGGING
 logging:
   level:
     com.creativespacefinder.manhattan: INFO
@@ -90,21 +110,41 @@ logging:
     org.hibernate.orm.deprecation: WARN     # Suppress deprecation warnings
     com.zaxxer.hikari: INFO                 # Reduced from DEBUG
     com.zaxxer.hikari.pool: WARN            # Only show warnings for pool issues
+    # ADDED: Cache and async debugging
+    org.springframework.cache: DEBUG        # Show cache operations
+    com.github.benmanes.caffeine: DEBUG     # Show Caffeine cache stats
+    org.springframework.scheduling: INFO    # Show async task execution
+    org.springframework.core.task: INFO     # Show task executor activity
 
 # Management endpoints for monitoring
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,shutdown
+        include: health,info,metrics,shutdown,caches
   endpoint:
     health:
       show-details: always
     shutdown:
       enabled: true
-      
-# >>> ADDED BLOCK FOR ML SERVICE URL <<<
+    caches:
+      enabled: true  # Enable cache endpoint for debugging
+
+# ML SERVICE CONFIGURATION
 ml:
   predict:
     url: ${ML_PREDICT_URL:http://ml-service.default.svc.cluster.local:8000/predict_batch}
-# <<< END ADDED BLOCK >>>
+    # ADDED: Timeout settings for ML service calls
+    timeout:
+      connect: 30000    # 30 seconds to connect
+      read: 120000      # 2 minutes to read response
+
+# CACHE WARMING CONFIGURATION
+cache:
+  warming:
+    # Enable async processing to prevent 502 errors
+    async: true
+    # Batch processing to reduce load
+    batch-size: 5
+    delay-between-batches: 3000  # 3 seconds between batches
+    max-duration-minutes: 20     # Maximum 20 minutes for safety
