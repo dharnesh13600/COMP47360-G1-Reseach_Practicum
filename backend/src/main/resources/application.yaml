@@ -23,14 +23,6 @@ spring:
       keepalive-time: 0              # No keepalive pings
       initialization-fail-timeout: 1 # Fail fast on startup issues
 
-  # CACHE CONFIGURATION - FIXED FOR PROPER CACHE HIT DETECTION
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=24h,recordStats
-    cache-names:
-      - recommendations
-
   jpa:
     hibernate:
       ddl-auto: validate             # Changed from 'none' to 'validate' for safety
