@@ -3,6 +3,7 @@ package com.creativespacefinder.manhattan.controller;
 import com.creativespacefinder.manhattan.service.DailyPrecomputationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -18,6 +22,9 @@ public class AdminController {
 
     @Autowired
     private DailyPrecomputationService dailyPrecomputationService;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -121,13 +128,13 @@ public class AdminController {
     // ===============================
 
     /**
-     * Manual trigger for daily cache warming
-     * Useful for immediate cache warming after deployment
+     * Manual trigger for daily cache warming - ASYNC VERSION (prevents 502 errors)
+     * This method returns immediately while cache warming runs in background
      * Requires authentication
      */
     @PostMapping("/warm-cache")
     public ResponseEntity<String> warmCache(HttpSession session) {
-        System.out.println("Cache warming request received");
+        System.out.println("🔥 Async cache warming request received");
 
         // Check authentication
         if (!isAuthenticated(session)) {
@@ -136,14 +143,24 @@ public class AdminController {
         }
 
         try {
-            System.out.println("Starting cache warming process...");
-            dailyPrecomputationService.triggerDailyPrecomputation();
-            System.out.println("Cache warming initiated successfully");
-            return ResponseEntity.ok("Daily cache warming initiated successfully. This will take ~10 minutes to complete.");
+            System.out.println("🚀 Starting ASYNC cache warming process...");
+
+            // Start cache warming in background - this returns immediately!
+            dailyPrecomputationService.triggerAsyncDailyPrecomputation();
+
+            String responseMessage = "Cache warming started successfully in background!\n\n" +
+                    "Process Duration: ~10-15 minutes\n" +
+                    "Runs in background - you can continue using the app\n" +
+                    "Cache will be populated automatically when complete";
+
+            System.out.println("✅ Async cache warming initiated - returning immediate response");
+            return ResponseEntity.ok(responseMessage);
+
         } catch (Exception e) {
-            System.err.println("Cache warming failed: " + e.getMessage());
+            String errorMessage = "❌ Failed to start cache warming: " + e.getMessage();
+            System.err.println(errorMessage);
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Cache warming failed: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorMessage);
         }
     }
 
@@ -163,6 +180,94 @@ public class AdminController {
 
         System.out.println("Cache status request authenticated");
         return ResponseEntity.ok("Daily cache warming runs at 3 AM every day. Check logs for details.");
+    }
+
+    /**
+     * Debug cache contents and statistics
+     */
+    @GetMapping("/cache-debug")
+    public ResponseEntity<Map<String, Object>> debugCache(HttpSession session) {
+        System.out.println("Cache debug request received");
+
+        // Check authentication
+        if (!isAuthenticated(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
+        }
+
+        Map<String, Object> debug = new HashMap<>();
+
+        try {
+            var cache = cacheManager.getCache("recommendations");
+            if (cache != null) {
+                debug.put("cacheExists", true);
+
+                if (cache instanceof org.springframework.cache.caffeine.CaffeineCache) {
+                    var caffeineCache = ((org.springframework.cache.caffeine.CaffeineCache) cache).getNativeCache();
+                    var stats = caffeineCache.stats();
+
+                    Map<String, Object> cacheStats = new HashMap<>();
+                    cacheStats.put("estimatedSize", caffeineCache.estimatedSize());
+                    cacheStats.put("hitCount", stats.hitCount());
+                    cacheStats.put("missCount", stats.missCount());
+                    cacheStats.put("hitRate", String.format("%.2f%%", stats.hitRate() * 100));
+                    cacheStats.put("missRate", String.format("%.2f%%", stats.missRate() * 100));
+                    cacheStats.put("requestCount", stats.requestCount());
+                    cacheStats.put("averageLoadTime", String.format("%.2fms", stats.averageLoadPenalty() / 1_000_000.0));
+                    cacheStats.put("evictionCount", stats.evictionCount());
+
+                    debug.put("statistics", cacheStats);
+
+                    // Get some sample cache keys (first 10)
+                    Set<Object> keys = caffeineCache.asMap().keySet();
+                    List<String> sampleKeys = keys.stream()
+                            .limit(10)
+                            .map(Object::toString)
+                            .collect(Collectors.toList());
+                    debug.put("sampleKeys", sampleKeys);
+                    debug.put("totalKeys", keys.size());
+
+                } else {
+                    debug.put("cacheType", cache.getClass().getSimpleName());
+                    debug.put("note", "Not a Caffeine cache - limited debug info available");
+                }
+            } else {
+                debug.put("cacheExists", false);
+                debug.put("error", "Cache 'recommendations' not found");
+            }
+
+        } catch (Exception e) {
+            debug.put("error", "Error accessing cache: " + e.getMessage());
+        }
+
+        return ResponseEntity.ok(debug);
+    }
+
+    /**
+     * Clear the cache for testing
+     */
+    @PostMapping("/clear-cache")
+    public ResponseEntity<String> clearCache(HttpSession session) {
+        System.out.println("Clear cache request received");
+
+        // Check authentication
+        if (!isAuthenticated(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
+        }
+
+        try {
+            var cache = cacheManager.getCache("recommendations");
+            if (cache != null) {
+                cache.clear();
+                System.out.println("✅ Cache cleared successfully");
+                return ResponseEntity.ok("Cache cleared successfully. Next requests will be cache misses.");
+            } else {
+                return ResponseEntity.status(404).body("Cache 'recommendations' not found");
+            }
+        } catch (Exception e) {
+            System.err.println("Error clearing cache: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error clearing cache: " + e.getMessage());
+        }
     }
 
     // ===============================

@@ -71,10 +71,9 @@ public class LocationRecommendationService {
     @Transactional
     public RecommendationResponse getLocationRecommendations(RecommendationRequest request) {
         long startTime = System.currentTimeMillis();
-        boolean cacheHit = false;
 
         String zoneInfo = (request.getSelectedZone() != null) ? request.getSelectedZone() : "ALL_MANHATTAN";
-        System.out.println("CACHE MISS - Processing recommendation request for activity: " + request.getActivity() +
+        System.out.println("🔄 Processing recommendation request for activity: " + request.getActivity() +
                 ", dateTime: " + request.getDateTime() +
                 ", zone: " + zoneInfo);
 
@@ -256,15 +255,9 @@ public class LocationRecommendationService {
 
             RecommendationResponse response = new RecommendationResponse(top10, activityName, requestDateTime.toString());
 
-            long responseTime = System.currentTimeMillis() - startTime;
-            System.out.println("TOTAL REQUEST TIME: " + responseTime + "ms");
-            analyticsService.trackRequest(activityName, requestDateTime, cacheHit, responseTime);
-
             return response;
 
         } catch (Exception e) {
-            long responseTime = System.currentTimeMillis() - startTime;
-            analyticsService.trackRequest(activityName, requestDateTime, cacheHit, responseTime);
             throw e;
         }
     }
@@ -411,19 +404,19 @@ public class LocationRecommendationService {
     //     RestTemplate r = new RestTemplate();
     //     return r.postForObject("http://34.94.101.102:8080/predict_batch", bodies, PredictionResponse[].class);
     // }
-    
+
     // added by dharnesh for injecting ML predict URL instead of hard-coding
-    
+
     protected PredictionResponse[] callMLModelBatch(List<Map<String,Object>> bodies) {
         // ← CHANGED: use injected URL instead of hard-coded IP
-       RestTemplate r = new RestTemplate();
+        RestTemplate r = new RestTemplate();
         return r.postForObject(
-            mlPredictUrl,                      // ← CHANGED to use env var
-            bodies,
-            PredictionResponse[].class
+                mlPredictUrl,                      // ← CHANGED to use env var
+                bodies,
+                PredictionResponse[].class
         );
     }
-        // ----------------
+    // ----------------
     public List<Activity> getAllActivities() {
         return activityRepository.findAll();
     }
