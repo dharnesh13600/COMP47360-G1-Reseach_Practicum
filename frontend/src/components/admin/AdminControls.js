@@ -31,22 +31,49 @@ const AdminControls = ({ setActiveTab }) => {
   };
 
   const handleWarmCache = async () => {
-    console.log('🔥 Initiating cache warming...');
+    console.log('🔥 Initiating ASYNC cache warming...');
     setOperationLoading(true);
     setError(null);
+    
     try {
       const result = await warmCache();
-      console.log('✅ Cache warming result:', result);
+      console.log('✅ Cache warming initiated:', result);
       
-      // Show success message
-      alert(result.message || 'Cache warming initiated successfully!');
+      // Show detailed success message for async operation
+      const successMessage = `Cache Warming Started Successfully!\n\n` +
+                            `${result.message || 'Process initiated in background'}\n\n` +
+                            `Expected Duration: 10-15 minutes\n` +
+                            `Process runs in asynchronously!\n` +
+                            `✅ You can continue using the app normally`;
+      
+      alert(successMessage);
+      
+      // Update UI to show cache warming in progress
+      setData(prev => ({ 
+        ...prev, 
+        cacheStatus: "Cache warming in progress... Check server logs for updates.",
+        lastChecked: new Date().toLocaleString()
+      }));
       
       // Refresh admin data
       await loadAdminData();
+      
     } catch (err) {
-      console.error('❌ Cache warming error:', err);
+      console.error('Cache warming error:', err);
       setError(err.message);
-      alert('Cache warming failed: ' + err.message);
+      
+      let errorMessage = `❌ Cache Warming Failed\n\n${err.message}`;
+      
+      if (err.message.includes('502')) {
+        errorMessage += `\n\n🔧 This 502 error indicates a timeout issue.\n` +
+                       `The async implementation should fix this.\n` +
+                       `If you still see this error, there may be:\n` +
+                       `• Kubernetes ingress timeout limits\n` +
+                       `• Load balancer timeout settings\n` +
+                       `• Network infrastructure limits`;
+      }
+      
+      alert(errorMessage);
     } finally {
       setOperationLoading(false);
     }
@@ -99,7 +126,7 @@ const AdminControls = ({ setActiveTab }) => {
               ) : (
                 <Zap className="h-4 w-4 mr-2" />
               )}
-              {operationLoading ? 'Warming Cache...' : 'Warm Cache Now'}
+              {operationLoading ? 'Starting Cache Warming...' : 'Warm Cache Now'}
             </button>
             
             {data.cacheStatus && (
@@ -119,6 +146,7 @@ const AdminControls = ({ setActiveTab }) => {
                 <p>• Manual warming processes ~280 combinations</p>
                 <p>• Cache expires after 24 hours</p>
                 <p>• Maximum 1000 cached entries</p>
+                <p>• <strong>NEW:</strong> Async warming prevents timeouts</p>
               </div>
             </div>
           </div>
@@ -160,6 +188,7 @@ const AdminControls = ({ setActiveTab }) => {
                 <p>• Database: PostgreSQL (Supabase)</p>
                 <p>• ML Service: FastAPI + XGBoost</p>
                 <p>• Weather API: OpenWeather Pro</p>
+                <p>• <strong>Cache:</strong> Caffeine with statistics enabled</p>
               </div>
             </div>
           </div>
@@ -190,8 +219,26 @@ const AdminControls = ({ setActiveTab }) => {
             <span className="text-gray-700">Health monitoring dashboard</span>
             <span className="ml-auto text-gray-500">Active</span>
           </div>
+          <div className="flex items-center text-sm">
+            <Zap className="h-4 w-4 text-yellow-500 mr-3" />
+            <span className="text-gray-700">Async cache warming system</span>
+            <span className="ml-auto text-gray-500">Ready</span>
+          </div>
         </div>
       </div>
+
+      {/* Cache Status Indicator */}
+      {data.cacheStatus && data.cacheStatus.includes('in progress') && (
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+          <div className="flex items-center">
+            <RefreshCw className="h-5 w-5 text-blue-500 mr-2 animate-spin" />
+            <div>
+              <p className="text-blue-800 font-medium">Cache Warming in Progress</p>
+              <p className="text-blue-600 text-sm">Background process is running. Check server logs for detailed progress updates.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Loading State */}
       {loading && (
