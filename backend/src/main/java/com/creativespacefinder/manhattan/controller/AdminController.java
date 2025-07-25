@@ -148,11 +148,10 @@ public class AdminController {
             // Start cache warming in background - this returns immediately!
             dailyPrecomputationService.triggerAsyncDailyPrecomputation();
 
-            String responseMessage = "✅ Cache warming started successfully in background!\n\n" +
-                    "⏱️  Process Duration: ~10-15 minutes\n" +
-                    "🔄 Runs in background - you can continue using the app\n" +
-                    "📋 Check server logs for progress updates\n" +
-                    "🎯 Cache will be populated automatically when complete";
+            String responseMessage = "Cache warming started successfully in background!\n\n" +
+                    "Process Duration: ~10-15 minutes\n" +
+                    "Runs in background - you can continue using the app\n" +
+                    "Cache will be populated automatically when complete";
 
             System.out.println("✅ Async cache warming initiated - returning immediate response");
             return ResponseEntity.ok(responseMessage);
