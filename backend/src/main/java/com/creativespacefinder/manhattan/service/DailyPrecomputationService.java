@@ -7,6 +7,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
+import java.util.concurrent.CompletableFuture;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
@@ -112,6 +114,38 @@ public class DailyPrecomputationService {
         System.out.println("Daily pre-computation completed at " + LocalDateTime.now());
         System.out.println("Total processed: " + totalProcessed + " combinations");
         System.out.println("Next pre-computation scheduled for 3 AM tomorrow");
+    }
+
+    /**
+     * Async cache warming that prevents 502 errors
+     * This method starts the cache warming in background and returns immediately
+     */
+    @Async("cacheWarmingExecutor")
+    public CompletableFuture<String> triggerAsyncDailyPrecomputation() {
+        try {
+            System.out.println("🚀 ASYNC Cache Warming Started in Background Thread: " + Thread.currentThread().getName());
+            long startTime = System.currentTimeMillis();
+
+            // Call your existing synchronous cache warming method
+            dailyPrecomputation();
+
+            long durationMs = System.currentTimeMillis() - startTime;
+            long durationMinutes = durationMs / (1000 * 60);
+
+            String successMessage = String.format("✅ ASYNC Cache warming completed successfully! Duration: %d minutes (%d ms)",
+                    durationMinutes, durationMs);
+            System.out.println(successMessage);
+
+            return CompletableFuture.completedFuture(successMessage);
+
+        } catch (Exception e) {
+            String errorMessage = "❌ ASYNC Cache warming failed: " + e.getMessage();
+            System.err.println(errorMessage);
+            e.printStackTrace();
+
+            // Don't throw exception - just return the error in the CompletableFuture
+            return CompletableFuture.completedFuture(errorMessage);
+        }
     }
 
     /**
