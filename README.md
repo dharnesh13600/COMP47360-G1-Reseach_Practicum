@@ -1,1 +1,307 @@
-# COMP47360-G1-Reseach_Practicum
+# Manhattan Muse 🎨🗽
+
+A location recommendation system for artists in Manhattan that suggests optimal locations for artistic activities based on crowd levels, cultural proximity, and weather conditions.
+
+## 📋 Project Overview
+
+Manhattan Muse is a summer research project that helps artists find the perfect spots in Manhattan to perform their artistic activities. Users input their activity type, preferred date/time, and receive personalized location recommendations with real-time weather forecasts.
+
+### Key Features
+- **Activity-Based Recommendations**: Get location suggestions tailored to your artistic activity
+- **Crowd Level Analysis**: Find spots with optimal crowd density for your needs
+- **Cultural Proximity Scoring**: Locations scored based on nearby cultural attractions
+- **Weather Integration**: Real-time weather forecasts for planned activities
+- **Zone-Specific Search**: Browse recommendations by Manhattan neighborhoods
+- **Interactive Map**: Visual exploration of recommended locations with MapBox integration
+- **Admin Dashboard**: Backend management and cache warming capabilities
+
+## 🏗️ Architecture
+
+### Frontend (Next.js)
+- **Framework**: Next.js with React
+- **Styling**: CSS Modules with responsive design
+- **Maps**: MapBox GL JS integration
+- **State Management**: React hooks and context
+
+### Backend (Java Spring Boot)
+- **Framework**: Spring Boot with REST APIs
+- **Authentication**: Session-based admin authentication with BCrypt
+- **Caching**: Precomputed recommendations with daily cache warming
+- **Database**: SQL database with comprehensive ERD design
+- **Microservices**: Modular architecture for scalability
+
+### Data Analytics (Python)
+- **ML Pipeline**: Python microservice processing analytics data
+- **Data Storage**: Pickled model files (.pkl) for fast inference
+- **Integration**: Seamless connection with Java backend services
+
+### External Services
+- **Weather API**: OpenWeather API integration
+- **Maps**: MapBox for interactive mapping
+- **Geocoding**: Google Maps API for location services
+
+## 🚀 API Endpoints
+
+### Public Endpoints
+
+#### Activities Management
+```http
+GET /api/recommendations/activities
+```
+Returns all available artistic activities for dropdown selection.
+
+#### Weather Services
+```http
+GET /api/forecast
+GET /api/forecast/available-datetimes
+GET /api/forecast/at?dateTime=2025-07-12T08:00
+```
+Comprehensive weather data with hourly forecasts and specific datetime queries.
+
+#### Location Recommendations
+```http
+POST /api/recommendations
+Content-Type: application/json
+
+{
+  "activity": "photography",
+  "dateTime": "2025-07-12T08:00",
+  "selectedZone": "west village" // optional for zone-specific search
+}
+```
+Core recommendation engine returning up to 10 optimized locations with scoring breakdown.
+
+#### Zone Management
+```http
+GET /api/recommendations/zones
+```
+Available Manhattan zones for area-specific searches.
+
+#### Health Check
+```http
+GET /api/recommendations/health
+```
+
+### Admin Endpoints (Authentication Required)
+
+#### Authentication
+```http
+POST /api/admin/login
+GET /api/admin/validate-session
+POST /api/admin/logout
+```
+
+#### Cache Management
+```http
+POST /api/admin/warm-cache
+GET /api/admin/cache-status
+```
+
+## 🛠️ Setup & Installation
+
+### Prerequisites
+- **Java 17+** for backend services
+- **Node.js 18+** for frontend development
+- **Python 3.8+** for data analytics microservice
+- **PostgreSQL** for database
+- **Docker** for containerized deployments
+
+### Environment Variables
+
+#### Backend (.env or application.properties)
+```properties
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/manhattan_muse
+spring.datasource.username=your_db_user
+spring.datasource.password=your_db_password
+
+# Admin Authentication
+admin.username=admin
+admin.password.hash=$2a$10$your_bcrypt_hash_here
+
+# External APIs
+openweather.api.key=your_openweather_api_key
+google.maps.api.key=your_google_maps_api_key
+
+# Backend API URL
+BACKEND_API_URL=http://localhost:8080/api
+```
+
+#### Frontend (.env.local)
+```env
+NEXT_PUBLIC_BACKEND_API_URL=http://localhost:8080
+NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token
+NEXT_PUBLIC_MAPBOX_STYLE_URL=your_mapbox_style_url
+NEXT_PUBLIC_MAPBOX_STYLE_DARK_URL=your_mapbox_dark_style_url
+NEXT_PUBLIC_GOOGLE_TOKEN=your_google_maps_api_key
+NEXT_PUBLIC_USE_MAPBOX=true
+```
+
+### Installation Steps
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd manhattan-muse
+```
+
+2. **Backend Setup**
+```bash
+cd backend
+./mvnw clean install
+./mvnw spring-boot:run
+```
+
+3. **Frontend Setup**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+4. **Python Analytics Service**
+```bash
+cd analytics
+pip install -r requirements.txt
+python app.py
+```
+
+5. **Database Setup**
+- Import the provided ERD schema
+- Run initial data migrations
+- Verify database connectivity
+
+## 🎯 Usage
+
+### For Artists
+1. **Select Activity**: Choose your artistic pursuit from the dropdown
+2. **Pick Date & Time**: Select when you plan to create
+3. **Choose Search Mode**:
+   - **Recommended Area**: Get top locations across all Manhattan
+   - **Select Area**: Browse specific neighborhoods first
+4. **View Results**: Explore recommendations with scores and weather
+5. **Map Integration**: Visualize locations and get directions
+
+### For Administrators
+1. **Login**: Access admin dashboard with credentials
+2. **Cache Management**: Manually trigger recommendation cache warming
+3. **System Monitoring**: Check API health and cache status
+4. **Session Management**: Monitor active admin sessions
+
+## 🔧 Development
+
+### Backend Development
+- **Framework**: Spring Boot with Maven
+- **Testing**: JUnit with comprehensive test coverage
+- **Monitoring**: Actuator endpoints for health checks
+
+### Frontend Development
+- **Hot Reload**: Next.js development server
+- **Component Structure**: Modular React components
+- **Responsive Design**: Mobile-first approach
+- **Map Integration**: Custom MapBox components
+
+### Data Pipeline
+- **Model Training**: Python scripts for recommendation algorithms
+- **Data Processing**: ETL pipelines for location and activity data
+- **Model Deployment**: Automated .pkl file generation and deployment
+
+## 🧪 Testing
+
+### API Testing
+Use the provided `test-all.http` file for comprehensive endpoint testing:
+```bash
+# Test basic recommendations
+POST /api/recommendations
+{
+  "activity": "photography",
+  "dateTime": "2025-07-18T10:00"
+}
+
+# Test zone-specific search
+POST /api/recommendations
+{
+  "activity": "street photography",
+  "dateTime": "2025-07-18T14:00",
+  "selectedZone": "soho hudson square"
+}
+```
+
+### Admin Authentication Testing
+```bash
+# Login first
+POST /api/admin/login
+{
+  "username": "admin",
+  "password": "your_password"
+}
+
+# Then access protected endpoints
+POST /api/admin/warm-cache
+```
+
+## 📊 Data Models
+
+### Location Recommendation Response
+```json
+{
+  "locations": [
+    {
+      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
+      "zoneName": "Washington Square Park: Arch Plaza",
+      "latitude": 40.7312185,
+      "longitude": -73.9970929,
+      "combinedScore": 5.03,
+      "activityScore": 4.14,
+      "museScore": 6.5,
+      "crowdScore": 8,
+      "estimatedCrowdNumber": 250,
+      "scoreBreakdown": {
+        "activityScore": 4.14,
+        "museScore": 6.5,
+        "crowdScore": 8
+      }
+    }
+  ],
+  "activity": "photography",
+  "requestedDateTime": "2025-07-12T08:00",
+  "totalResults": 10
+}
+```
+
+## 🚀 Deployment
+
+### Production Considerations
+- **Environment Configuration**: Separate configs for dev/staging/prod
+- **Database Migration**: Automated schema updates
+- **Cache Warming**: Scheduled daily precomputation at 3 AM
+- **API Rate Limiting**: Implement rate limiting for external API calls
+- **Security**: HTTPS, secure session management, input validation
+
+### Monitoring & Logging
+- **Application Logs**: Structured logging with appropriate levels
+- **Performance Metrics**: API response times and success rates
+- **Error Tracking**: Comprehensive error handling and reporting
+- **Cache Analytics**: Monitor cache hit rates and performance
+
+## 👥 Team
+
+- **Backend Team Lead**: API development, microservices architecture, database design
+- **Data Analytics Lead**: ML models, recommendation algorithms, .pkl file generation
+- **Frontend Team**: React/Next.js development, UI/UX design, MapBox integration
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create feature branches (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is developed as part of a summer research program.
+
+---
+
+**Manhattan Muse** - Connecting artists with the perfect creative spaces in the heart of New York City 🎨🏙️
