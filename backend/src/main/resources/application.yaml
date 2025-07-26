@@ -7,21 +7,21 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
     hikari:
-      # ULTRA CONSERVATIVE for Supabase connections as it is free
-      maximum-pool-size: 1           # Only 1 connection total
-      minimum-idle: 0                # No idle connections ever
-      connection-timeout: 10000      # 10 seconds
-      idle-timeout: 10000            # Close idle connections after 10 seconds
-      max-lifetime: 120000           # Force close connections after 2 minutes
-      leak-detection-threshold: 15000 # 15 seconds leak detection
+      # SCALED UP for 50-60 concurrent users (from 1 to 8 connections)
+      maximum-pool-size: 8           # Increased from 1 to 8 (8x improvement)
+      minimum-idle: 2                # Keep 2 connections ready
+      connection-timeout: 15000      # 15 seconds (increased from 10s)
+      idle-timeout: 60000            # 1 minute (increased from 10s)
+      max-lifetime: 300000           # 5 minutes (increased from 2min)
+      leak-detection-threshold: 20000 # 20 seconds leak detection
       # Connection validation
       connection-test-query: SELECT 1
       validation-timeout: 3000       # 3 seconds validation
       auto-commit: true              # Explicit auto-commit
-      pool-name: "ProductionHikariPool"     # Production pool name
-      # CRITICAL: Aggressive connection cleanup
-      keepalive-time: 0              # No keepalive pings
-      initialization-fail-timeout: 1 # Fail fast on startup issues
+      pool-name: "ScaledHikariPool"  # Updated pool name
+      # BALANCED: Connection cleanup (less aggressive than before)
+      keepalive-time: 30000          # 30 seconds keepalive (was 0)
+      initialization-fail-timeout: 5000 # 5 seconds (increased from 1s)
 
   jpa:
     hibernate:
@@ -33,7 +33,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect  # Explicit dialect to avoid JDBC metadata lookup
         jdbc:
           time_zone: UTC
-          batch_size: 20             # Batch operations for efficiency
+          batch_size: 25             # Increased from 20 for better efficiency
         connection:
           provider_disables_autocommit: false  # Ensure autocommit works
         # CRITICAL: Reduce connection usage during startup
@@ -44,22 +44,22 @@ spring:
 
   # CRITICAL: Graceful shutdown handling
   lifecycle:
-    timeout-per-shutdown-phase: 30s
+    timeout-per-shutdown-phase: 45s  # Increased from 30s
 
   # Session configuration for admin authentication
   session:
     store-type: memory
     timeout: 24h
 
-  # ASYNC TASK EXECUTION (Required for cache warming)
+  # ASYNC TASK EXECUTION (Slightly scaled up)
   task:
     execution:
       pool:
-        core-size: 2
-        max-size: 5
-        queue-capacity: 10
+        core-size: 3                 # Increased from 2
+        max-size: 8                  # Increased from 5
+        queue-capacity: 15           # Increased from 10
         thread-name-prefix: "async-"
-        keep-alive: 60s
+        keep-alive: 90s              # Increased from 60s
 
 # Admin credentials configuration - SECURE WITH ENVIRONMENT VARIABLES
 admin:
@@ -83,15 +83,15 @@ server:
   # CRITICAL: Proper shutdown handling
   shutdown: graceful
   tomcat:
-    # UPDATED: Separate timeouts for different scenarios
+    # SCALED: Handle 50-60 concurrent users
     connection-timeout: 30000        # 30 seconds for regular requests
-    max-connections: 50
+    max-connections: 150             # Increased from 50 to 150
     threads:
-      max: 200
-      min-spare: 10
-    # IMPORTANT: These settings allow for longer admin operations
-    processor-cache: 200
-    accept-count: 100
+      max: 250                       # Increased from 200 to 250
+      min-spare: 15                  # Increased from 10 to 15
+    # UPDATED: Better handling for moderate load
+    processor-cache: 300             # Increased from 200
+    accept-count: 150                # Increased from 100
 
 # ENHANCED LOGGING FOR DEBUGGING
 logging:
@@ -102,9 +102,9 @@ logging:
     org.hibernate.orm.deprecation: WARN     # Suppress deprecation warnings
     com.zaxxer.hikari: INFO                 # Reduced from DEBUG
     com.zaxxer.hikari.pool: WARN            # Only show warnings for pool issues
-    # ADDED: Cache and async debugging
-    org.springframework.cache: DEBUG        # Show cache operations
-    com.github.benmanes.caffeine: DEBUG     # Show Caffeine cache stats
+    # REDUCED: Cache and async debugging (for performance)
+    org.springframework.cache: INFO         # Reduced from DEBUG
+    com.github.benmanes.caffeine: INFO      # Reduced from DEBUG
     org.springframework.scheduling: INFO    # Show async task execution
     org.springframework.core.task: INFO     # Show task executor activity
 
@@ -126,17 +126,17 @@ management:
 ml:
   predict:
     url: ${ML_PREDICT_URL:http://ml-service.default.svc.cluster.local:8000/predict_batch}
-    # ADDED: Timeout settings for ML service calls
+    # UPDATED: Timeout settings for moderate load
     timeout:
-      connect: 30000    # 30 seconds to connect
-      read: 120000      # 2 minutes to read response
+      connect: 35000    # 35 seconds to connect (increased from 30s)
+      read: 150000      # 2.5 minutes to read response (increased from 2min)
 
 # CACHE WARMING CONFIGURATION
 cache:
   warming:
     # Enable async processing to prevent 502 errors
     async: true
-    # Batch processing to reduce load
-    batch-size: 5
-    delay-between-batches: 3000  # 3 seconds between batches
-    max-duration-minutes: 20     # Maximum 20 minutes for safety
+    # Optimized batch processing for moderate load
+    batch-size: 7                    # Increased from 5
+    delay-between-batches: 2500      # Reduced from 3000ms for faster processing
+    max-duration-minutes: 25         # Increased from 20 minutes for safety
