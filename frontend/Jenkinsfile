@@ -1,17 +1,17 @@
 pipeline{
     agent any
 
+// Setting environment variables
     environment {
 
         GCP_PROJECT = "manhattan-muse"
-        // GCP_ACCOUNTNAME = "jenkins-gke-deployer@${GCP_PROJECT}.iam.gserviceaccount.com"
         GCP_ACCOUNTNAME = "your-service-account@${AR_PROJECT}.iam.gserviceaccount.com" 
         CLUSTER_NAME = "cluster-1"
         LOCATION = "us-west2-a"
         PROJECT_ID = "${AR_PROJECT}"
 
 
-        // artifact registry components
+        // AR components
         
         AR_REGION = "europe-west2"
         AR_REPO = "manhattan-muse-project"
@@ -32,6 +32,9 @@ pipeline{
           checkout scm
         }
       }
+
+      // Does the unit test and builds the code
+
       stage('Build'){
         steps{
           dir('frontend'){
@@ -41,13 +44,15 @@ pipeline{
               
               npm ci
               npm install lucide-react
-              #npm run lint
-              #npm --if-present test
+              npm --if-present test
               npm run build
             '''
           }
         }
       }
+      
+       // Creating the docker image and pushing in Artifact registry connects with the gcp-docker.sh file
+
       stage('Docker Build & Push'){
         steps{
           withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GCLOUD_KEY')]){
@@ -64,6 +69,9 @@ pipeline{
           }
         }
       }
+
+      // Deploying in GKE with the help of kube-deploy.sh
+
       stage('Deploy to GKE') {
         steps {
     
