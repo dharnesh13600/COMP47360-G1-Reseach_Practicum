@@ -17,39 +17,17 @@
      width: 100%;
   max-width: 100%;
 }
+.mapboxgl-ctrl-top-right {
+  display:block;
+  top: 0px;
+  right: 0px;
+  z-index: 2;
+}
 .mapboxgl-canvas {
   pointer-events: all !important;
 }
-.mapboxgl-ctrl-top-right {
-  top: 20px;
-  right: 10px;
-  z-index: 2;
-}
-.reset-button {
-    position: absolute;
-    bottom: 50px;
-    z-index: 1;
-    width: 120px;
-    height: 42px;
-    right: 42px;
-    padding: 4px 15px;
-    border-radius: 20px;
-    border: none;
-    background-color: #4B8382;
-    font-size: 15px;
-    font-family: var(--ff-overpass);
-   color: #FEFAF6;
-    font-weight: bold;
-    transition: 0.1s;
-     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
-  }
-  .reset-button:hover{
-    color: var(--background);
-    background-color: var(--on-surface-low-contrast);
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 60px;
-  }
+
+
 
    .navigation-wrapper-map {
   display: flex;
@@ -136,7 +114,10 @@
 }
 }
 
-
+.mapboxgl-ctrl-top-right {
+  display:none;
+  
+}
 
 
 /* https://codepen.io/katia-trifonova/pen/zwZgdx?editors=0110 */
@@ -519,6 +500,31 @@ filter: invert(28%) sepia(12%) saturate(1262%) hue-rotate(137deg) brightness(130
    margin-top: -15px;
   font-size: 17px;
 }
+.reset-button {
+    position: absolute;
+    bottom: 50px;
+    z-index: 1;
+    width: 120px;
+    height: 42px;
+    right: 42px;
+    padding: 4px 15px;
+    border-radius: 20px;
+    border: none;
+    background-color: #4B8382;
+    font-size: 15px;
+    font-family: var(--ff-overpass);
+   color: #FEFAF6;
+    font-weight: bold;
+    transition: 0.1s;
+     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  .reset-button:hover{
+    color: var(--background);
+    background-color: var(--on-surface-low-contrast);
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 60px;
+  }
 }
 
 
