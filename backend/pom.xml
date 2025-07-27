@@ -37,7 +37,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- memory cache -->
+        <!-- Memory Cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -82,14 +82,14 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency> <!-- ✱ ADDED -->
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- AssertJ for fluent assertions -->
+        <!-- AssertJ to help injections -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -153,8 +153,8 @@
                 </configuration>
             </plugin>
 
-            <!-- Integration tests (Failsafe) -->
-            <plugin> <!-- ✱ ADDED BLOCK -->
+            <!-- Fail Safe for Integration Tests -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.2.5</version>
