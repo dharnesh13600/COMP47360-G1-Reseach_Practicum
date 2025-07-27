@@ -1,16 +1,17 @@
 # Manhattan Muse 🎨🗽
 
-A location recommendation system for artists in Manhattan that suggests optimal locations for artistic activities based on crowd levels, cultural proximity, and weather conditions.
+A location recommendation system for artists in Manhattan that suggests optimal locations for artistic activities based on crowd levels and past event data for the creative disciplines.
 
 ## 📋 Project Overview
 
-Manhattan Muse is a summer research project that helps artists find the perfect spots in Manhattan to perform their artistic activities. Users input their activity type, preferred date/time, and receive personalized location recommendations with real-time weather forecasts.
+Manhattan Muse is a summer research project that creates a web application to help artists find the perfect spots in Manhattan to perform their artistic activities. Users input their activity type, preferred date/time, and receive personalized location recommendations with real-time weather forecasts.
 
 ### Key Features
 - **Activity-Based Recommendations**: Get location suggestions tailored to your artistic activity
 - **Crowd Level Analysis**: Find spots with optimal crowd density for your needs
-- **Cultural Proximity Scoring**: Locations scored based on nearby cultural attractions
+- **Creative Proximity Scoring**: Locations are scored based on nearby art and cultural centres, past events in the area.
 - **Weather Integration**: Real-time weather forecasts for planned activities
+- **Location Comparision**: Compare up to three potential locations
 - **Zone-Specific Search**: Browse recommendations by Manhattan neighborhoods
 - **Interactive Map**: Visual exploration of recommended locations with MapBox integration
 - **Admin Dashboard**: Backend management and cache warming capabilities
@@ -18,6 +19,7 @@ Manhattan Muse is a summer research project that helps artists find the perfect 
 ## 🏗️ Architecture
 
 ### Frontend (Next.js)
+- **Design Mockup**: Figma
 - **Framework**: Next.js with React
 - **Styling**: CSS Modules with responsive design
 - **Maps**: MapBox GL JS integration
@@ -39,6 +41,9 @@ Manhattan Muse is a summer research project that helps artists find the perfect 
 - **Weather API**: OpenWeather API integration
 - **Maps**: MapBox for interactive mapping
 - **Geocoding**: Google Maps API for location services
+
+## Web Design 
+**Design Process, Key Elements and Changes**: [https://drive.google.com/file/d/1nqOlq860SyPoxcr4U6ZHBvl_H_NyLCZY/view?usp=sharing](https://drive.google.com/drive/folders/1WgBpJfn9HCT-EWYug160Cbf_rA_pVuan?usp=sharing)
 
 ## 🚀 API Endpoints
 
