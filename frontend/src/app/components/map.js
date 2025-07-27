@@ -100,7 +100,7 @@ function getStyleFromSelectedTime(selectedTime) {
   const parsed = parse(selectedTime.trim(), 'HH:mm', new Date());
   const hour = parsed.getHours();
 
-  return hour >= 18 && hour<=6 ? NIGHT_STYLE : DAY_STYLE;
+  return hour >= 18 || hour<=6 ? NIGHT_STYLE : DAY_STYLE;
 }
 // initializing mapbox
 
