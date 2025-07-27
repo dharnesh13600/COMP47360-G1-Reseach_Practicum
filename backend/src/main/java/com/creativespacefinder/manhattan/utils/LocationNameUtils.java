@@ -73,7 +73,7 @@ public class LocationNameUtils {
                 .replaceAll(",\\s*Queens$", "");
 
         // Remove hanging punctuation at the end
-        text = text.replaceAll("[(:,\\-\\s]+$", "");
+        text = text.replaceAll("[(:,\\-\\s]++$", "");
 
         // Check for unmatched opening parentheses and remove them
         long openParens = text.chars().filter(ch -> ch == '(').count();
@@ -188,7 +188,7 @@ public class LocationNameUtils {
     }
 
     private static String shortenIntersectionDescription(String intersection) {
-        String[] streets = intersection.split("\\s+and\\s+", 2);
+        String[] streets = intersection.split("\\s++and\\s++", 2);
         if (streets.length == 2) {
             String street1 = shortenStreetName(streets[0].trim());
             String street2 = shortenStreetName(streets[1].trim());
@@ -217,7 +217,7 @@ public class LocationNameUtils {
     }
 
     private static String extractNumberRange(String street1, String street2) {
-        java.util.regex.Pattern numberPattern = java.util.regex.Pattern.compile("(\\d+)\\s*(St|Ave|Blvd)");
+        java.util.regex.Pattern numberPattern = java.util.regex.Pattern.compile("(\\d+)\\s*+(St|Ave|Blvd)");
         java.util.regex.Matcher matcher1 = numberPattern.matcher(street1);
         java.util.regex.Matcher matcher2 = numberPattern.matcher(street2);
 

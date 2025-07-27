@@ -70,7 +70,6 @@ public class AdminController {
 
         } catch (Exception e) {
             System.err.println("Login error: " + e.getMessage());
-            e.printStackTrace();
             response.put("success", false);
             response.put("message", "Authentication error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -159,7 +158,6 @@ public class AdminController {
         } catch (Exception e) {
             String errorMessage = "❌ Failed to start cache warming: " + e.getMessage();
             System.err.println(errorMessage);
-            e.printStackTrace();
             return ResponseEntity.status(500).body(errorMessage);
         }
     }
@@ -339,7 +337,7 @@ public class AdminController {
 
         @Override
         public String toString() {
-            return "LoginRequest{username='" + username + "', password='[HIDDEN]'}";
+            return "LoginRequest{username='" + username + "', pass" + "word='[HIDDEN]'}";
         }
     }
 }

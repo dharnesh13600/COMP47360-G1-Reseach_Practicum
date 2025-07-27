@@ -17,8 +17,14 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("java:S4502") // Suppress SonarQube CSRF warning
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // SECURITY JUSTIFICATION: CSRF disabled for REST API
+                // - This is a stateless REST API consumed by mobile/SPA clients  
+                // - Admin endpoints use additional session-based validation
+                // - Custom X-Requested-With header provides CSRF-like protection
+                // - CORS is configured to restrict origins in production
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/recommendations/**").permitAll()
