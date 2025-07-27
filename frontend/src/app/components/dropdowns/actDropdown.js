@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import ActivityDropdown from "@/helper/ActivityButton";
 import DropdownContent from "@/helper/ActivityDropContent";
 import DropdownItem from "@/helper/activityItem";
-import styles from '@/app/styles/dropdown.module.css';
+import styles from './dropdown.module.css';
 
 
 const Dropdown=({buttonText,content,activityChoice})=>{

@@ -1,7 +1,7 @@
 
-import BodyWrapper from '../components/bodyWrapper'; 
-import Header from "../components/header";
-import PageTransitionWrapper from '../components/PageTransitionWrapper'; 
+import BodyWrapper from '../components/utils/bodyWrapper'; 
+import Header from "../components/homeComponent/header";
+import PageTransitionWrapper from '../components/utils/PageTransitionWrapper'; 
 import './globals.css';
 
 

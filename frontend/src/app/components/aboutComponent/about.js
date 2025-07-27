@@ -2,7 +2,7 @@ import '../styles/about.css';
 
 import Link from 'next/link';
 import Image from'next/image';
-import Button from './button.js';
+import Button from './utils/button.js';
 const teams = [
   {
     name: "Front-End Team",

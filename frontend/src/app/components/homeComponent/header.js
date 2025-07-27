@@ -7,14 +7,13 @@
 
 'use client';
 
-import MapDraw from '../components/map-draw-1.js'
-import MapDraw02 from '../components/map-draw-2.js'
-import '../styles/map-draw-1.css'
-import '../styles/map-draw-2.css'
+import MapDraw from '../mapComponent/map-draw-1';
+import MapDraw02 from '../mapComponent/map-draw-2.js'
+import '../mapComponent/map-draw-2.css'
 
-import Button from '../components/button';
+import Button from '../utils/button.js';
 import Link from 'next/link';
-import '../styles/header.css';
+import './header.css';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';

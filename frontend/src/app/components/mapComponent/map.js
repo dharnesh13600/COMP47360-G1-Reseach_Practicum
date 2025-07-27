@@ -5,7 +5,7 @@
 
 import {useRef,useEffect,useState,useCallback} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import '../styles/map.css';
+import './map.css';
 import ComparisonStack from './comparisonStack.js';
 
 
@@ -16,6 +16,7 @@ import { parse, format } from 'date-fns';
 import Image from 'next/image';
 
 import mapboxgl from 'mapbox-gl';
+import { getMarkerElement,getZoneMarkerElement,getPopupHTML } from '../utils/mapMarkerHelpers';
 const INITIAL_CENTER =[
 
  -74.000, 40.7526
@@ -339,49 +340,11 @@ mapRef.current.on('style.load', () => {
   toDraw.forEach((item, index) => {
     if (showLocations) {
       const loc=item;
-        const el = document.createElement('div');
-        el.className = 'numbered-marker';
-        el.innerHTML = `
-          <div class="pinShape">
-            <div class="number">${index+1}</div>
-          </div>
-        `;
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-    <div class="popup-card">
-    <div class="popup-header">
-    <span class="info-icon" title="Muse Score: visitor rating. Crowd Estimate: number of visitors. Status: how busy it feels.">i</span>
-  </div>
-    <div class="muse-score ">Muse Score</div>
-    <div class="muse-value">${loc.museScore}/10</div>
-    <div class="estimate-crowd-label ">Estimate Crowd  </div>
-    <div class="estimate-crowd">${loc.estimatedCrowdNumber}</div>
-    <div class="crowd-label ">Crowd Status </div>
-    <div class="crowd-status">${loc.crowdLevel}</div>
-    <div class="directions">
-    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
-    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
-    </div>
+      const el = getMarkerElement(index);
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(getPopupHTML(loc, index));
 
-    <!-- ComparisonStack placeholder directly under the Directions button -->
-    <button class="compare-button" id="compare-${index}">
-<svg class="compare-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-    Add to Compare
-    </button>
 
-    <div class="tooltip">
-    <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
-    the most suitable location for your activity according to busyness 
-    and past events in each location. <br><br>
 
-    Don't want to use our Muse Score? Use our predicted <b> Estimate Crowd</b> and <b> Crowd Status </b> the best time to be your best self,
-    whether in the crowd or in a peaceful corner.
-
-    </p>
-    </div>
-  </div>
-`);
 
 const addToComparison = (loc) => {
   setComparisonStack(prev => {
@@ -479,13 +442,6 @@ if (compareBtn) {
       const pinShapeEl = el.querySelector('.pinShape');
   pinShapeEl.classList.add('pulse-marker');
 
- 
-
-  
-
-    
-  
-
     } 
     else {
    
@@ -494,48 +450,8 @@ if (compareBtn) {
 
   const zone=item;
  zoneLocations.forEach((zone, index) => {
-    const el = document.createElement('img');
-    el.src           = iconMap[zone.crowdLevel] || iconMap.default;
-    el.style.width   = '30px';
-    el.style.height  = '40px';
-    el.style.cursor  = 'pointer';
-
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-    <div class="popup-card">
-    <div class="popup-header">
-    <span class="info-icon" title="Muse Score: visitor rating. Crowd Estimate: number of visitors. Status: how busy it feels.">i</span>
-  </div>
-    <div class="muse-score ">Muse Score</div>
-    <div class="muse-value">${zone.museScore}/10</div>
-    <div class="estimate-crowd-label ">Estimate Crowd  </div>
-    <div class="estimate-crowd">${zone.estimatedCrowdNumber}</div>
-    <div class="crowd-label ">Crowd Status </div>
-    <div class="crowd-status">${zone.crowdLevel}</div>
-    <div class="directions">
-    <img class="directions-image" src="/directions-icon.png" alt="Directions" />
-    <button class="directions-button" id="gmaps-${index}">View on Google Maps</button>
-    </div>
-
-    <!-- ComparisonStack placeholder directly under the Directions button -->
-    <button class="compare-button" id="compare-${index}">
-<svg class="compare-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-    Add to Compare
-    </button>
-
-    <div class="tooltip">
-    <p><b>MUSE SCORE</b> is the product of our machine learning model to calculate 
-    the most suitable location for your activity according to busyness 
-    and past events in each location. <br><br>
-
-    Don't want to use our Muse Score? Use our predicted <b> Estimate Crowd</b> and <b> Crowd Status </b> the best time to be your best self,
-    whether in the crowd or in a peaceful corner.
-
-    </p>
-    </div>
-  </div>
-`);
+const el = getZoneMarkerElement(zone);
+const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(getPopupHTML(zone, index));
 const addToComparison = (zone) => {
   setComparisonStack(prev => {
     if (prev.find(item => item.id === zone.id)) return prev; // prevent duplicates
@@ -628,22 +544,9 @@ if (compareBtn) {
 
 
       });
- 
-
-
- 
-
-  
-
-    
     });
-
-
   }
-
   });
-
-
   return () => {
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];

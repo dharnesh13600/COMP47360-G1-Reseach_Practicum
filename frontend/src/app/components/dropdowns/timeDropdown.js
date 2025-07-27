@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import TimeDropdown from '@/helper/timeButton';
 import DropdownContent from '@/helper/timeDropContent';
 import TimeItem from '@/helper/timeItem';
-import styles from '@/app/styles/timeDrop.module.css';
+import styles from './timeDrop.module.css';
 
 
 const DropdownTime=({buttonText,content,selectedTime})=>{
