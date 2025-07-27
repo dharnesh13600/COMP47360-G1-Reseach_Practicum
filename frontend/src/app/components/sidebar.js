@@ -60,6 +60,8 @@ const [isTimeOpen, setIsTimeOpen] = useState(false);
 const [selectedDate, setSelectedDate] = useState(null);
 const [selectedTime, setSelectedTime] = useState(null);
 const [submitted, setSubmitted] = useState(false);
+const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
+
 
 const [showMore,setShowMore]=useState(false);
 const [visibleIndexes, setVisibleIndexes] = useState([]);
@@ -162,10 +164,15 @@ useEffect(()=>{
   async function getDate(){
     const data=await fetchDateTimes();
     const dateSet=new Set();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     data.forEach(entry =>{
       const dateObj=new Date(entry);
+     dateObj.setHours(0, 0, 0, 0);
+if (dateObj >= today) {
       const formattedDate= format(dateObj,'MMMM d');
       dateSet.add(formattedDate);
+}
     });
     const dates=Array.from(dateSet);
     console.log("dates rendered",dates);
@@ -208,7 +215,19 @@ useEffect(()=>{
       }
     });
     const filteredTimes = Array.from(matchingTimes);
-    setTime(filteredTimes);
+    const sortedTimes = Array.from(filteredTimes).sort((a, b) => {
+  const [aH, aM] = a.split(':').map(Number);
+  const [bH, bM] = b.split(':').map(Number);
+
+  // Shift early morning times (before 6 AM) to the end
+  const aShift = aH < 6 ? aH + 24 : aH;
+  const bShift = bH < 6 ? bH + 24 : bH;
+
+  return aShift * 60 + aM - (bShift * 60 + bM);
+});
+
+setTime(sortedTimes);
+    // setTime(filteredTimes);
   }
   matchTime();
 },[selectedDate]);
@@ -260,6 +279,7 @@ async function handleSubmit(){
     return;
   }
   setSubmitted(true);
+  setHasSubmittedOnce(true);
   try{
     const date = parse(`${selectedDate} ${selectedTime}`, 'MMMM d HH:mm', new Date());
     const readableTimeJson = format(date, "yyyy-MM-dd'T'HH:mm");
@@ -342,10 +362,11 @@ async function handleZoneClick(area){
 };
 
 useEffect(() => {
+  
   if (submitted) {
     setVisibleIndexes([]);
     visibleLocations.forEach((_, i) => {
-      let delay=50 +i*200;
+      let delay=100 +i*180;
       setTimeout(() => {
         setVisibleIndexes(prev => [...prev, i]);
       }, delay);
@@ -365,7 +386,7 @@ useEffect(() => {
   setShowLocations(!isSmall);
 }, [isSmall, setShowLocations]);
 
-// Initialize showLocationContent based on screen size
+
 useEffect(() => {
   if (isDesktop) {
     setShowLocationContent(true); // Always show content on desktop
@@ -511,7 +532,8 @@ const WeatherDisplay = ({ className = "" }) => (
 );
 
 const LocationsList = () => (
- <div className={`${styles.locationListContainer} ${showAllLocations ? styles.expanded : ''}`}>
+  <>
+  <div className={`${styles.locationListContainer} ${showAllLocations ? styles.expanded : ''}`}>
     {visibleLocations.slice(0, maxItems).map((location,index) => (
       <div 
         key={location.id} 
@@ -523,11 +545,13 @@ const LocationsList = () => (
           {cleanAndTruncate(location.zoneName, 3)}
         </span>
         <span>
-          <Image className='photo' src='/search.png' alt='d' width={30} height={25}/>
+          <Image className={styles.lens} src='/search.png' alt='d' width={30} height={25}/>
         </span>
       </div>
     ))}
-    {locations.length > 5 && isLarge && (
+    
+  </div>
+  {locations.length > 5 && isLarge && (
       <button onClick={()=>setShowAllLocations(prev =>!prev)} className={styles.showMoreBtn}>
         {showAllLocations ? (
           <svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -540,7 +564,8 @@ const LocationsList = () => (
         )}
       </button>
     )}
-  </div>
+  </>
+ 
 );
 
 const ZoneSelection = () => (
@@ -580,10 +605,10 @@ return (
               <DateDropdown />
               <TimeDropdown />
             </div>
-            <button className={styles.subButtonMob} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>
+            <button className={styles.subButtonMob} onClick={handleSubmit} disabled={isDesktop && !showLocations} style={{ opacity:isDesktop && !showLocations ? 0.5 : 1, cursor: isDesktop && !showLocations ? 'not-allowed' : 'pointer' }}>
               <FaCheck />
             </button>
-            <button className={styles.buttonStyle} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>Submit</button>
+            <button className={styles.buttonStyle} onClick={handleSubmit} disabled={isDesktop && !showLocations} style={{ opacity: isDesktop && !showLocations ? 0.5 : 1, cursor: isDesktop && !showLocations ? 'not-allowed' : 'pointer' }}>Submit</button>
           </div>
           
           <div className={styles.locationBottomSection}>
@@ -595,44 +620,48 @@ return (
                     <path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
                   </svg>
                 ) : (
-                  <svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path opacity="0.9" d="M3 2.93237L13.1739 10.0677L22.5 2.93237" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
+            
+                   <svg width="20" height="13" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9" d="M22.5 10.1353L12.3261 2.9999L3 10.1353" stroke="#177371" strokeWidth="4.5" strokeLinecap="round"/>
                   </svg>
                 )}
               </button>
             </div>
-            
-            <div className={styles.locationHeader}>
-              <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
-                <p className={styles.recommendation}>Recommended</p>
-                <p className={styles.area}>Area</p>
-              </div>
-              
-              <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
-                {!showLocations ? (
-                  <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" fill="#52767E" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </button> 
-              <span className={`${styles.manualSelection} ${showLocations ? styles.active : styles.inactive}`}>
-                Select Area
-              </span>
+           {hasSubmittedOnce && 
+          <div className={styles.locationHeader}>
+            <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
+              <p className={styles.recommendation}>Recommended</p>
+              <p className={styles.area}>Area</p>
             </div>
             
-            {showLocationContent && (
-              <>
-                {!submitted && showLocations && (
+            <button onClick={handleToggleClick} className={styles.areaToggleBtn}>
+              {!showLocations ? (
+                  <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M32 29.999C35.3137 29.999 38 27.3127 38 23.999C38 20.6853 35.3137 17.999 32 17.999C28.6863 17.999 26 20.6853 26 23.999C26 27.3127 28.6863 29.999 32 29.999Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+           
+                  <svg width="40" height="25" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32 10H16C8.26801 10 2 16.268 2 24C2 31.732 8.26801 38 16 38H32C39.732 38 46 31.732 46 24C46 16.268 39.732 10 32 10Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 30C19.3137 30 22 27.3137 22 24C22 20.6863 19.3137 18 16 18C12.6863 18 10 20.6863 10 24C10 27.3137 12.6863 30 16 30Z" stroke="#52767E" strokeWidth="4" strokeLinecap="round" fill="#52767E" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button> 
+            <span className={`${styles.manualSelection} ${showLocations ? styles.active : styles.inactive}`}>
+              Select Area
+            </span>
+          </div>
+          }
+             {!submitted && showLocations && (
                   <div className={styles.noRecommendations}>
                     Please submit your choices to view the recommended areas
                   </div>
                 )}
+            
+            {showLocationContent && (
+              <>
+               
                 
                 {submitted && showLocations && <LocationsList />}
                 {!showLocations && <ZoneSelection />}
@@ -652,9 +681,7 @@ return (
             <DateDropdown />
             <TimeDropdown />
           </div>
-          <button className={styles.subButtonMob} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>
-            <FaCheck />
-          </button>
+          
           <button className={styles.buttonStyle} onClick={handleSubmit} disabled={!showLocations} style={{ opacity: !showLocations ? 0.5 : 1, cursor: !showLocations ? 'not-allowed' : 'pointer' }}>Submit</button>
           
           {isLarge && <WeatherDisplay />}
@@ -662,8 +689,11 @@ return (
         
         <div className={styles.locationBottomSection}>
           {/* Desktop location header - no expand toggle button */}
+ 
+          
+          {hasSubmittedOnce && 
           <div className={styles.locationHeader}>
-            <div className={`${styles.recArea} ${showLocations ? styles.active : styles.inactive}`}>
+            <div className={`${styles.recArea} ${showLocations ? styles.inactive : styles.active}`}>
               <p className={styles.recommendation}>Recommended</p>
               <p className={styles.area}>Area</p>
             </div>
@@ -681,10 +711,12 @@ return (
                 </svg>
               )}
             </button> 
-            <span className={`${styles.manualSelection} ${showLocations ? styles.inactive : styles.active}`}>
+            <span className={`${styles.manualSelection} ${showLocations ? styles.active : styles.inactive}`}>
               Select Area
             </span>
           </div>
+          }
+          
           
           {/* Desktop location content - always visible (showLocationContent always true for desktop) */}
           {!submitted && showLocations && (

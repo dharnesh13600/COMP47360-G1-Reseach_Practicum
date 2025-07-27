@@ -161,7 +161,7 @@ div.vl{
   display: flex;
  position: fixed;
   top: 2px;
-  right: 65px;
+  right: 90px;
   z-index:200;
 }
 
@@ -242,8 +242,8 @@ div.vl{
 }
 
 .locationItem {
-
-  padding-inline: 0;
+ padding-inline: 0.2rem;
+ height:35px;
   width:100%;
   margin-bottom: 4px;
   background-color: #F4F5F2;
@@ -253,18 +253,18 @@ div.vl{
   color: #697F6E;
   border: 1px solid #ddd;
   display:flex;
+  align-items: center;
   gap:0.2rem;
   box-shadow: 3px 4px 4px 0 #00000040;
   font-family: var(--ff-overpass);
   font-weight: 600;
   opacity:0;
   transform:translateY(-10px);
-  transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
+  transition: opacity 0.3s ease,transform 0.3s ease, box-shadow 0.3s ease;
    max-width: 335px;
-   
-   /* Prevent items from getting squished */
    flex-shrink: 0;
    min-height: 35px;
+   text-align: center;
 }
 .locationItem.show {
   opacity: 1;
@@ -318,6 +318,10 @@ animation: fadeSlideIn 0.4s forwards ease;
  width:max-content;
 font-family: var(--ff-overpass);
  
+}
+.lens{
+  width:25px;
+  height:20px;
 }
  .locationBottomSection {
     position: fixed;
@@ -596,11 +600,14 @@ flex-wrap: wrap;
 
   display:flex;
   flex-direction: row;
+  align-items: center;
   gap:1rem;
 
 }
 
-
+.activityWrapper{
+  align-self: flex-start;
+}
 .subButtonMob{
  display: none;
 }
@@ -798,10 +805,7 @@ grid-auto-columns: 169px;
     overflow-y: auto;
 }
 
-.locationItem {
-    width: auto;
-    max-width: unset;
-}
+
 
 .locationListContainer>button {
   display: none;
@@ -972,7 +976,8 @@ div.vl{
 }
 .weatherDisplay {
   
-   margin-top: 0.5rem;         /* space below Submit */
+   margin-top: 0.1rem; 
+   margin-bottom: 1rem;      
   font-size: 18px;
   color: var(--subway-bg);
   display: flex;
@@ -997,7 +1002,7 @@ div.vl{
     display:flex;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 3rem;
+    margin-top: 3rem ;
     padding-inline: 1rem;
      color: var(--subway-bg);
      font-weight: 700;
@@ -1056,63 +1061,8 @@ div.vl{
   overflow-y: auto;
 }
 
-.locationItem {
-  
-  padding-inline: 0.2rem;
-  width:100%;
-  margin-bottom: 4px;
-  background-color: #F4F5F2;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #697F6E;
-  border: 1px solid #ddd;
-  display:flex;
-  align-items: center;
-  gap:0.2rem;
-  box-shadow: 3px 4px 4px 0 #00000040;
-  font-family: var(--ff-overpass);
-  font-weight: 600;
-  opacity:0;
- 
-  transform:translateY(-10px);
-  overflow: hidden;
-  transition: opacity 0.5s ease,transform 0.3s ease, box-shadow 0.3s ease;
-  
-flex-shrink: 0;
-  min-height: 35px; 
-}
-.locationItem.show {
-  opacity: 1;
-  transform: translateY(-1px);
-}
-.locationItem:hover{
-  cursor:pointer;
-   transform: translateY(-3px);
-  box-shadow: 5px 5px 3px #00000040;
-}
-.index{
-    border-radius: 50%;
-    width:32px;
-    height:25px;
-    background-color: #697F6E;
-    color:#F4F5F2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 .locationName{
- border-radius: inherit;
  padding-inline:12px;
- width:100%;
-
- text-transform: lowercase;
- display: flex;
- justify-content: center;
- text-align: center;
-   font-family: var(--ff-overpass);
-  font-weight: 600;
-  text-transform: uppercase;
 }
 
 .suggestedLocations{
@@ -1312,6 +1262,32 @@ width:190px;
   .weatherLarge {
     position: static;
     margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
+}
+
+
+
+@media (min-width:900px) and (max-height:800px){
+  .sidebarContainer{
+    min-height: 500px; 
+            max-height: calc(100vh - 100px - 30px); 
+            top: calc(150px + 5px); 
+            padding: 30px 20px 15px 20px;
+  }
+}
+
+
+@media (min-width:900px) and (max-height:762px){
+  .sidebarContainer{
+    height: 480px; 
+            max-height: calc(100vh - 100px - 0px); 
+            top: calc(142px + 5px); 
+            padding: 30px 20px 15px 20px;
+            overflow-y: scroll;
+  }
+  .locationListContainer{
+    height:200px;
+  }
 }
