@@ -87,6 +87,119 @@ Available Manhattan zones for area-specific searches.
 GET /api/recommendations/health
 ```
 
+### Analytics Endpoints
+
+#### Popular Combinations
+```http
+GET /api/analytics/popular-combinations
+```
+Returns most requested activity/time combinations for cache optimization and usage insights.
+
+**Response Structure:**
+```json
+[
+  {
+    "activity": "Portrait photography",
+    "hour": 15,
+    "dayOfWeek": 6,
+    "requestCount": 25,
+    "lastRequested": "2025-07-25T15:30:00",
+    "avgResponseTime": 1250
+  }
+]
+```
+
+#### Cache Performance Analysis
+```http
+GET /api/analytics/cache-performance
+```
+Monitor cache effectiveness across different activities and times.
+
+**Response Structure:**
+```json
+[
+  {
+    "activity": "Street photography",
+    "hour": 17,
+    "cacheHitRate": "89.5%",
+    "totalRequests": 45,
+    "avgResponseTime": 850
+  }
+]
+```
+
+#### Activity Trends
+```http
+GET /api/analytics/activity-trends
+```
+Understand overall activity popularity and performance metrics.
+
+**Response Structure:**
+```json
+[
+  {
+    "activity": "Portrait photography",
+    "totalRequests": 150,
+    "avgResponseTime": 1100,
+    "lastRequested": "2025-07-25T16:00:00"
+  }
+]
+```
+
+#### Hourly Usage Patterns
+```http
+GET /api/analytics/hourly-patterns
+```
+Identify peak usage hours and activity diversity for capacity planning.
+
+**Response Structure:**
+```json
+[
+  {
+    "hour": 15,
+    "totalRequests": 85,
+    "uniqueActivities": 7
+  }
+]
+```
+
+#### Recent Activity
+```http
+GET /api/analytics/recent-activity
+```
+Monitor recent system usage (last 7 days) with detailed metrics.
+
+**Response Structure:**
+```json
+[
+  {
+    "activity": "Filmmaking",
+    "hour": 14,
+    "requestCount": 3,
+    "lastRequested": "2025-07-25T14:30:00",
+    "cacheHit": true,
+    "responseTime": 95
+  }
+]
+```
+
+#### Analytics Dashboard
+```http
+GET /api/analytics/dashboard
+```
+Executive summary of system metrics and performance indicators.
+
+**Response Structure:**
+```json
+{
+  "popularCombinations": 25,
+  "avgCacheHitRate": "85.3%",
+  "totalActivities": 8,
+  "totalRequests": 1250,
+  "recentActivityCount": 45
+}
+```
+
 ### Admin Endpoints (Authentication Required)
 
 #### Authentication
@@ -172,7 +285,7 @@ python app.py
 ```
 
 5. **Database Setup**
-- Import the provided ERD schema
+- Import the provided SQL schema
 - Run initial data migrations
 - Verify database connectivity
 
@@ -245,6 +358,17 @@ POST /api/admin/login
 POST /api/admin/warm-cache
 ```
 
+### Analytics Testing
+```bash
+# Test analytics endpoints
+GET /api/analytics/dashboard
+GET /api/analytics/popular-combinations
+GET /api/analytics/cache-performance
+GET /api/analytics/activity-trends
+GET /api/analytics/hourly-patterns
+GET /api/analytics/recent-activity
+```
+
 ## 📊 Data Models
 
 ### Location Recommendation Response
@@ -291,9 +415,12 @@ POST /api/admin/warm-cache
 
 ## 👥 Team
 
-- **Backend Team Lead**: API development, microservices architecture, database design
-- **Data Analytics Lead**: ML models, recommendation algorithms, .pkl file generation
-- **Frontend Team**: React/Next.js development, UI/UX design, MapBox integration
+- **Backend Team Lead**: Mark Tully
+- **Data Analytics Lead**: Rahul
+- **Frontend Lead**: Divya
+- **Maintenance Lead**: Dharnesh
+- **Customer Lead**: Phirada
+- **Coordination Lead**: Ting
 
 ## 📝 Contributing
 
