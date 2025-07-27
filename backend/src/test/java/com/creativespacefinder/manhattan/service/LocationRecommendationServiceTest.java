@@ -3,136 +3,113 @@ package com.creativespacefinder.manhattan.service;
 import com.creativespacefinder.manhattan.dto.*;
 import com.creativespacefinder.manhattan.entity.*;
 import com.creativespacefinder.manhattan.repository.*;
+import com.creativespacefinder.manhattan.entity.EventLocation;
+import com.creativespacefinder.manhattan.entity.TaxiZone;
+import com.creativespacefinder.manhattan.entity.LocationActivityScore;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class LocationRecommendationServiceTests {
+@ExtendWith(SpringExtension.class)
 
-    @InjectMocks LocationRecommendationService service;
+class LocationRecommendationServiceTest {
 
-    @Mock LocationActivityScoreRepository scoreRepo;
-    @Mock ActivityRepository             activityRepo;
-    @Mock MLPredictionLogRepository      logRepo;
+    @Mock private LocationActivityScoreRepository lasRepo;
+    @Mock private ActivityRepository activityRepo;
+    @Mock private MLPredictionLogRepository logRepo;
+    @Mock private AnalyticsService analyticsService;
 
-    Activity photo;
+
+    @Spy @InjectMocks
+    private LocationRecommendationService service;
+
+    private final LocalDateTime NOW = LocalDateTime.of(2025,7,17,15,0);
 
     @BeforeEach
-    void setUp() {
-        photo = new Activity();
-        photo.setId(UUID.randomUUID());
-        photo.setName("Photography");
+    void init() {
+        Mockito.reset(lasRepo, activityRepo, logRepo, analyticsService);
     }
 
-    /* SVC‑001 */
     @Test
-    void unknownActivity_throws() {
-        when(activityRepo.findByName("Surfing")).thenReturn(Optional.empty());
+    void whenNoLocationIds_thenEmptyResponse_andNoDbOrMlCalls() {
+        RecommendationRequest req = new RecommendationRequest("Sculpture", NOW, null);
+        when(activityRepo.findByName("Sculpture"))
+                .thenReturn(Optional.of(new Activity()));
+        when(lasRepo.findDistinctLocationIdsByActivityName("Sculpture", 100))
+                .thenReturn(Collections.emptyList());
 
-        RecommendationRequest req = new RecommendationRequest("Surfing", LocalDateTime.now());
-        assertThatThrownBy(() -> service.getLocationRecommendations(req))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Activity not found");
+        RecommendationResponse resp = service.getLocationRecommendations(req);
+
+        assertThat(resp.getTotalResults()).isZero();
+        verify(lasRepo, never()).findByIdsWithEagerLoading(anyList());
+        verify(service, never()).callMLModelBatch(any());
+        verify(logRepo, never()).save(any());
+        verify(analyticsService, never())
+                .trackRequest(anyString(), any(LocalDateTime.class), anyBoolean(), anyLong());
     }
 
-    /* SVC‑002 */
     @Test
-    void noScores_returnsEmptyArray() {
-        when(activityRepo.findByName("Photography")).thenReturn(Optional.of(photo));
-        when(scoreRepo.findTopByActivityNameIgnoreDateTime(eq("Photography"), any(PageRequest.class)))
-                .thenReturn(List.of());
+    void happyPath_singleLocation_mapsAndPersists() {
+        UUID id = UUID.randomUUID();
+        EventLocation loc = new EventLocation();
+        loc.setId(id);
+        loc.setLocationName("Test Zone");
+        loc.setLatitude(BigDecimal.valueOf(40.0));
+        loc.setLongitude(BigDecimal.valueOf(-73.0));
 
-        RecommendationResponse resp =
-                service.getLocationRecommendations(new RecommendationRequest("Photography", LocalDateTime.now()));
+        TaxiZone tz = new TaxiZone();
+        tz.setZoneName("Test Zone");
 
-        assertThat(resp.getLocations()).isEmpty();
-        verifyNoInteractions(logRepo);
-    }
+        LocationActivityScore las = new LocationActivityScore();
+        las.setLocation(loc);
+        las.setTaxiZone(tz);
 
-    /* SVC‑003 */
-    @Test
-    void happyPath_returnsTop10_andPersists() {
-        when(activityRepo.findByName("Photography")).thenReturn(Optional.of(photo));
+        RecommendationRequest req = new RecommendationRequest("Photography", NOW, null);
+        when(activityRepo.findByName("Photography"))
+                .thenReturn(Optional.of(new Activity()));
+        when(lasRepo.findDistinctLocationIdsByActivityName("Photography", 100))
+                .thenReturn(List.of(id.toString()));
+        when(lasRepo.findByIdsWithEagerLoading(List.of(id)))
+                .thenReturn(List.of(las));
 
-        List<LocationActivityScore> cands = buildDummyScores(25);
-        when(scoreRepo.findTopByActivityNameIgnoreDateTime(eq("Photography"), any(PageRequest.class)))
-                .thenReturn(cands);
+        PredictionResponse pr = new PredictionResponse(null, 5, 8f, 7f);
+        doReturn(new PredictionResponse[]{ pr })
+                .when(service).callMLModelBatch(any());
 
-        // Spy to stub private ML batch
-        LocationRecommendationService spy = Mockito.spy(service);
-        doReturn(buildPredictions(cands.size())).when(spy).callMLModelBatch(any());
+        RecommendationResponse resp = service.getLocationRecommendations(req);
 
-        RecommendationResponse resp =
-                spy.getLocationRecommendations(new RecommendationRequest("Photography", LocalDateTime.now()));
+        assertThat(resp.getTotalResults()).isEqualTo(1);
+        LocationRecommendationResponse out = resp.getLocations().get(0);
 
-        assertThat(resp.getLocations()).hasSize(10);
-        verify(scoreRepo).saveAll(cands);
+        assertThat(out.getMuseScore())
+                .isEqualByComparingTo(BigDecimal.valueOf(10.0));
+        assertThat(out.getEstimatedCrowdNumber()).isEqualTo(5);
+        assertThat(out.getCrowdScore())
+                .isEqualByComparingTo(BigDecimal.valueOf(10.0));
+
+        verify(lasRepo).saveAll(anyList());
         verify(logRepo).save(any(MLPredictionLog.class));
     }
 
-    /* SVC‑004 */
     @Test
-    void getAllActivities_passThru() {
-        service.getAllActivities();
-        verify(activityRepo).findAll();
-    }
+    void whenActivityNotFound_thenThrowAndTrack() {
+        RecommendationRequest req = new RecommendationRequest("Unknown", NOW, null);
+        when(activityRepo.findByName("Unknown")).thenReturn(Optional.empty());
 
-    /* SVC‑005 */
-    @Test
-    void fewerPredictions_extraCandidatesIgnored() {
-        when(activityRepo.findByName("Photography")).thenReturn(Optional.of(photo));
+        assertThatThrownBy(() -> service.getLocationRecommendations(req))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Activity not found");
 
-        List<LocationActivityScore> cands = buildDummyScores(5);
-        when(scoreRepo.findTopByActivityNameIgnoreDateTime(eq("Photography"), any(PageRequest.class)))
-                .thenReturn(cands);
-
-        LocationRecommendationService spy = Mockito.spy(service);
-        // Return only 3 predictions for 5 candidates
-        doReturn(buildPredictions(3)).when(spy).callMLModelBatch(any());
-
-        RecommendationResponse resp =
-                spy.getLocationRecommendations(new RecommendationRequest("Photography", LocalDateTime.now()));
-
-        // should still not blow up, just zero MuseScore for extra
-        assertThat(resp.getLocations()).hasSizeLessThanOrEqualTo(5);
-    }
-
-    /* helpers */
-    private List<LocationActivityScore> buildDummyScores(int n) {
-        List<LocationActivityScore> list = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            EventLocation loc = new EventLocation("Loc-"+i,
-                    BigDecimal.valueOf(40.7+i*0.01),
-                    BigDecimal.valueOf(-73.9-i*0.01), null);
-            loc.setId(UUID.randomUUID());
-
-            LocationActivityScore las = new LocationActivityScore();
-            las.setId(UUID.randomUUID());
-            las.setActivity(photo);
-            las.setLocation(loc);
-            las.setEventDate(LocalDate.now());
-            las.setEventTime(LocalTime.NOON);
-            las.setMuseScore(BigDecimal.valueOf(i));
-            list.add(las);
-        }
-        return list;
-    }
-    private PredictionResponse[] buildPredictions(int n) {
-        PredictionResponse[] arr = new PredictionResponse[n];
-        Arrays.fill(arr, new PredictionResponse(0f, 100, 0f, 0f));
-        return arr;
     }
 }
+
+

@@ -23,7 +23,6 @@ class ForecastResponseTest {
 
     @Test
     void testJsonDeserialization() throws Exception {
-        // Mock JSON string representing a typical OpenWeather 96hr forecast response
         String json = """
             {
                 "cod": "200",
@@ -69,10 +68,8 @@ class ForecastResponseTest {
             }
             """;
 
-        // Deserialize the JSON string into ForecastResponse object
         ForecastResponse forecastResponse = objectMapper.readValue(json, ForecastResponse.class);
 
-        // Assertions to check if the deserialization was successful and data is mapped correctly
         assertNotNull(forecastResponse);
         assertNotNull(forecastResponse.getHourly());
         assertFalse(forecastResponse.getHourly().isEmpty());
@@ -80,21 +77,14 @@ class ForecastResponseTest {
         ForecastResponse.HourlyForecast firstForecast = forecastResponse.getHourly().get(0);
         assertNotNull(firstForecast);
 
-        // Test dt mapping
         assertEquals(1720818000L, firstForecast.getDt());
-
-        // Test tempInfo and getTemp() mapping
-        // We cannot assert on tempInfo directly because it's private.
-        // We only assert on the public getter method.
         assertEquals(298.15, firstForecast.getTemp());
 
-        // Test weather list and getCondition() mapping
         assertNotNull(firstForecast.getWeather());
         assertFalse(firstForecast.getWeather().isEmpty());
         assertEquals("Clear", firstForecast.getCondition());
         assertEquals("clear sky", firstForecast.getWeather().get(0).getDescription());
 
-        // Test getReadableTime() with the expected format and timezone
         String expectedReadableTime = Instant.ofEpochSecond(1720818000L)
                                             .atZone(ZoneId.of("America/New_York"))
                                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -103,7 +93,6 @@ class ForecastResponseTest {
 
     @Test
     void testGetTemp_NoTempInfo() throws Exception {
-        // Create an HourlyForecast JSON where 'main' (TempInfo) is null
         String jsonWithNullMain = """
             {
                 "dt": 123456789,
@@ -112,14 +101,11 @@ class ForecastResponseTest {
             }
             """;
         ForecastResponse.HourlyForecast forecast = objectMapper.readValue(jsonWithNullMain, ForecastResponse.HourlyForecast.class);
-
-        // Should return 0.0 if tempInfo is null
         assertEquals(0.0, forecast.getTemp());
     }
 
     @Test
     void testGetCondition_NoWeatherInfo() throws Exception {
-        // Create an HourlyForecast JSON where 'weather' is null
         String jsonWithNullWeather = """
             {
                 "dt": 123456789,
@@ -130,7 +116,6 @@ class ForecastResponseTest {
         ForecastResponse.HourlyForecast forecastNullWeather = objectMapper.readValue(jsonWithNullWeather, ForecastResponse.HourlyForecast.class);
         assertEquals("Unknown", forecastNullWeather.getCondition());
 
-        // Create an HourlyForecast JSON where 'weather' is an empty list
         String jsonWithEmptyWeather = """
             {
                 "dt": 123456789,
@@ -144,8 +129,6 @@ class ForecastResponseTest {
 
     @Test
     void testSerializationAndDeserializationConsistency() throws Exception {
-        // Create an instance of ForecastResponse programmatically by building a JSON string
-        // This is necessary because we cannot directly set private fields like tempInfo
         String innerHourlyJson = """
             {
                 "dt": 1678886400,
@@ -155,11 +138,8 @@ class ForecastResponseTest {
             """;
 
         String fullResponseJson = "{ \"list\": [" + innerHourlyJson + "] }";
-
-        // Deserialize to object
         ForecastResponse deserializedResponse = objectMapper.readValue(fullResponseJson, ForecastResponse.class);
 
-        // Assert equality after round-trip (effectively through JSON conversion)
         assertNotNull(deserializedResponse);
         assertEquals(1, deserializedResponse.getHourly().size());
         ForecastResponse.HourlyForecast retrievedForecast = deserializedResponse.getHourly().get(0);

@@ -11,7 +11,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class WeatherForecastServiceTests {
 
-    WeatherForecastService service;   // created manually to inject mocks
+    WeatherForecastService service;
     RestTemplate restMock;
 
     @BeforeEach
@@ -32,7 +34,6 @@ class WeatherForecastServiceTests {
         ReflectionTestUtils.setField(service, "apiKey", "dummy");
     }
 
-    /* WX‑001 */
     @Test
     void ok96hForecast_returnsObject() {
         ForecastResponse fake = new ForecastResponse();
@@ -41,7 +42,6 @@ class WeatherForecastServiceTests {
         assertThat(service.get96HourForecast()).isSameAs(fake);
     }
 
-    /* WX‑002 */
     @Test
     void openWeather404_wrapsApiException() {
         when(restMock.getForObject(anyString(), eq(ForecastResponse.class)))
@@ -51,7 +51,6 @@ class WeatherForecastServiceTests {
                 .isInstanceOf(ApiException.class);
     }
 
-    /* WX‑003 */
     @Test
     void malformedJson_onAvailableTimes_throws() {
         when(restMock.getForObject(anyString(), eq(String.class))).thenReturn("{\"foo\":\"bar\"}");
@@ -60,7 +59,6 @@ class WeatherForecastServiceTests {
                 .isInstanceOf(ApiException.class);
     }
 
-    /* WX‑004 */
     @Test
     void getWeatherForDateTime_fallback70F() {
         ForecastResponse empty = new ForecastResponse();
@@ -70,5 +68,30 @@ class WeatherForecastServiceTests {
         WeatherData data = service.getWeatherForDateTime(LocalDateTime.now());
 
         assertThat(data.getTemperature()).isEqualByComparingTo(BigDecimal.valueOf(70));
+    }
+
+    @Test
+    void getAvailableForecastDateTimes_success_returnsCorrectDateTimes() throws Exception {
+        long epoch1 = 1625140800L;
+        long epoch2 = 1625144400L;
+        String json = String.format(
+                "{\"list\":[{\"dt\":%d},{\"dt\":%d}]}", epoch1, epoch2
+        );
+        when(restMock.getForObject(anyString(), eq(String.class))).thenReturn(json);
+
+        List<LocalDateTime> result = service.getAvailableForecastDateTimes();
+
+        LocalDateTime expected1 = Instant
+                .ofEpochSecond(epoch1)
+                .atZone(ZoneId.of("America/New_York"))
+                .toLocalDateTime();
+        LocalDateTime expected2 = Instant
+                .ofEpochSecond(epoch2)
+                .atZone(ZoneId.of("America/New_York"))
+                .toLocalDateTime();
+
+        assertThat(result)
+                .hasSize(2)
+                .containsExactly(expected1, expected2);
     }
 }

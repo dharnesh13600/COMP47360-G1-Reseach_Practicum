@@ -50,7 +50,6 @@ class LocationRecommendationResponseTest {
         assertEquals(testCrowdScore, response.getCrowdScore());
         assertEquals(testEstimatedCrowdNumber, response.getEstimatedCrowdNumber());
 
-        // Test the automatically created ScoreBreakdown
         assertNotNull(response.getScoreBreakdown());
         assertEquals(testActivityScore, response.getScoreBreakdown().getActivityScore());
         assertEquals(testMuseScore, response.getScoreBreakdown().getMuseScore());
@@ -98,7 +97,6 @@ class LocationRecommendationResponseTest {
 
     @Test
     void testScoreBreakdownExplanation_CalculatedFromML() {
-        // When museScore is NOT null, explanation should be "Calculated from ML .pkl file"
         LocationRecommendationResponse.ScoreBreakdown breakdown =
                 new LocationRecommendationResponse.ScoreBreakdown(
                         new BigDecimal("0.5"), new BigDecimal("0.6"), new BigDecimal("0.7")
@@ -108,10 +106,9 @@ class LocationRecommendationResponseTest {
 
     @Test
     void testScoreBreakdownExplanation_LoggedToDatabase() {
-        // When museScore IS null, explanation should be "Calculation already logged in database"
         LocationRecommendationResponse.ScoreBreakdown breakdown =
                 new LocationRecommendationResponse.ScoreBreakdown(
-                        new BigDecimal("0.5"), null, new BigDecimal("0.7") // museScore is null
+                        new BigDecimal("0.5"), null, new BigDecimal("0.7")
                 );
         assertEquals("Calculation already logged in database", breakdown.getExplanation());
     }
@@ -138,7 +135,6 @@ class LocationRecommendationResponseTest {
                 testEstimatedCrowdNumber
         );
 
-        // Serialize to JSON
         String json = objectMapper.writeValueAsString(originalResponse);
         assertNotNull(json);
         assertTrue(json.contains("\"id\":\"" + testId + "\""));
@@ -148,12 +144,10 @@ class LocationRecommendationResponseTest {
         assertTrue(json.contains("\"museScore\":0.90"));
         assertTrue(json.contains("\"crowdScore\":0.65"));
         assertTrue(json.contains("\"estimatedCrowdNumber\":300"));
-        assertTrue(json.contains("\"explanation\":\"Calculated from ML .pkl file\"")); // Check nested object
+        assertTrue(json.contains("\"explanation\":\"Calculated from ML .pkl file\""));
 
-        // Deserialize back from JSON
         LocationRecommendationResponse deserializedResponse = objectMapper.readValue(json, LocationRecommendationResponse.class);
 
-        // Assert that the deserialized object matches the original
         assertEquals(originalResponse.getId(), deserializedResponse.getId());
         assertEquals(originalResponse.getZoneName(), deserializedResponse.getZoneName());
         assertEquals(originalResponse.getLatitude(), deserializedResponse.getLatitude());
@@ -163,7 +157,6 @@ class LocationRecommendationResponseTest {
         assertEquals(originalResponse.getCrowdScore(), deserializedResponse.getCrowdScore());
         assertEquals(originalResponse.getEstimatedCrowdNumber(), deserializedResponse.getEstimatedCrowdNumber());
 
-        // Assert nested ScoreBreakdown
         assertNotNull(deserializedResponse.getScoreBreakdown());
         assertEquals(originalResponse.getScoreBreakdown().getActivityScore(), deserializedResponse.getScoreBreakdown().getActivityScore());
         assertEquals(originalResponse.getScoreBreakdown().getMuseScore(), deserializedResponse.getScoreBreakdown().getMuseScore());
@@ -197,10 +190,10 @@ class LocationRecommendationResponseTest {
 
         assertNotNull(deserializedResponse);
         assertEquals(testId, deserializedResponse.getId());
-        assertNull(deserializedResponse.getMuseScore()); // Direct museScore in main DTO should be null
+        assertNull(deserializedResponse.getMuseScore());
 
         assertNotNull(deserializedResponse.getScoreBreakdown());
-        assertNull(deserializedResponse.getScoreBreakdown().getMuseScore()); // Nested museScore should be null
+        assertNull(deserializedResponse.getScoreBreakdown().getMuseScore());
         assertEquals("Calculation already logged in database", deserializedResponse.getScoreBreakdown().getExplanation());
     }
 }

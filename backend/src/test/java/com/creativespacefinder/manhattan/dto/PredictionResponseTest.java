@@ -74,7 +74,6 @@ class PredictionResponseTest {
                 museScore, estimatedCrowdNumber, crowdScore, creativeActivityScore
         );
 
-        // Serialize to JSON
         String json = objectMapper.writeValueAsString(originalResponse);
         assertNotNull(json);
         assertTrue(json.contains("\"muse_score\":0.75"));
@@ -82,10 +81,8 @@ class PredictionResponseTest {
         assertTrue(json.contains("\"crowd_score\":0.65"));
         assertTrue(json.contains("\"creative_activity_score\":0.95"));
 
-        // Deserialize back from JSON
         PredictionResponse deserializedResponse = objectMapper.readValue(json, PredictionResponse.class);
 
-        // Assert that the deserialized object matches the original
         assertEquals(originalResponse.getMuseScore(), deserializedResponse.getMuseScore());
         assertEquals(originalResponse.getEstimatedCrowdNumber(), deserializedResponse.getEstimatedCrowdNumber());
         assertEquals(originalResponse.getCrowdScore(), deserializedResponse.getCrowdScore());
@@ -94,7 +91,6 @@ class PredictionResponseTest {
 
     @Test
     void testJsonSerializationAndDeserializationWithNullMuseScore() throws Exception {
-        // Test with a nullable field set to null
         Integer estimatedCrowdNumber = 50;
         Float crowdScore = 0.4f;
         Float creativeActivityScore = 0.7f;
@@ -103,19 +99,15 @@ class PredictionResponseTest {
                 null, estimatedCrowdNumber, crowdScore, creativeActivityScore
         );
 
-        // Serialize to JSON
         String json = objectMapper.writeValueAsString(originalResponse);
         assertNotNull(json);
-        // Ensure "muse_score" is present but its value is null in JSON
-        assertTrue(json.contains("\"muse_score\":null")); 
+        assertTrue(json.contains("\"muse_score\":null"));
         assertTrue(json.contains("\"estimated_crowd_number\":50"));
         assertTrue(json.contains("\"crowd_score\":0.4"));
         assertTrue(json.contains("\"creative_activity_score\":0.7"));
 
-        // Deserialize back from JSON
         PredictionResponse deserializedResponse = objectMapper.readValue(json, PredictionResponse.class);
 
-        // Assert that the deserialized object matches the original
         assertNull(deserializedResponse.getMuseScore());
         assertEquals(originalResponse.getEstimatedCrowdNumber(), deserializedResponse.getEstimatedCrowdNumber());
         assertEquals(originalResponse.getCrowdScore(), deserializedResponse.getCrowdScore());
