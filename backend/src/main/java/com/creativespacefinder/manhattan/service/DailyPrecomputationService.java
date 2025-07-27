@@ -141,7 +141,6 @@ public class DailyPrecomputationService {
         } catch (Exception e) {
             String errorMessage = "❌ ASYNC Cache warming failed: " + e.getMessage();
             System.err.println(errorMessage);
-            e.printStackTrace();
 
             // Don't throw exception - just return the error in the CompletableFuture
             return CompletableFuture.completedFuture(errorMessage);
