@@ -28,8 +28,8 @@ public class DailyPrecomputationService {
     private DataSource dataSource;
 
     /**
-     * Pre-compute all combinations once daily at 3 AM
-     * With aggressive connection management for Supabase
+     * Pre-compute all the user potential combinations daily for 3am
+     * Also, the connection management for the Database
      */
     @Scheduled(cron = "0 0 3 * * *")
     public void dailyPrecomputation() {
@@ -53,7 +53,7 @@ public class DailyPrecomputationService {
         int batchCount = 0;
 
         try {
-            // Process all 4 days
+            // Process the 96hrs
             for (int dayOffset = 0; dayOffset < 4; dayOffset++) {
                 LocalDateTime baseDate = LocalDateTime.now().plusDays(dayOffset);
 
@@ -62,7 +62,7 @@ public class DailyPrecomputationService {
                         try {
                             LocalDateTime targetDateTime = baseDate.toLocalDate().atTime(time);
 
-                            // Only pre-compute future times
+                            // Precompute future times
                             if (targetDateTime.isAfter(LocalDateTime.now())) {
                                 RecommendationRequest request = new RecommendationRequest(
                                         activity.getName(),
@@ -73,16 +73,16 @@ public class DailyPrecomputationService {
                                 locationRecommendationService.getLocationRecommendations(request);
                                 totalProcessed++;
 
-                                // AGGRESSIVE connection management
+                                // Connection management due to my supabase crashing due to free tier
                                 forceConnectionCleanup();
-                                Thread.sleep(2000); // 2 second break after each request
+                                Thread.sleep(2000); // 2 seconds after each request
 
-                                // Every 3 requests, take a longer break and force cleanup
+                                // Every 3 requests - take a longer break and force a connection cleanup
                                 if (totalProcessed % 3 == 0) {
                                     batchCount++;
                                     System.out.println("Completed batch " + batchCount + " (processed " + totalProcessed + " combinations)");
 
-                                    // Force cleanup and longer break
+                                    // Force the cleanup and a longer break
                                     forceConnectionCleanup();
                                     Thread.sleep(5000); // 5 second break every 3 requests
 
@@ -94,10 +94,10 @@ public class DailyPrecomputationService {
                             System.err.println("Error pre-computing for " + activity.getName() +
                                     " at " + time + ": " + e.getMessage());
 
-                            // Force cleanup on error
+                            // Force a cleanup on the pre comp error
                             forceConnectionCleanup();
                             try {
-                                Thread.sleep(3000); // Extra break on error
+                                Thread.sleep(3000); // Another break on error
                             } catch (InterruptedException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -106,7 +106,7 @@ public class DailyPrecomputationService {
                 }
             }
         } finally {
-            // CRITICAL: Force cleanup after completion
+            // After completion, force a cleanup of connection
             forceConnectionCleanup();
             logConnectionStats("AFTER pre-computation");
         }
@@ -117,38 +117,38 @@ public class DailyPrecomputationService {
     }
 
     /**
-     * Async cache warming that prevents 502 errors
-     * This method starts the cache warming in background and returns immediately
+     * Async cache warming to prevent 502 errors
+     * This method starts the cache warming in the background and returns it immediately
      */
     @Async("cacheWarmingExecutor")
     public CompletableFuture<String> triggerAsyncDailyPrecomputation() {
         try {
-            System.out.println("🚀 ASYNC Cache Warming Started in Background Thread: " + Thread.currentThread().getName());
+            System.out.println("ASYNC Cache Warming Started in Background Thread: " + Thread.currentThread().getName());
             long startTime = System.currentTimeMillis();
 
-            // Call your existing synchronous cache warming method
+            // Call the existing synchronous cache warming method
             dailyPrecomputation();
 
             long durationMs = System.currentTimeMillis() - startTime;
             long durationMinutes = durationMs / (1000 * 60);
 
-            String successMessage = String.format("✅ ASYNC Cache warming completed successfully! Duration: %d minutes (%d ms)",
+            String successMessage = String.format("ASYNC Cache warming completed successfully! Duration: %d minutes (%d ms)",
                     durationMinutes, durationMs);
             System.out.println(successMessage);
 
             return CompletableFuture.completedFuture(successMessage);
 
         } catch (Exception e) {
-            String errorMessage = "❌ ASYNC Cache warming failed: " + e.getMessage();
+            String errorMessage = "ASYNC Cache warming failed: " + e.getMessage();
             System.err.println(errorMessage);
 
-            // Don't throw exception - just return the error in the CompletableFuture
+            // Return an error if the cache warming failed
             return CompletableFuture.completedFuture(errorMessage);
         }
     }
 
     /**
-     * Force connection cleanup
+     * Force a connection cleanup
      */
     private void forceConnectionCleanup() {
         try {
@@ -162,7 +162,7 @@ public class DailyPrecomputationService {
     }
 
     /**
-     * Log connection statistics
+     * Log any connection statistics
      */
     private void logConnectionStats(String phase) {
         try {
@@ -182,7 +182,7 @@ public class DailyPrecomputationService {
     }
 
     /**
-     * Manual trigger for testing
+     * This is a manual trigger for testing
      */
     public void triggerDailyPrecomputation() {
         dailyPrecomputation();

@@ -33,7 +33,7 @@ public class WeatherForecastService {
     private final RestTemplate rest = new RestTemplate();
 
     /* ------------------------------------------------------------------ */
-    /*  1. 96-hour forecast (whole JSON mapped to ForecastResponse)       */
+    /*                        96-hour forecast                            */
     /* ------------------------------------------------------------------ */
     public ForecastResponse get96HourForecast() {
         String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=imperial", BASE_URL, LAT, LON, apiKey);
@@ -48,7 +48,7 @@ public class WeatherForecastService {
     }
 
     /* ------------------------------------------------------------------ */
-    /*  2. List of available forecast LocalDateTime values                */
+    /*              Available Forecast with DateTimes                     */
     /* ------------------------------------------------------------------ */
     public List<LocalDateTime> getAvailableForecastDateTimes() {
         String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=imperial", BASE_URL, LAT, LON, apiKey);
@@ -71,7 +71,7 @@ public class WeatherForecastService {
     }
 
     /* ------------------------------------------------------------------ */
-    /*  3. Get weather for one exact LocalDateTime                         */
+    /*               Weather For Exact DateTime                           */
     /* ------------------------------------------------------------------ */
     public WeatherData getWeatherForDateTime(LocalDateTime target) {
         try {
@@ -83,7 +83,7 @@ public class WeatherForecastService {
     }
 
     /* ------------------------------------------------------------------ */
-    /*  4. Find matching record in ForecastResponse                        */
+    /*              Find Match Forecast for DateTime                     */
     /* ------------------------------------------------------------------ */
     private WeatherData findWeatherForDateTime(ForecastResponse forecast, LocalDateTime target) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -101,7 +101,7 @@ public class WeatherForecastService {
     }
 
     /* ------------------------------------------------------------------ */
-    /*  5. Default fallback                                               */
+    /*                      Default Fallback                              */
     /* ------------------------------------------------------------------ */
     private WeatherData createDefaultWeatherData(LocalDateTime dateTime) {
         return new WeatherData(

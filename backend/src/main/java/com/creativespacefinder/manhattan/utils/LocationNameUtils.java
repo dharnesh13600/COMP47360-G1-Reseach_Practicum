@@ -1,7 +1,15 @@
 package com.creativespacefinder.manhattan.utils;
 
-public class LocationNameUtils {
+// References:
+// https://docs.oracle.com/javase/8/docs/api/java/lang/String.html
+// https://www.regular-expressions.info/java.html
+// https://medium.com/@anil.goyal0057/mastering-string-algorithms-in-java-4488d9bff9df 
+// https://mammadyahya.medium.com/how-to-design-utility-classes-in-java-15772c5a6e1f
+// https://www.geeksforgeeks.org/java/how-to-replace-a-string-using-regex-pattern-in-java/
+// https://www.geeksforgeeks.org/java/java-string-manipulation-best-practices-for-clean-code/
 
+public class LocationNameUtils {
+    // Leave the location name if it is null or only 25 characters
     public static String shortenLocationName(String originalName) {
         if (originalName == null || originalName.length() <= 25) {
             return originalName;
@@ -9,59 +17,61 @@ public class LocationNameUtils {
 
         String shortened = originalName;
 
-        // Handle duplicated plaza names (data quality issue)
+        // Remove duplicated location names with Plaza
         shortened = removeDuplicatedPlazaNames(shortened);
 
-        // Handle named plazas with street intersections
+        // Any location with : or Plaza or Square should be shortened
         if (shortened.contains(": ") && (shortened.contains("Plaza") || shortened.contains("Square"))) {
             shortened = shortenNamedPlaza(shortened);
         }
 
-        // Handle street intersections with "between"
+        // Get rid of locations referencing in-between other locations/streets
         if (shortened.contains(" between ")) {
             shortened = shortenStreetIntersection(shortened);
         }
 
-        // Apply general abbreviations
+        // Enforce the general abbreviations that I set
         shortened = applyGeneralAbbreviations(shortened);
 
-        // Smart length management - cut at natural boundaries
+        // Use my function smartTruncate to shorten the name at a more natural breaking point
         shortened = smartTruncate(shortened, 28);
 
         return shortened;
     }
 
     private static String smartTruncate(String text, int maxLength) {
+        // If the text is short enough then leave it
         if (text.length() <= maxLength) {
             return text;
         }
 
-        // Try to cut at natural breakpoints in order of preference
+        // Slice at natural breaking points of location names
         String[] breakpoints = {": ", " - ", " (", " between ", " and ", " "};
 
+        // Check for the last occurrence of each breaking point within the maxLength limit
         for (String breakpoint : breakpoints) {
             int lastBreakpoint = text.lastIndexOf(breakpoint, maxLength);
             if (lastBreakpoint > 15) { // Don't cut too early
                 String truncated = text.substring(0, lastBreakpoint);
-                // Clean up any hanging punctuation
+                // Clean up any punctation left at the end of the name
                 return cleanHangingPunctuation(truncated);
             }
         }
 
-        // Last resort: cut at word boundary without "..."
+        // If we have no breaking point, find the last space before max (last resort)
         int lastSpace = text.lastIndexOf(" ", maxLength);
         if (lastSpace > 15) {
             String truncated = text.substring(0, lastSpace);
             return cleanHangingPunctuation(truncated);
         }
 
-        // If no good breakpoint found, just truncate cleanly
+        // If there is no last then truncate at max
         String truncated = text.substring(0, maxLength);
         return cleanHangingPunctuation(truncated);
     }
 
     private static String cleanHangingPunctuation(String text) {
-        // Remove hanging geographical suffixes first
+        // Remove any of the following ending geographical suffixes
         text = text.replaceAll(",\\s*New$", "")
                 .replaceAll(",\\s*North$", "")
                 .replaceAll(",\\s*South$", "")
@@ -72,14 +82,14 @@ public class LocationNameUtils {
                 .replaceAll(",\\s*Brooklyn$", "")
                 .replaceAll(",\\s*Queens$", "");
 
-        // Remove hanging punctuation at the end
+        // Remove any ending punctuation
         text = text.replaceAll("[(:,\\-\\s]++$", "");
 
-        // Check for unmatched opening parentheses and remove them
+        // If there is unmatched opening parentheses, remove them
         long openParens = text.chars().filter(ch -> ch == '(').count();
         long closeParens = text.chars().filter(ch -> ch == ')').count();
 
-        // If we have unmatched opening parentheses, remove the last one(s)
+        // If we have an unmatched opening parentheses, just get rid of the last one
         while (openParens > closeParens && text.contains("(")) {
             int lastOpenParen = text.lastIndexOf("(");
             text = text.substring(0, lastOpenParen).trim();
@@ -90,6 +100,8 @@ public class LocationNameUtils {
         return text.trim();
     }
 
+    // This function removes the duplication of Plaza, occuring in locations :)))
+    // Example: "Pershing Square Plaza (Pershing Square Plaza): between X and Y"
     private static String removeDuplicatedPlazaNames(String name) {
         if (name.contains("Plaza (") && name.contains("): ") && name.contains("Plaza (")) {
             int firstPlazaEnd = name.indexOf("): ");
@@ -106,19 +118,19 @@ public class LocationNameUtils {
         return name;
     }
 
+    // Shorten any names that mention a plaza or square
     private static String shortenNamedPlaza(String name) {
         String[] mainParts = name.split(": ", 2);
         if (mainParts.length == 2) {
             String plazaName = mainParts[0];
             String intersection = mainParts[1];
 
-            // Shorten plaza name
             plazaName = plazaName.replaceAll("Pedestrian Plaza", "Plaza")
                     .replaceAll(" Plaza Plaza", " Plaza")
                     .replaceAll("\\(Herald Square.*?\\)", "(Herald Sq)")
                     .replaceAll("Pershing Square Plaza", "Pershing Sq");
 
-            // If there's a street intersection after the plaza name, shorten it
+            // Shorten the intersection part too if necessary
             if (intersection.contains(" between ")) {
                 intersection = shortenStreetIntersection(intersection);
             }
@@ -128,6 +140,7 @@ public class LocationNameUtils {
         return name;
     }
 
+    // Shorten names like "X Street between Y and Z"
     private static String shortenStreetIntersection(String streetName) {
         String[] parts = streetName.split(" between ", 2);
         if (parts.length != 2) return streetName;
@@ -135,19 +148,15 @@ public class LocationNameUtils {
         String mainStreet = parts[0].trim();
         String intersectionPart = parts[1].trim();
 
-        // Shorten the main street name
+        // Shorten the main street's name via the function
         mainStreet = shortenStreetName(mainStreet);
-
-        // Handle the intersection part with aggressive abbreviation
         String shortenedIntersection = shortenIntersectionDescription(intersectionPart);
-
-        // Build result
         return mainStreet + " (" + shortenedIntersection + ")";
     }
 
     private static String shortenStreetName(String streetName) {
         return streetName
-                // Aggressive abbreviation for very long boulevard names
+                // Handmade attempt at abbreviation for very long boulevard names
                 .replaceAll("\\bADAM CLAYTON POWELL JR BOULEVARD\\b", "ACP Jr Blvd")
                 .replaceAll("\\bADAM CLAYTON POWELL BOULEVARD\\b", "ACP Blvd")
                 .replaceAll("\\bFREDERICK DOUGLASS BOULEVARD\\b", "F Douglass Blvd")
@@ -170,14 +179,14 @@ public class LocationNameUtils {
                 .replaceAll("\\bMT MORRIS PARK WEST\\b", "Mt Morris Pk W")
                 .replaceAll("\\bDUKE ELLINGTON CIRCLE\\b", "Duke Ellington Cir")
                 .replaceAll("\\bMARGARET CORBIN PLAZA\\b", "Margaret Corbin Plz")
-                // Handle Central Park variations
+                // Central Park variations
                 .replaceAll("\\bCENTRAL PARK NORTH\\b", "Central Park N")
                 .replaceAll("\\bCENTRAL PARK SOUTH\\b", "Central Park S")
                 .replaceAll("\\bCENTRAL PARK WEST\\b", "Central Park W")
                 .replaceAll("\\bCENTRAL PARK EAST\\b", "Central Park E")
-                // Remove directional prefixes for numbered streets to save space
+                // Remove directional words for streets to save some space
                 .replaceAll("\\b(EAST|WEST|NORTH|SOUTH)\\s+", "")
-                // Standard abbreviations
+                // Standard abbreviations anyways
                 .replaceAll("\\bAVENUE\\b", "Ave")
                 .replaceAll("\\bSTREET\\b", "St")
                 .replaceAll("\\bBOULEVARD\\b", "Blvd")
@@ -187,19 +196,20 @@ public class LocationNameUtils {
                 .replaceAll("\\bTERRACE\\b", "Ter");
     }
 
+    // This is an attempt to summarise the intersection of 2 streets ref, via numbers & abbreviations....
     private static String shortenIntersectionDescription(String intersection) {
         String[] streets = intersection.split("\\s++and\\s++", 2);
         if (streets.length == 2) {
             String street1 = shortenStreetName(streets[0].trim());
             String street2 = shortenStreetName(streets[1].trim());
 
-            // Try to find number ranges for same street types
+            // I attempt to make a number range if two streets are mentioned with numbers
             String range = extractNumberRange(street1, street2);
             if (range != null) {
                 return range;
             }
 
-            // For very long avenue names, use even more aggressive abbreviation
+            // Another round of abbreviations for really long names
             street1 = street1.replaceAll("\\bACP Jr Blvd\\b", "ACP")
                     .replaceAll("\\bF Douglass Blvd\\b", "FD")
                     .replaceAll("\\bF Douglas Blvd\\b", "FD")
@@ -216,6 +226,7 @@ public class LocationNameUtils {
         return shortenStreetName(intersection);
     }
 
+    // I try to take a number range from two streets if they are in one location name
     private static String extractNumberRange(String street1, String street2) {
         java.util.regex.Pattern numberPattern = java.util.regex.Pattern.compile("(\\d+)\\s*+(St|Ave|Blvd)");
         java.util.regex.Matcher matcher1 = numberPattern.matcher(street1);

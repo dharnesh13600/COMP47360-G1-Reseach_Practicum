@@ -19,20 +19,20 @@ public class AnalyticsService {
     private RequestAnalyticsRepository analyticsRepository;
 
     /**
-     * Track a recommendation request with automatic cache hit detection
+     * Track any recommendation request with an automatic cache hit detection
      */
     public void trackRequest(String activityName, LocalDateTime requestedDateTime,
                              boolean cacheHit, long responseTimeMs) {
         try {
             Integer hour = requestedDateTime.getHour();
-            Integer dayOfWeek = requestedDateTime.getDayOfWeek().getValue(); // 1=Monday, 7=Sunday
+            Integer dayOfWeek = requestedDateTime.getDayOfWeek().getValue(); // 1 is Monday and 7 is Sunday
             String userAgent = getUserAgent();
 
             Optional<RequestAnalytics> existing = analyticsRepository
                     .findByActivityNameAndRequestedHourAndRequestedDayOfWeek(activityName, hour, dayOfWeek);
 
             if (existing.isPresent()) {
-                // Update existing record
+                // Update any existing records
                 RequestAnalytics analytics = existing.get();
                 analytics.incrementRequestCount();
                 analytics.setCacheHit(cacheHit);
@@ -42,61 +42,61 @@ public class AnalyticsService {
                 }
                 analyticsRepository.save(analytics);
             } else {
-                // Create new record
+                // Create a  new record
                 RequestAnalytics analytics = new RequestAnalytics(
                         activityName, hour, dayOfWeek, cacheHit, responseTimeMs, userAgent);
                 analyticsRepository.save(analytics);
             }
         } catch (Exception e) {
-            // Don't let analytics tracking break the main flow
+            // I prevent the tracking breaking the flow
             System.err.println("Error tracking request analytics: " + e.getMessage());
         }
     }
 
     /**
-     * Get popular combinations to optimize pre-computation
+     * Get all the popular combinations for optimisation of the app ML
      */
     public List<RequestAnalytics> getPopularCombinations() {
         return analyticsRepository.findPopularCombinations(3);
     }
 
     /**
-     * Get popular combinations for specific activity
+     * Get popular combinations for a specific activity
      */
     public List<RequestAnalytics> getPopularCombinationsForActivity(String activityName) {
         return analyticsRepository.findPopularCombinationsForActivity(activityName);
     }
 
     /**
-     * Get cache performance statistics
+     * Get cache performance statistics of the app
      */
     public List<Object[]> getCachePerformanceStats() {
         return analyticsRepository.getCacheHitRateStats();
     }
 
     /**
-     * Get recent activity (last 7 days)
+     * Get recent activity over the last 7 days
      */
     public List<RequestAnalytics> getRecentActivity() {
         return analyticsRepository.findRecentActivity(LocalDateTime.now().minusDays(7));
     }
 
     /**
-     * Get activity popularity trends
+     * Get activity popularity trends of the app
      */
     public List<Object[]> getActivityTrends() {
         return analyticsRepository.getActivityPopularityStats();
     }
 
     /**
-     * Get hourly usage patterns
+     * Get hourly usage patterns of app
      */
     public List<Object[]> getHourlyUsagePatterns() {
         return analyticsRepository.getHourlyUsageStats();
     }
 
     /**
-     * Extract user agent from current request
+     * Extract the user agent from the current request (idk i saw this online!)
      */
     private String getUserAgent() {
         try {
@@ -106,7 +106,7 @@ public class AnalyticsService {
                 return request.getHeader("User-Agent");
             }
         } catch (Exception e) {
-            // Ignore if not in request context
+            // Ignore
         }
         return null;
     }
