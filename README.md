@@ -187,7 +187,7 @@ Monitor recent system usage (last 7 days) with detailed metrics.
 ```http
 GET /api/analytics/dashboard
 ```
-Executive summary of system metrics and performance indicators.
+Executive summary of user statistics, system metrics and performance indicators.
 
 **Response Structure:**
 ```json
@@ -226,10 +226,10 @@ GET /api/admin/cache-status
 
 ### Environment Variables
 
-#### Backend (.env or application.properties)
+#### Backend (.env)
 ```properties
 # Database Configuration
-spring.datasource.url=jdbc:postgresql://localhost:5432/manhattan_muse
+spring.datasource.url=jdbc:postgresql://localhost:5432/manhattan_muse_database
 spring.datasource.username=your_db_user
 spring.datasource.password=your_db_password
 
@@ -259,8 +259,8 @@ NEXT_PUBLIC_USE_MAPBOX=true
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd manhattan-muse
+git clone https://github.com/dharnesh13600/COMP47360-G1-Reseach_Practicum.git
+cd COMP47360-G1-Reseach_Practicum
 ```
 
 2. **Backend Setup**
@@ -279,7 +279,7 @@ npm run dev
 
 4. **Python Analytics Service**
 ```bash
-cd analytics
+cd data-analytics
 pip install -r requirements.txt
 python app.py
 ```
@@ -287,7 +287,7 @@ python app.py
 5. **Database Setup**
 - Import the provided SQL schema
 - Run initial data migrations
-- Verify database connectivity
+- Verify database connectivity to Java backend
 
 ## 🎯 Usage
 
@@ -295,7 +295,7 @@ python app.py
 1. **Select Activity**: Choose your artistic pursuit from the dropdown
 2. **Pick Date & Time**: Select when you plan to create
 3. **Choose Search Mode**:
-   - **Recommended Area**: Get top locations across all Manhattan
+   - **Recommended Area**: Get top locations across all of Manhattan
    - **Select Area**: Browse specific neighborhoods first
 4. **View Results**: Explore recommendations with scores and weather
 5. **Map Integration**: Visualize locations and get directions
@@ -305,6 +305,7 @@ python app.py
 2. **Cache Management**: Manually trigger recommendation cache warming
 3. **System Monitoring**: Check API health and cache status
 4. **Session Management**: Monitor active admin sessions
+5. **User Analytics**: View user selection insights
 
 ## 🔧 Development
 
@@ -400,7 +401,7 @@ GET /api/analytics/recent-activity
 
 ## 🚀 Deployment
 
-### Production Considerations
+### Our Production Deployment
 - **Environment Configuration**: Separate configs for dev/staging/prod
 - **Database Migration**: Automated schema updates
 - **Cache Warming**: Scheduled daily precomputation at 3 AM
@@ -416,23 +417,23 @@ GET /api/analytics/recent-activity
 ## 👥 Team
 
 - **Backend Team Lead**: Mark Tully
-- **Data Analytics Lead**: Rahul
-- **Frontend Lead**: Divya
-- **Maintenance Lead**: Dharnesh
-- **Customer Lead**: Phirada
-- **Coordination Lead**: Ting
+- **Data Analytics Lead**: Rahul Murali
+- **Frontend Lead**: Diviyya Shree Iyappan
+- **Maintenance Lead**: Dharnesh Vasudev Indumathi Ramesh Kumar
+- **Customer Lead**: Phirada Kanjanangkuplpunt
+- **Coordination Lead**: Ting Li
 
 ## 📝 Contributing
 
 1. Fork the repository
-2. Create feature branches (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
+2. Create feature branches (`git checkout -b feature/new-feature`)
+3. Commit changes (`git commit -m 'Add new feature'`)
+4. Push to branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
 ## 📄 License
 
-This project is developed as part of a summer research program.
+This project is developed as part of a summer research program, for COMP47360 via group 1.
 
 ---
 

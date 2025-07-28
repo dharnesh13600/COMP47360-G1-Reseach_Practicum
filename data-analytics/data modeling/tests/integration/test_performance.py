@@ -359,7 +359,7 @@ class TestMLServicePerformance:
         print(f"Min: {min_time:.2f}ms, Max: {max_time:.2f}ms")
         
         # Standard deviation should be reasonable (not too much variance)
-        assert std_dev < avg_time * 0.5  # StdDev less than 50% of average
+        assert std_dev < avg_time * 0.5  # Standard deviation is less than 50% of average
         assert max_time < avg_time * 3    # No outliers more than 3x average
 
     @pytest.mark.performance
@@ -474,7 +474,7 @@ class TestMLServicePerformance:
         print(f"Baseline avg: {baseline_avg:.2f}ms, Post-GC avg: {post_gc_avg:.2f}ms")
         
         # Garbage collection shouldn't significantly impact performance
-        # Allow up to 50% increase after GC
+        # Allow to 50%
         assert post_gc_avg < baseline_avg * 1.5
 
     @pytest.mark.performance
@@ -509,7 +509,7 @@ class TestMLServicePerformance:
                     
                     print(f"Payload size {size}: {response_time:.2f}ms")
                     
-                    if size <= 5000:  # Reasonable sizes should work
+                    if size <= 5000:
                         assert response.status_code == 200
                         data = response.json()
                         assert len(data) == size
@@ -519,4 +519,4 @@ class TestMLServicePerformance:
                 except Exception as e:
                     # Large payloads might cause timeouts or memory errors
                     print(f"Payload size {size} failed: {str(e)}")
-                    assert size >= 5000  # Only very large sizes should fail
+                    assert size >= 5000  # Very large sizes should fail

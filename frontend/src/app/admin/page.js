@@ -1,26 +1,36 @@
+// References:
+// https://nextjs.org/learn/dashboard-app/adding-authentication
+// https://blog.logrocket.com/implement-authentication-authorization-next-js/
+// https://cruip.com/toggle-password-visibility-with-tailwind-css-and-nextjs/
+// http://freecodecamp.org/news/how-to-authenticate-users-with-nextauth-in-nextjs-app-and-pages-router/
+
+// Enable the hooks for the client
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity, Lock, User, Eye, EyeOff } from 'lucide-react';
 import '../styles/admin.module.css';
 import '../styles/layout.css';
-// API configuration
-// const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080/api';
+
+// API URL - changed for production
 const API_BASE = `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api`; 
 
+// Login page component
 export default function AdminLoginPage() {
+  // Used for form input variables
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true); // The initial authentication check is done
   const router = useRouter();
 
   // Check if user is already authenticated when page loads
   useEffect(() => {
     checkExistingAuth();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
+  // Call the backend for validation of session
   const checkExistingAuth = async () => {
     try {
       const response = await fetch(`${API_BASE}/admin/validate-session`, {
@@ -33,18 +43,20 @@ export default function AdminLoginPage() {
 
       const data = await response.json();
       
+      // If authenticated then go to dashboard, else stay on login
       if (response.ok && data.valid) {
-        console.log('✅ User already authenticated - redirecting to dashboard');
+        console.log('User already authenticated - redirecting to dashboard');
         router.push('/admin/dashboard');
         return;
       }
     } catch (error) {
-      console.log('🔍 No existing session found');
+      console.log('No existing session found');
     } finally {
       setCheckingAuth(false);
     }
   };
 
+  // Handle login form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -66,7 +78,7 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Store minimal session info (backend handles the actual session)
+        // Store some session info
         localStorage.setItem('adminAuthenticated', 'true');
         localStorage.setItem('adminLoginTime', Date.now().toString());
         
@@ -76,6 +88,7 @@ export default function AdminLoginPage() {
         setError(data.message || 'Invalid username or password');
       }
     } catch (error) {
+      // Error output if login was wrong
       console.error('Login error:', error);
       setError('Connection error. Please check if the backend is running.');
     } finally {
@@ -89,11 +102,11 @@ export default function AdminLoginPage() {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
+    // Clear the error when the user starts typing
     if (error) setError('');
   };
 
-  // Show loading while checking existing authentication
+  // Show the loading while we are checking for existing authentication
   if (checkingAuth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -105,6 +118,7 @@ export default function AdminLoginPage() {
     );
   }
 
+  // Show the login form
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">

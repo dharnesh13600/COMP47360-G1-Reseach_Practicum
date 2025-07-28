@@ -1,29 +1,44 @@
+// References:
+// https://react.dev/learn/responding-to-events
+// https://www.freecodecamp.org/news/how-to-handle-events-in-react-19/
+// https://www.digitalocean.com/community/tutorials/react-modal-component
+// https://react.dev/learn/conditional-rendering
+// https://react.dev/reference/react/useState
+
+// Enable the hooks for client-side  
 'use client';
 import React, { useState } from 'react';
-import { Activity, LogOut, X } from 'lucide-react';
+import { Activity, LogOut, X } from 'lucide-react'; // Once again i pull icons from lucide react
+
+// Import all the sub components for the admin dashboard
 import DashboardHome from './DashboardHome';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import AdminControls from './AdminControls';
 import HealthMonitor from './HealthMonitor';
 
+// This is the main Admin Dashboard component
 const AdminDashboard = ({ onLogout }) => {
+  // I have to track what state the tab is active
   const [activeTab, setActiveTab] = useState('home');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // Show pop-up when logout is clicked function
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
 
+  // Function to confirm logout
   const handleLogoutConfirm = () => {
     setShowLogoutModal(false);
     onLogout();
   };
 
+  // Function to accept canceling of logout
   const handleLogoutCancel = () => {
     setShowLogoutModal(false);
   };
 
-  // Logout Modal Component (inline)
+  // Show the logout component when this is set to true, else don't show
 const LogoutModal = () => {
   if (!showLogoutModal) return null;
 
@@ -220,4 +235,5 @@ const LogoutModal = () => {
   );
 };
 
+// Export component
 export default AdminDashboard;

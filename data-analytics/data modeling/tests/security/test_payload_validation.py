@@ -1,4 +1,3 @@
-# tests/security/test_payload_validation.py
 import pytest
 from fastapi.testclient import TestClient
 import json
@@ -32,7 +31,7 @@ class TestPayloadValidation:
         """Test that only JSON content type is accepted"""
         import requests
         
-        # Test with invalid content type (if server is running)
+        # Test with invalid content type
         try:
             # This test requires the actual server to be running
             response = requests.post(
@@ -47,7 +46,6 @@ class TestPayloadValidation:
             pytest.skip("Server not running for content type test")
         except Exception:
             # Use TestClient instead
-            # Note: TestClient always uses application/json, so we test the validation logic
             pass
     
     def test_request_size_limits(self, client):
@@ -133,7 +131,7 @@ class TestPayloadValidation:
         
         response = client.post("/predict_batch", json=request)
         
-        # Should handle gracefully (ignore extra fields or reject)
+        # Should handle gracefully
         assert response.status_code in [200, 422, 400]
     
     def test_array_injection_attacks(self, client):

@@ -3,28 +3,28 @@ set -e
 
 echo "Building and deploying Nginx reverse proxy..."
 
-# Variables
+# Variables flr deployment
 PROJECT_ID="manhattan-muse"
 REGION="europe-west2"
 IMAGE_NAME="creative-space-nginx"
 
-# Build Docker image
+# Build the Docker image
 echo "Building Docker image..."
 cd nginx/
 docker build -t gcr.io/${PROJECT_ID}/${IMAGE_NAME}:latest .
 
-# Push to Google Container Registry
+# Push to the Google Container Registry
 echo "Pushing image to GCR..."
 docker push gcr.io/${PROJECT_ID}/${IMAGE_NAME}:latest
 
-# Deploy to Kubernetes
+# Deploy to the Kubernetes
 echo "Deploying to Kubernetes..."
 cd ../k8s/
 
-# Create namespace if it doesn't exist
+# Creat a namespace if it doesn't exist
 kubectl create namespace creative-space-finder --dry-run=client -o yaml | kubectl apply -f -
 
-# Apply Kubernetes manifests
+# Apply all the Kubernetes manifests
 kubectl apply -f nginx-configmap.yaml
 kubectl apply -f nginx-deployment.yaml
 kubectl apply -f nginx-service.yaml
