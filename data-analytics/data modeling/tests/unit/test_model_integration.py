@@ -1,4 +1,3 @@
-# tests/unit/test_model_integration.py
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
@@ -7,7 +6,6 @@ import pandas as pd
 import sys
 import os
 
-# Add the parent directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from main import app, model

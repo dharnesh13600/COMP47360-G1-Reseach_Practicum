@@ -16,7 +16,7 @@ public class ConnectionCleanupService {
     private DataSource dataSource;
 
     /**
-     * Monitor and clean up connections every 30 seconds
+     * Monitor and clean up any connections after every 30 seconds
      */
     @Scheduled(fixedRate = 30000)
     public void monitorAndCleanConnections() {
@@ -29,16 +29,16 @@ public class ConnectionCleanupService {
                 int idle = poolBean.getIdleConnections();
                 int total = poolBean.getTotalConnections();
 
-                // Log connection status
+                // Log the connection status
                 System.out.println("Connection Monitor - Active: " + active + ", Idle: " + idle + ", Total: " + total);
 
-                // Force cleanup if we have any idle connections
+                // Force any cleanup if we have any idle connections
                 if (idle > 0) {
                     System.out.println("Forcing cleanup of " + idle + " idle connections");
                     poolBean.softEvictConnections();
                 }
 
-                // Alert if we're using too many connections
+                // Alert me if I have too many connections to the db
                 if (total > 1) {
                     System.out.println("WARNING: Using " + total + " connections (should be 1 max)");
                 }
@@ -49,7 +49,7 @@ public class ConnectionCleanupService {
     }
 
     /**
-     * Force cleanup on application shutdown
+     * Force a cleanup on the application's shutdown
      */
     @PreDestroy
     public void forceCleanupOnShutdown() {
@@ -58,13 +58,13 @@ public class ConnectionCleanupService {
             if (dataSource instanceof HikariDataSource) {
                 HikariDataSource hikariDS = (HikariDataSource) dataSource;
 
-                // Force close all connections
+                // Force all connections closed
                 hikariDS.getHikariPoolMXBean().softEvictConnections();
 
-                // Wait a moment for cleanup
+                // Wait for cleanup
                 Thread.sleep(2000);
 
-                // Close the pool completely
+                // Close the pool entirely
                 hikariDS.close();
 
                 System.out.println("Connection cleanup completed");

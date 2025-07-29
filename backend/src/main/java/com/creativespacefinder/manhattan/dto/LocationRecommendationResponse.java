@@ -8,7 +8,6 @@ import java.util.UUID;
 /**
  * DTO for individual location recommendations
  * Scoring is based ONLY on MuseScore, activity score, and crowd score
- * NO weather influence on recommendations
  */
 public class LocationRecommendationResponse {
 

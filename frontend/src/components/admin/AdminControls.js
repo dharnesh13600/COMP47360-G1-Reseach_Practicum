@@ -1,71 +1,89 @@
+// References:
+// https://react.dev/reference/react/useEffect
+// https://www.robinwieruch.de/react-hooks-fetch-data/
+// https://react.dev/learn/conditional-rendering
+// https://lucide.dev/guide/packages/lucide-react
+
+
+// Here we will enable client side react hooks i.e. useState and useEffect
+// These manage the component state
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Zap, Heart, BarChart3, RefreshCw, CheckCircle, Clock, Activity, XCircle } from 'lucide-react';
 import { fetchAdminData, warmCache } from '../../lib/api';
 
+
 const AdminControls = ({ setActiveTab }) => {
+  // This is the state for the admin data
   const [data, setData] = useState({});
+  //This is the state to show loading when i fetch data
   const [loading, setLoading] = useState(false);
+  // This is state to give errors
   const [error, setError] = useState(null);
+  // This is to show the progress when we warm the cache in the background
   const [operationLoading, setOperationLoading] = useState(false);
 
+  // useEffect to do a hook when the component is ready
   useEffect(() => {
-    console.log('⚙️ AdminControls mounted, loading admin data...');
+    console.log('AdminControls are mounted, loading the admin data now...');
     loadAdminData();
   }, []);
 
+  // Function gets the admin data from the API
   const loadAdminData = async () => {
-    console.log('🔄 Loading admin data...');
+    console.log('Loading admin data...');
     setLoading(true);
     setError(null);
     try {
       const adminData = await fetchAdminData();
-      console.log('📋 Admin data received:', adminData);
+      console.log('Admin data received:', adminData);
       setData(adminData);
     } catch (err) {
-      console.error('❌ Admin data error:', err);
+      console.error('Admin data error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // Function deals with the async cache warming, saying it is started
   const handleWarmCache = async () => {
-    console.log('🔥 Initiating ASYNC cache warming...');
+    console.log('Initiating ASYNC cache warming...');
     setOperationLoading(true);
     setError(null);
     
     try {
       const result = await warmCache();
-      console.log('✅ Cache warming initiated:', result);
+      console.log('Cache warming initiated:', result);
       
-      // Show detailed success message for async operation
+      // Here i need to show a detailed success message for the async of cache warming
       const successMessage = `Cache Warming Started Successfully!\n\n` +
                             `${result.message || 'Process initiated in background'}\n\n` +
                             `Expected Duration: 10-15 minutes\n` +
                             `Process runs in asynchronously!\n` +
-                            `✅ You can continue using the app normally`;
+                            `You can continue using the app normally`;
       
       alert(successMessage);
       
-      // Update UI to show cache warming in progress
+      // This shows the user an update to show cache warming is in progress
       setData(prev => ({ 
         ...prev, 
         cacheStatus: "Cache warming in progress... Check server logs for updates.",
         lastChecked: new Date().toLocaleString()
       }));
       
-      // Refresh admin data
+      // Refresh the admin data
       await loadAdminData();
       
     } catch (err) {
+      // If the cache warming fails, i give a error message for detail
       console.error('Cache warming error:', err);
       setError(err.message);
       
-      let errorMessage = `❌ Cache Warming Failed\n\n${err.message}`;
+      let errorMessage = `Cache Warming Failed\n\n${err.message}`;
       
       if (err.message.includes('502')) {
-        errorMessage += `\n\n🔧 This 502 error indicates a timeout issue.\n` +
+        errorMessage += `\n\n This 502 error indicates a timeout issue.\n` +
                        `The async implementation should fix this.\n` +
                        `If you still see this error, there may be:\n` +
                        `• Kubernetes ingress timeout limits\n` +
@@ -186,7 +204,7 @@ const AdminControls = ({ setActiveTab }) => {
               <div className="text-sm text-gray-600 space-y-1">
                 <p>• Backend: Spring Boot with Java</p>
                 <p>• Database: PostgreSQL (Supabase)</p>
-                <p>• ML Service: FastAPI + XGBoost</p>
+                <p>• ML Service: XGBoost via XGBoost</p>
                 <p>• Weather API: OpenWeather Pro</p>
                 <p>• <strong>Cache:</strong> Caffeine with statistics enabled</p>
               </div>
@@ -253,4 +271,5 @@ const AdminControls = ({ setActiveTab }) => {
   );
 };
 
+// Here we finally export the component
 export default AdminControls;

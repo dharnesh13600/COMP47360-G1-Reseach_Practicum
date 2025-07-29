@@ -96,7 +96,7 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Responsive adjustments */
+/* Responsiveness */
 @media (max-width: 768px) {
   .navigationTabs {
     flex-direction: column;
@@ -112,7 +112,7 @@
   }
 }
 
-/* Dark mode support (if needed) */
+/* Dark mode if wanted*/
 @media (prefers-color-scheme: dark) {
   .dashboardContainer {
     background-color: #111827;

@@ -1,22 +1,33 @@
+// References:
+// https://www.createwithdata.com/react-chartjs-dashboard/
+// https://medium.com/@mohdkhan.mk99/interactive-dashboards-recharts-react-grid-layout-a12952bbd0e0
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+
+// Import the hooks for client-side
 import React, { useState, useEffect } from 'react';
 import { 
   Cpu, Database, Cloud, Activity, Zap, RefreshCw, 
   CheckCircle, XCircle, AlertCircle, Users 
-} from 'lucide-react';
+} from 'lucide-react'; // I use these icons for the UI frm lucide
+
+// Here I import from the Health api
 import { fetchHealthData } from '../../lib/api';
 
+// This is the main for the system health, showing the system status data, loading state and error handler setting
 const HealthMonitor = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // When the component finally shows, get the data and do the auto refresh
   useEffect(() => {
     loadHealthData();
-    // Auto-refresh every 30 seconds
+    // Refresh every 30 seconds automatically
     const interval = setInterval(loadHealthData, 30000);
     return () => clearInterval(interval);
   }, []);
 
+  // This function loads in the health data from the API 
   const loadHealthData = async () => {
     setLoading(true);
     setError(null);
@@ -30,6 +41,7 @@ const HealthMonitor = () => {
     }
   };
 
+  // This is all the various return icons that are given for the system health
   const getStatusIcon = (status) => {
     switch (status?.toUpperCase()) {
       case 'HEALTHY':
@@ -45,6 +57,7 @@ const HealthMonitor = () => {
     }
   };
 
+  // This sets the colour based on the health status
   const getStatusColor = (status) => {
     switch (status?.toUpperCase()) {
       case 'HEALTHY':
@@ -444,4 +457,5 @@ const HealthMonitor = () => {
   );
 };
 
+// Export component
 export default HealthMonitor;

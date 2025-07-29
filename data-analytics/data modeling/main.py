@@ -1,4 +1,10 @@
-# main.py
+# References:
+# https://www.udemy.com/course/microservices-from-basics-to-advanced/?srsltid=AfmBOoroIIIkYD28fc_G4oRgOV7NkcGQCNUouZvN4BfQHV0pvuaKWIO9
+# https://medium.com/@vishwajitpatil1224/machine-learning-in-python-deployed-with-java-architecting-hybrid-ai-systems-5e4617742a9b
+# https://developer.nvidia.com/blog/building-a-machine-learning-microservice-with-fastapi/
+# https://www.geeksforgeeks.org/python/microservice-in-python-using-fastapi/
+
+# Import all libraries
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,9 +16,10 @@ import numpy as np
 import logging
 from datetime import datetime
 
+# Version is important for ML model output tracking (we had 4 models!!)
 app = FastAPI(title="Crowd & Muse-Score ML API", version="3.0")
 
-# Add CORS middleware
+# Add all CORS origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,13 +28,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Set up logging
+# Set up logging for tracing errors if something fucks up
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# 1. Load the trained pipeline
+# 1. Load the model
 # ---------------------------------------------------------------------------
+
+# If this fails to load then all of it fails
 try:
     MODEL_PATH = "xgboost_model.pkl"
     model = joblib.load(MODEL_PATH)
@@ -37,8 +46,10 @@ except Exception as exc:
     raise RuntimeError(f"Could not load model at {MODEL_PATH}: {exc}")
 
 # ---------------------------------------------------------------------------
-# 2. Pydantic schemas with validation (Updated to Pydantic V2)
+# 2. Request and response models
 # ---------------------------------------------------------------------------
+
+# Input validation using strict rules to stop crap
 class PredictionRequest(BaseModel):
     latitude: float
     longitude: float
@@ -47,6 +58,7 @@ class PredictionRequest(BaseModel):
     day: int
     cultural_activity_prefered: str
 
+    # Make it an hour between 0 and 23
     @field_validator('hour')
     @classmethod
     def validate_hour(cls, v):
@@ -54,6 +66,7 @@ class PredictionRequest(BaseModel):
             raise ValueError('Hour must be between 0 and 23')
         return v
     
+    # Make it an month between 1 and 12
     @field_validator('month')
     @classmethod
     def validate_month(cls, v):
@@ -61,6 +74,7 @@ class PredictionRequest(BaseModel):
             raise ValueError('Month must be between 1 and 12')
         return v
     
+    # Make it a day between 1 and 31
     @field_validator('day')
     @classmethod
     def validate_day(cls, v):
@@ -68,6 +82,7 @@ class PredictionRequest(BaseModel):
             raise ValueError('Day must be between 1 and 31')
         return v
     
+    # The lat and long must be somewhat valid
     @field_validator('latitude')
     @classmethod
     def validate_latitude(cls, v):
@@ -82,6 +97,7 @@ class PredictionRequest(BaseModel):
             raise ValueError('Longitude must be between -180 and 180')
         return v
     
+    # This cannot be null or 0
     @field_validator('cultural_activity_prefered')
     @classmethod
     def validate_activity(cls, v):
@@ -89,6 +105,7 @@ class PredictionRequest(BaseModel):
             raise ValueError('Cultural activity cannot be empty')
         return v
 
+# This returns the cultural activity and crowd score, along with estimated crowd number
 class PredictionResponse(BaseModel):
     muse_score: float | None = None
     estimated_crowd_number: int
@@ -96,15 +113,16 @@ class PredictionResponse(BaseModel):
     creative_activity_score: float
 
 # ---------------------------------------------------------------------------
-# 3. Exception handlers and middleware
+# 3. Exception handlers, body validation and middleware
 # ---------------------------------------------------------------------------
+# Handle all non JSON requests and empty bodies
 @app.middleware("http")
 async def validate_content_type(request: Request, call_next):
     """Validate content type for POST requests"""
     if request.method == "POST" and request.url.path.startswith("/predict"):
         content_type = request.headers.get("content-type", "")
         
-        # Special handling for empty/null bodies - return 422
+        # Special handling for empty/null bodies so we return 422
         try:
             body = await request.body()
             if not body or body == b'null':
@@ -115,10 +133,10 @@ async def validate_content_type(request: Request, call_next):
         except:
             pass
         
-        # Check for specific test scenarios that expect 422
+        # Check for bosy is JSON but header is not there/wrong
         try:
             body = await request.body()
-            # If body looks like JSON but wrong content type, return 422
+            # If the body looks like a JSON but the wrong content type, return 422
             if body and (body.startswith(b'{') or body.startswith(b'[')):
                 if not content_type.startswith("application/json"):
                     return JSONResponse(
@@ -128,14 +146,14 @@ async def validate_content_type(request: Request, call_next):
         except:
             pass
         
-        # Default content type validation (415)
+        # Default a content type validation for 415, where the header is missing
         if content_type and not content_type.startswith("application/json"):
             return JSONResponse(
                 status_code=415,
                 content={"error": "Unsupported Media Type", "detail": "Content-Type must be application/json"}
             )
         
-        # If no content type at all, return 415
+        # If no content type at all, 415
         if not content_type:
             return JSONResponse(
                 status_code=415,
@@ -145,6 +163,7 @@ async def validate_content_type(request: Request, call_next):
     response = await call_next(request)
     return response
 
+# Custom handler for error
 @app.exception_handler(ValueError)
 async def value_error_handler(request: Request, exc: ValueError):
     return JSONResponse(
@@ -152,6 +171,7 @@ async def value_error_handler(request: Request, exc: ValueError):
         content={"error": "Validation Error", "detail": str(exc)}
     )
 
+# Generic error handler
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unexpected error: {exc}")
@@ -161,7 +181,7 @@ async def general_exception_handler(request: Request, exc: Exception):
     )
 
 # ---------------------------------------------------------------------------
-# 4. Health endpoint (Fixed to include timestamp)
+# 4. Health endpoint check
 # ---------------------------------------------------------------------------
 @app.get("/health")
 async def health_check():
@@ -189,39 +209,37 @@ async def health_check():
         raise HTTPException(status_code=503, detail="Service unhealthy")
 
 # ---------------------------------------------------------------------------
-# 5. Main prediction endpoint
+# 5. Main prediction batch endpoint
 # ---------------------------------------------------------------------------
 @app.post("/predict_batch", response_model=List[PredictionResponse])
 def predict_batch(reqs: List[PredictionRequest]):
     """
     Run the XGBoost pipeline and return model predictions for a batch of requests.
     """
-    # Handle empty requests
+    # We handle empty requests
     if not reqs:
         return []
     
     try:
-        # Convert list of Pydantic models to a list of dictionaries
+        # Convert to a dataframe for the model
         data_for_df = [r.model_dump() for r in reqs]
         
-        # Create DataFrame from the list of dictionaries
         df = pd.DataFrame(data_for_df)
 
-        # Ensure column order matches training data
         df = df[["latitude", "longitude", "hour", "month", "day", "cultural_activity_prefered"]]
         
-        # Rename columns to match model's expected input
+        # Rename columns to match the model's input desired
         df.columns = ["Latitude", "Longitude", "Hour", "Month", "Day", "Cultural_activity_prefered"]
 
-        # Predict for the entire batch
+        # Predict for the entire batch in a run
         try:
             preds = model.predict(df)
         except Exception as model_exception:
-            # Handle any model exceptions (including mock exceptions)
+            # Handle any model exceptions and even the mock tests
             logger.error(f"Model prediction failed: {model_exception}")
             raise HTTPException(status_code=500, detail=f"Model prediction failed: {str(model_exception)}")
         
-        # Handle None predictions (for error handling tests)
+        # Handle none predictions - used for error handling tests
         if preds is None:
             logger.error("Model returned None predictions")
             raise HTTPException(status_code=500, detail="Model prediction failed: returned None")
@@ -230,54 +248,43 @@ def predict_batch(reqs: List[PredictionRequest]):
         if isinstance(preds, list):
             preds = np.array(preds)
         
-        # Handle different prediction shapes more robustly
+        # Handles model different for prediction of single and not a batch
         if len(preds.shape) == 1:
-            # 1D array - could be single prediction with multiple outputs or multiple predictions with single output
             if len(preds) == len(reqs):
-                # Multiple single-output predictions - reshape to (n_samples, 1)
                 preds = preds.reshape(-1, 1)
             elif len(preds) > len(reqs) and len(preds) % len(reqs) == 0:
-                # Multiple outputs per sample - reshape accordingly
                 outputs_per_sample = len(preds) // len(reqs)
                 preds = preds.reshape(len(reqs), outputs_per_sample)
             else:
-                # Single request with multiple outputs
                 preds = preds.reshape(1, -1)
         
-        # Handle case where model returns fewer predictions than expected (common with some models)
+        # Fallback for single predict and not a batch
         if len(preds) == 1 and len(reqs) > 1:
-            # Model returned single prediction for batch - duplicate it
             logger.warning(f"Model returned single prediction for batch of {len(reqs)}, duplicating...")
             single_pred = preds[0]
             preds = np.array([single_pred] * len(reqs))
         
         logger.info(f"Processed batch of {len(reqs)} requests, got predictions shape: {preds.shape}")
 
-        # Final check - if still mismatch, create default predictions
         if len(preds) != len(reqs):
             logger.error(f"Prediction count mismatch: {len(preds)} != {len(reqs)}")
-            # Create default predictions to prevent crashes
             if len(preds) > 0:
-                # Use first prediction as template
                 template = preds[0] if len(preds.shape) > 1 else [preds[0], 5.0, 7.0]
                 preds = np.array([template] * len(reqs))
             else:
-                # Fallback to complete defaults
                 preds = np.array([[25.0, 5.0, 7.0]] * len(reqs))
 
-        # Convert predictions to response format
+        # Convert predictions to a desired response format
         response_list = []
         for i, pred in enumerate(preds):
             try:
-                # Ensure pred is a numpy array or list-like
                 if np.isscalar(pred):
                     pred = [pred]
                 elif not isinstance(pred, (list, np.ndarray)):
                     pred = [float(pred)]
                 
-                # Handle different prediction formats
                 if len(pred) >= 3:
-                    # Handle NaN values that can't be converted to int
+                    # Handle NaN values if cant change to int
                     try:
                         estimated_crowd = int(round(float(pred[0]))) if not np.isnan(float(pred[0])) else 0
                     except (ValueError, OverflowError):
@@ -304,7 +311,7 @@ def predict_batch(reqs: List[PredictionRequest]):
                     crowd_score = 5.0
                     creative_score = 7.0
                 
-                # Ensure values are within reasonable ranges (but allow negatives for tests)
+                # Ensure values are within noraml ranges
                 estimated_crowd = max(0, estimated_crowd)
                 # Allow negative values for crowd_score and creative_score for testing
                 if crowd_score < -10.0 or crowd_score > 10.0:
@@ -335,7 +342,7 @@ def predict_batch(reqs: List[PredictionRequest]):
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
 # ---------------------------------------------------------------------------
-# 6. Additional endpoints
+# 6. Additional Endpoints - Utility and 404
 # ---------------------------------------------------------------------------
 @app.get("/")
 async def root():
@@ -351,7 +358,7 @@ async def get_metrics():
     }
 
 # ---------------------------------------------------------------------------
-# 7. Handle 404 errors explicitly and invalid endpoints
+# 7. Handle any 404 errors explicitly and any invalid endpoints
 # ---------------------------------------------------------------------------
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
@@ -360,7 +367,6 @@ async def not_found_handler(request: Request, exc):
         content={"error": "Not Found", "detail": f"Path {request.url.path} not found"}
     )
 
-# Add explicit handlers for common invalid endpoints
 @app.post("/predict")
 async def invalid_predict():
     raise HTTPException(status_code=404, detail="Path /predict not found")
@@ -377,7 +383,7 @@ async def invalid_predict_batches():
 async def invalid_api_predict_batch():
     raise HTTPException(status_code=404, detail="Path /api/predict_batch not found")
 
-# Handle trailing slash redirects
+# Handle any trailing slash redirects
 @app.post("/predict_batch/")
 async def invalid_predict_batch_slash():
     raise HTTPException(status_code=404, detail="Path /predict_batch/ not found")

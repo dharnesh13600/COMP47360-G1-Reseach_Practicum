@@ -36,7 +36,7 @@ public class RecommendationController {
         String cacheKey = request.getActivity() + "_" + request.getDateTime().toString() + "_" +
                 (request.getSelectedZone() != null ? request.getSelectedZone() : "all");
 
-        // Check if cache contains this key BEFORE calling the service
+        // Check if cache contains this key before calling the service
         boolean cacheHit = false;
         var cache = cacheManager.getCache("recommendations");
         if (cache != null) {
@@ -46,9 +46,9 @@ public class RecommendationController {
 
         // Log cache hit/miss for debugging
         if (cacheHit) {
-            System.out.println("🎯 CACHE HIT for: " + request.getActivity() + " at " + request.getDateTime());
+            System.out.println("CACHE HIT for: " + request.getActivity() + " at " + request.getDateTime());
         } else {
-            System.out.println("❌ CACHE MISS for: " + request.getActivity() + " at " + request.getDateTime());
+            System.out.println("CACHE MISS for: " + request.getActivity() + " at " + request.getDateTime());
         }
 
         // Call the service (will use cache if available)

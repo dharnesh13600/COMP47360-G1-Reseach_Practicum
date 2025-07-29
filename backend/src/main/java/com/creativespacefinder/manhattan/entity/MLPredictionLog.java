@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+
+/**
+* Associated ml_prediction__logs table in database recording the history of ML predictions for testing
+*/
 @Entity
 @Table(name = "ml_prediction_logs")
 public class MLPredictionLog {
@@ -58,13 +62,13 @@ public class MLPredictionLog {
         this.predictionDate = predictionDate;
     }
 
-    // ───── Getters & Setters ─────────────────────────────────────────────────────
+    // Getters & Setters
 
     public UUID getId() {
         return id;
     }
 
-    /** We assign this manually in the service (UUID.randomUUID()). */
+    /** We assign this manually in the service with UUID.randomUUID() */
     public void setId(UUID id) {
         this.id = id;
     }

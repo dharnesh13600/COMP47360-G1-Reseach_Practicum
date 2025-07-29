@@ -304,7 +304,7 @@ class TestAPIIntegration:
                 response = client.post("/predict_batch", json=request_data)
                 responses.append(response.status_code)
             
-            # Should handle all requests (no rate limiting implemented)
+            # Should handle all requests
             success_count = sum(1 for status in responses if status == 200)
             assert success_count >= 45  # Most should succeed
 
@@ -404,6 +404,6 @@ class TestAPIIntegration:
         assert "paths" in schema
         assert "/predict_batch" in schema["paths"]
         
-        # Test docs endpoint (if available)
+        # Test docs endpoint
         response = client.get("/docs")
-        assert response.status_code in [200, 404]  # May not be enabled in production
+        assert response.status_code in [200, 404] 

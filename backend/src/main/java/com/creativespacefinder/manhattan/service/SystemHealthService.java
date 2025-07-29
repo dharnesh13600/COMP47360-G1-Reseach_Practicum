@@ -10,7 +10,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-//added by dharnesh for ml model
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.sql.DataSource;
@@ -47,10 +46,9 @@ public class SystemHealthService {
     @Autowired
     private WeatherForecastService weatherForecastService;
     
-    //// added by dharnesh for injecting ML predict URL instead of hard-coding
+    // ML Prediction URL
     @Value("${ml.predict.url}")
     private String mlPredictUrl;
-    // ----------------
     
     private final RestTemplate restTemplate = new RestTemplate();
     private static final long startTime = System.currentTimeMillis();
@@ -58,31 +56,31 @@ public class SystemHealthService {
     public Map<String, Object> getComprehensiveHealthStatus() {
         Map<String, Object> health = new LinkedHashMap<>();
 
-        // System Overview
+        // System data
         health.put("system", getSystemOverview());
 
-        // Database Health
+        // Database data
         health.put("database", getDatabaseHealth());
 
-        // Cache Performance
+        // Cache performance data
         health.put("cache", getCacheHealth());
 
-        // ML Model Connectivity
+        // ML model connectivity data
         health.put("mlModel", getMLModelHealth());
 
-        // Weather API Status
+        // Weather API status
         health.put("weatherApi", getWeatherApiHealth());
 
-        // Performance Metrics
+        // Performance metric data
         health.put("performance", getPerformanceMetrics());
 
-        // Analytics Insights
+        // Analytical insights
         health.put("analytics", getAnalyticsInsights());
 
-        // Resource Utilization
+        // Resource util data
         health.put("resources", getResourceUtilization());
 
-        // API Endpoints Status
+        // API endpoints stats
         health.put("endpoints", getEndpointsStatus());
 
         return health;
@@ -96,7 +94,7 @@ public class SystemHealthService {
         long uptimeHours = uptimeMinutes / 60;
 
         system.put("status", "HEALTHY");
-        system.put("version", "3.0");
+        system.put("version", "3.0"); // Updated to reflect the ML version
         system.put("timestamp", ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
         system.put("uptimeMs", uptimeMs);
         system.put("uptimeHours", uptimeHours);
@@ -111,7 +109,7 @@ public class SystemHealthService {
         Map<String, Object> db = new LinkedHashMap<>();
 
         try {
-            // Connection pool status
+            // To get the connection pool status
             if (dataSource instanceof HikariDataSource) {
                 HikariDataSource hikariDS = (HikariDataSource) dataSource;
                 var poolBean = hikariDS.getHikariPoolMXBean();
@@ -126,7 +124,7 @@ public class SystemHealthService {
                 db.put("connectionPool", connectionPool);
             }
 
-            // Data statistics
+            // Gathering of overall app stats
             Map<String, Object> dataStats = new LinkedHashMap<>();
             dataStats.put("totalActivities", activityRepository.count());
             dataStats.put("totalLocationScores", locationActivityScoreRepository.count());
@@ -134,7 +132,7 @@ public class SystemHealthService {
             dataStats.put("recordsWithHistoricalData", locationActivityScoreRepository.countRecordsWithHistoricalData());
             dataStats.put("mlPredictionLogs", mlPredictionLogRepository.count());
 
-            // Calculate data coverage percentage
+            // Brief formula to see how much the ML model is covering with the data
             long totalRecords = locationActivityScoreRepository.count();
             long mlRecords = locationActivityScoreRepository.countRecordsWithMLPredictions();
             double coveragePercentage = totalRecords > 0 ? (double) mlRecords / totalRecords * 100 : 0;
@@ -151,6 +149,7 @@ public class SystemHealthService {
         return db;
     }
 
+    // Here we get caching stats like the app misses, hits and evictions
     private Map<String, Object> getCacheHealth() {
         Map<String, Object> cache = new LinkedHashMap<>();
 
@@ -184,11 +183,12 @@ public class SystemHealthService {
         return cache;
     }
 
+    // This method will check the ML model connection by sending a test
     private Map<String, Object> getMLModelHealth() {
         Map<String, Object> ml = new LinkedHashMap<>();
 
         try {
-            // Test ML model connectivity
+            // Test ML model connectivity connection
             List<Map<String, Object>> testPayload = Arrays.asList(
                     Map.of(
                             "latitude", 40.7589,
@@ -201,10 +201,8 @@ public class SystemHealthService {
             );
 
             long startTime = System.currentTimeMillis();
-            // ← CHANGED: use injected URL instead of hard-coded IP (by dharnesh)
             var response = restTemplate.postForObject(
-                     mlPredictUrl, 
-                     //-----------
+                     mlPredictUrl,
                     testPayload,
                     Object[].class
             );
@@ -223,6 +221,7 @@ public class SystemHealthService {
         return ml;
     }
 
+    // Check the weather API for health via 96hr forecast
     private Map<String, Object> getWeatherApiHealth() {
         Map<String, Object> weather = new LinkedHashMap<>();
 
@@ -245,6 +244,7 @@ public class SystemHealthService {
         return weather;
     }
 
+    // This method is to track overall app performance i.e. response, requests and cache hits
     private Map<String, Object> getPerformanceMetrics() {
         Map<String, Object> performance = new LinkedHashMap<>();
 
@@ -290,6 +290,7 @@ public class SystemHealthService {
         return performance;
     }
 
+    // Method returns the overall user trends for activity, datetime and peak use
     private Map<String, Object> getAnalyticsInsights() {
         Map<String, Object> analytics = new LinkedHashMap<>();
 
@@ -344,6 +345,7 @@ public class SystemHealthService {
         return analytics;
     }
 
+    // This method gives statistics on my JVM memory and processor load
     private Map<String, Object> getResourceUtilization() {
         Map<String, Object> resources = new LinkedHashMap<>();
 
@@ -377,6 +379,7 @@ public class SystemHealthService {
         return resources;
     }
 
+    // Hardcoded summary of endpoints currently (meant to be implemented)
     private Map<String, Object> getEndpointsStatus() {
         Map<String, Object> endpoints = new LinkedHashMap<>();
 

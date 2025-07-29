@@ -1,4 +1,3 @@
-# tests/security/test_input_sanitization.py
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
@@ -40,7 +39,7 @@ class TestInputSanitization:
             
             response = client.post("/predict_batch", json=request)
             
-            # Should either validate successfully (if sanitized) or return validation error
+            # Should either validate successfully or return validation error
             assert response.status_code in [200, 422], f"Unexpected status for payload: {payload}"
             
             if response.status_code == 200:
@@ -156,7 +155,7 @@ class TestInputSanitization:
                 # Should handle gracefully
                 assert response.status_code in [200, 422, 400]
             except UnicodeEncodeError:
-                # Some characters may cause encoding issues - this is expected
+                # Some characters may cause encoding issues
                 pass
     
     def test_extremely_long_strings(self, client):
@@ -181,7 +180,7 @@ class TestInputSanitization:
             response = client.post("/predict_batch", json=request)
             
             # Should either process or reject with appropriate error
-            assert response.status_code in [200, 422, 413]  # 413 = Payload Too Large
+            assert response.status_code in [200, 422, 413]  # 413 -- Payload Too Large
     
     def test_numeric_injection_in_string_fields(self, client):
         """Test numeric values in string fields"""

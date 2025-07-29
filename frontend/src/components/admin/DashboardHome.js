@@ -1,6 +1,10 @@
-import React from 'react';
-import { BarChart3, Zap, Heart } from 'lucide-react';
+// References:
+// https://www.joshwcomeau.com/react/boop/
 
+import React from 'react';
+import { BarChart3, Zap, Heart } from 'lucide-react'; // Bring in them icons from lucide react (as i am not phirada or diviyya!!!)
+
+// Show the home dashboard with 3 clickable cards: analytics, admin and health
 const DashboardHome = ({ setActiveTab }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -47,4 +51,5 @@ const DashboardHome = ({ setActiveTab }) => {
   );
 };
 
+// Export the component
 export default DashboardHome;

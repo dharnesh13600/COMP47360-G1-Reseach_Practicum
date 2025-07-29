@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Response DTO for location recommendations
- * Weather is now decoupled and handled separately via WeatherForecastController
+ * Weather is handled separately via WeatherForecastController
  */
 public class RecommendationResponse {
 

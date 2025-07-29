@@ -15,34 +15,8 @@ import java.util.UUID;
 
 @Repository
 public interface LocationActivityScoreRepository extends JpaRepository<LocationActivityScore, UUID> {
-
-
-     // //(added by Dharnesh for unit testing) Top 10 scores for an activity at a specific date/time, sorted by museScore desc
-     //    List<LocationActivityScore> findTop10ByActivityNameAndEventDateAndEventTimeOrderByMuseScoreDesc(
-     //            String activityName,
-     //            LocalDate eventDate,
-     //            LocalTime eventTime
-     //    );
-     //    //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
-     //    List<LocationActivityScore> findByActivityNameAndHistoricalActivityScoreNotNullOrderByHistoricalActivityScoreDesc(
-     //            String activityName,
-     //            Pageable pageable
-     //    );
-        // //(added by Dharnesh for unit testing) Top scores for an activity (ignoring date/time) using the given Pageable
-     
-        //   @Query("""
-        //        SELECT l
-        //        FROM LocationActivityScore l
-        //        WHERE LOWER(l.activity.name) = LOWER(:activityName)
-        //        ORDER BY l.museScore DESC
-        //        """)
-        //   Page<LocationActivityScore> findTopByActivityNameIgnoreDateTime(
-        //           @Param("activityName") String activityName,
-        //           Pageable pageable);
-
-
     // ——————————————————————————————————————————
-    // PERFORMANCE FIX: Two-step query to avoid DISTINCT + FETCH issues
+    // Improved performance, two-step query to avoid DISTINCT + FETCH issues
     // ——————————————————————————————————————————
     @Query(value = """
         SELECT las.id FROM location_activity_scores las
@@ -66,9 +40,6 @@ public interface LocationActivityScoreRepository extends JpaRepository<LocationA
         """)
     List<LocationActivityScore> findByIdsWithEagerLoading(@Param("ids") List<UUID> ids);
 
-    // ——————————————————————————————————————————
-    // Keep original method as backup (you can remove this later)
-    // ——————————————————————————————————————————
     @Query(value = """
     SELECT * FROM location_activity_scores las
     WHERE las.id IN (
@@ -82,7 +53,7 @@ public interface LocationActivityScoreRepository extends JpaRepository<LocationA
     """, nativeQuery = true)
     List<LocationActivityScore> findDistinctLocationsByActivityName(@Param("activityName") String activityName, Pageable pageable);
 
-    // ——————————————————————————————————————————
+
     @Query("""
         SELECT DISTINCT l.eventDate
           FROM LocationActivityScore l

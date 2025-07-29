@@ -1,17 +1,32 @@
+// References:
+// https://www.robinwieruch.de/react-hooks-fetch-data/
+// https://www.freecodecamp.org/news/how-to-fetch-api-data-in-react/
+// https://compatt.medium.com/a-simple-dashboard-using-react-hooks-and-d3-1eca02ea0d18
+
+// Enable the hooks for client-side  
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Activity, Zap, Clock, RefreshCw, XCircle } from 'lucide-react';
+
+// I have to call the API to get the analytics info
 import { fetchAnalyticsData } from '../../lib/api';
 import { getDayName } from '../../utils/helpers';
 
+// This is the Analytics Dashboard component
 const AnalyticsDashboard = () => {
+  // Store backend data
   const [data, setData] = useState({});
+  // Store loading state
   const [loading, setLoading] = useState(false);
+  // Store error state
   const [error, setError] = useState(null);
 
+  // On component mount to screen, load the analytics data
   useEffect(() => {
     loadAnalyticsData();
   }, []);
 
+  // This is the function to load the analytics data from the backend
+  // Will set the loading state to true, and fetch the data
   const loadAnalyticsData = async () => {
     setLoading(true);
     setError(null);
@@ -21,10 +36,11 @@ const AnalyticsDashboard = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop the loading spinner when done
     }
   };
 
+  // If we are currently loading, show that spinner
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
