@@ -28,7 +28,7 @@ public class AdminController {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Admin credentials from environment variables
+    // Admin credentials from .env or GKE secrets
     @Value("${admin.username}")
     private String adminUsername;
 
@@ -36,7 +36,7 @@ public class AdminController {
     private String adminPasswordHash;
 
     // ===============================
-    // AUTHENTICATION ENDPOINTS
+    // Authentification endpoints
     // ===============================
 
     @PostMapping("/login")
@@ -123,17 +123,17 @@ public class AdminController {
     }
 
     // ===============================
-    // CACHE MANAGEMENT ENDPOINTS
+    // Cache management endpoints
     // ===============================
 
     /**
-     * Manual trigger for daily cache warming - ASYNC VERSION (prevents 502 errors)
+     * Manual trigger for daily cache warming via async (prevents 502 errors)
      * This method returns immediately while cache warming runs in background
-     * Requires authentication
+     * It requires authentication
      */
     @PostMapping("/warm-cache")
     public ResponseEntity<String> warmCache(HttpSession session) {
-        System.out.println("🔥 Async cache warming request received");
+        System.out.println("Async cache warming request received");
 
         // Check authentication
         if (!isAuthenticated(session)) {
@@ -142,7 +142,7 @@ public class AdminController {
         }
 
         try {
-            System.out.println("🚀 Starting ASYNC cache warming process...");
+            System.out.println("Starting ASYNC cache warming process...");
 
             // Start cache warming in background - this returns immediately!
             dailyPrecomputationService.triggerAsyncDailyPrecomputation();
@@ -152,11 +152,11 @@ public class AdminController {
                     "Runs in background - you can continue using the app\n" +
                     "Cache will be populated automatically when complete";
 
-            System.out.println("✅ Async cache warming initiated - returning immediate response");
+            System.out.println("Async cache warming initiated - returning immediate response");
             return ResponseEntity.ok(responseMessage);
 
         } catch (Exception e) {
-            String errorMessage = "❌ Failed to start cache warming: " + e.getMessage();
+            String errorMessage = "Failed to start cache warming: " + e.getMessage();
             System.err.println(errorMessage);
             return ResponseEntity.status(500).body(errorMessage);
         }
@@ -269,7 +269,7 @@ public class AdminController {
     }
 
     // ===============================
-    // HELPER METHODS
+    // Helper methods
     // ===============================
 
     /**
@@ -299,7 +299,7 @@ public class AdminController {
     }
 
     // ===============================
-    // DTO CLASSES
+    // DTO classes
     // ===============================
 
     /**

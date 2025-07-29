@@ -8,7 +8,7 @@ import java.util.UUID;
 @Table(name = "activities")
 public class Activity {
 
-    // ── columns ────────────────────────────────────────────────
+    // Columns
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, updatable = false)
@@ -17,21 +17,21 @@ public class Activity {
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    // ── constructors ────────────────────────────────────────────
+    // Constructors
     public Activity() { }                 // default constructor
 
     public Activity(String name) {        // convenience constructor
         this.name = name;
     }
 
-    // ── getters / setters ───────────────────────────────────────
+    // Getters and Setters
     public UUID getId()                { return id; }
     public void setId(UUID id)         { this.id = id; }
 
     public String getName()            { return name; }
     public void setName(String name)   { this.name = name; }
 
-    // ── equality / hashing / toString ───────────────────────────
+    // Equals, hashing and toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

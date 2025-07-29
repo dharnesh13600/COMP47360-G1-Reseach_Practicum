@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
+
+/**
+ * Associated location_activity_score table in database of scores linked to activities and locations
+*/
 @Entity
 @Table(name = "location_activity_scores")
 public class LocationActivityScore {
@@ -47,7 +51,7 @@ public class LocationActivityScore {
     @Column(name = "historical_activity_score", precision = 5, scale = 2)
     private BigDecimal historicalActivityScore;
 
-    // ML Predicted scores (nullable - to be populated by ML team)
+    // ML Predicted scores (nullable because its populated by ML team)
     @Column(name = "cultural_activity_score", precision = 5, scale = 2)
     private BigDecimal culturalActivityScore;
 
@@ -68,7 +72,7 @@ public class LocationActivityScore {
         this.estimatedCrowdNumber = estimatedCrowdNumber;
     }
 
-    // Metadata - for the teams help
+    // For me and Dharnesh help
     @Column(name = "ml_prediction_date")
     private LocalDateTime mlPredictionDate;
 

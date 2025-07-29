@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("VALIDATION_ERROR", message));
     }
 
-    // NEW: Handle JSON parsing errors (malformed JSON, invalid dates)
+    // Handle JSON parsing errors (malformed JSON, invalid dates)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return ResponseEntity
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("BAD_REQUEST", "Invalid request format: " + ex.getMessage()));
     }
 
-    // NEW: Handle unsupported HTTP methods (GET on POST endpoint)
+    // Handle unsupported HTTP methods (GET on POST endpoint)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<?> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
         return ResponseEntity
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("METHOD_NOT_ALLOWED", ex.getMessage()));
     }
 
-    // NEW: Handle unsupported media types (missing Content-Type)
+    // Handle unsupported media types (missing Content-Type)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<?> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
         return ResponseEntity
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("UNSUPPORTED_MEDIA_TYPE", ex.getMessage()));
     }
 
-    // NEW: Handle 404 Not Found
+    // Handle 404 Not Found
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<?> handleNoHandlerFoundException(NoHandlerFoundException ex) {
         return ResponseEntity
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("NOT_FOUND", "Endpoint not found: " + ex.getMessage()));
     }
 
-    // NEW: Handle date parsing errors specifically
+    // Handle date parsing errors specifically
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<?> handleDateTimeParseException(DateTimeParseException ex) {
         return ResponseEntity

@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+
+/**
+ * Associated request_analytics table of user request patterns and statistics
+*/
 @Entity
 @Table(name = "request_analytics")
 public class RequestAnalytics {

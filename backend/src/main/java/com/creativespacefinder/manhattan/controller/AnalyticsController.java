@@ -16,7 +16,7 @@ public class AnalyticsController {
     private AnalyticsService analyticsService;
 
     /**
-     * Get popular activity + time combinations
+     * Get popular activity and time combinations
      */
     @GetMapping("/popular-combinations")
     public ResponseEntity<List<Map<String, Object>>> getPopularCombinations() {
@@ -94,7 +94,7 @@ public class AnalyticsController {
     }
 
     /**
-     * Get recent activity (last 7 days)
+     * Get recent activity for 7 days
      */
     @GetMapping("/recent-activity")
     public ResponseEntity<List<Map<String, Object>>> getRecentActivity() {

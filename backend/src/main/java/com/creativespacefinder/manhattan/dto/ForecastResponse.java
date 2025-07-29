@@ -10,7 +10,7 @@ import java.util.*;
    DTO that maps the 96‑hour /forecast response from OpenWeather
    ------------------------------------------------------------------ */
 
-@JsonIgnoreProperties(ignoreUnknown = true)           // keep lenient at the root
+@JsonIgnoreProperties(ignoreUnknown = true)           
 public class ForecastResponse {
 
     /* ------------- list of 96 hourly records ------------- */
@@ -23,32 +23,30 @@ public class ForecastResponse {
     /* ======================================================
        Inner DTO for each individual hour
        ====================================================== */
-    // @JsonIgnoreProperties(ignoreUnknown = true)      // ✱ REMOVED (be strict here)
     public static class HourlyForecast {
 
-        private long dt;                               // epoch‑seconds
+        private long dt;                               
 
-        @JsonProperty("main")                          // nested temps
+        @JsonProperty("main")                          
         private TempInfo tempInfo;
 
         private List<Weather> weather;
 
-        /* ---------- ✱ ADDED: capture any unknown keys ---------- */
+        // Used for unknown keys
         @JsonAnySetter
         void putUnknown(String k, Object v) { unknown.put(k, v); }
 
         @JsonIgnore
         private final Map<String,Object> unknown = new HashMap<>();
-        /* ------------------------------------------------------- */
 
-        /* --------------- getters / helpers ---------------- */
+        // Getters and Setters
         public long getDt()            { return dt; }
         public void setDt(long dt)     { this.dt = dt; }
 
         public List<Weather> getWeather()            { return weather; }
         public void setWeather(List<Weather> weather){ this.weather = weather; }
 
-        /** "2025‑07‑15 06:00" in New‑York local time */
+        // "2025‑07‑15 06:00" in New‑York local time
         public String getReadableTime() {
             return Instant.ofEpochSecond(dt)
                     .atZone(ZoneId.of("America/New_York"))
@@ -58,17 +56,16 @@ public class ForecastResponse {
         public String  getCondition() { return (weather!=null && !weather.isEmpty())
                 ? weather.get(0).getMain() : "Unknown"; }
 
-        /* ------- nested "main" object ------- */
-        @JsonIgnoreProperties(ignoreUnknown = true)   // keep lenient on the leaf
+        // This is nested in the main object
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class TempInfo {
             public double temp;
         }
     }
 
     /* ======================================================
-       Weather entry (first element is used for the summary)
+                Weather conditions
        ====================================================== */
-    // @JsonIgnoreProperties(ignoreUnknown = true)     // ✱ REMOVED (be strict)
     public static class Weather {
 
         private int id;

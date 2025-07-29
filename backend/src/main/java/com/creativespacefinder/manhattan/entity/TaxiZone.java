@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Associated taxi_zones table in database of geographical areas for taxi services
+*/
 @Entity
 @Table(name = "taxi_zones")
 public class TaxiZone {
