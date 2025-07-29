@@ -1,7 +1,6 @@
 .sidebarContainer{
     width:100%;
     background-color: transparent;
-
     display: flex;
     align-items: stretch;
     flex-direction: column;
@@ -121,9 +120,7 @@ justify-content: center;
  padding-bottom: 0.1rem;
  align-self: center;
 }
-.sidebarInner img{
-    width:45px;
-} 
+
 
 .dateContainer{
     display:flex;
@@ -132,16 +129,8 @@ justify-content: center;
     height:20px;
 }
 
-div.vl{
-    all:unset;
-    border-left: 1px solid #FFFFFF;
-    height:60px;
-}
 
-.userdateContainer{  
-      z-index:20000;
-      display: flex;  
-}
+
 
 .weatherDisplay {
   margin-top: 1rem;
@@ -465,16 +454,7 @@ transition: 0.3s ease;
     background-color: var(--on-surface-low-contrast);
 }
 
-.fade-enter {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 1s ease, transform 0.3s ease;
-}
 
-.fade-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 .noRecommendations{
   color:var(--subway-bg);
@@ -799,7 +779,7 @@ grid-auto-columns: 169px;
     max-height: 200px;
 }
 
-/* Medium screens: Only show scroll when expanded */
+
 .locationListContainer.expanded {
     overflow-x: auto;
     overflow-y: auto;
@@ -812,21 +792,20 @@ grid-auto-columns: 169px;
 }
 
 }
-/* sidebar responsive */
+
 
 @media (min-width:900px){
   .sidebarContainer{
     width:280px;
      min-height: 510px;  
-    max-height: 85vh; /* Constrain sidebar to viewport */
+    max-height: 85vh;
     height:auto; 
     border-radius: 56px;
     background-color: var(--background);
     box-shadow: 0 4px 20.5px 3px #00000025;
     padding-inline:20px;
     padding-top: 50px;
-    padding-bottom: 20px; /* Add bottom padding */
-   
+    padding-bottom: 20px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -835,7 +814,7 @@ grid-auto-columns: 169px;
     left:50px;
     z-index:10;
     margin-bottom: 0;
-    overflow: hidden; /* Prevent sidebar overflow */
+    overflow: hidden; 
 }
  .locationListContainer>button {
   border: 0;
@@ -949,9 +928,7 @@ align-content: center;
     overflow-y: hidden;
     overflow-x: hidden;
   }
-.sidebarInner img{
-    width:45px;
-} 
+
 
 .dateContainer{
     display:flex;
@@ -960,11 +937,7 @@ align-content: center;
     height:20px;
 }
 
-div.vl{
-    all:unset;
-    border-left: 1px solid #FFFFFF;
-    height:60px;
-}
+
 
 .userdateContainer{  
       z-index:20000;

@@ -1,11 +1,11 @@
-import Button from '../components/button.js';
+import Button from '../components/utils/button.js';
 import Image from 'next/image';
-import Draw01 from '../components/home-draw-1.js';
-import Draw02 from '../components/home-draw-2.js';
-import Draw03 from '../components/home-draw-3.js';
-import '../styles/home-draw-1.css'
-import '../styles/home-draw-2.css'
-import '../styles/home-draw-3.css'
+import Draw01 from '../components/homeComponent/home-draw-1.js';
+import Draw02 from '../components/homeComponent/home-draw-2.js';
+import Draw03 from '../components/homeComponent/home-draw-3.js';
+import '../components/homeComponent/home-draw-1.css'
+import '../components/homeComponent/home-draw-2.css'
+import '../components/homeComponent/home-draw-3.js'
 
 <link
   rel="icon"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import '../styles/comparisonStack.css';
+import './comparisonStack.css';
 
 export default function ComparisonStack({ stack, clearStack, removeItem }) {
     const [isCollapsed, setIsCollapsed] = useState(false);

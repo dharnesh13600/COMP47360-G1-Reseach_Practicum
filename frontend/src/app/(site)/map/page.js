@@ -1,11 +1,10 @@
 'use client';
 import { useState, useEffect,useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import '@/app/styles/map-draw-1.css';
-import '@/app/styles/map-draw-2.css';
-
-const Map = dynamic(() => import('@/app/components/map'), { ssr: false });
-const SideBar = dynamic(() => import('@/app/components/sidebar'), { ssr: false });
+import '../../components/mapComponent/map-draw-1.css';
+import '../../components/mapComponent/map-draw-2.css';
+const Map = dynamic(() => import('@/app/components/mapComponent/map'), { ssr: false });
+const SideBar = dynamic(() => import('@/app/components/sidebar/sidebar'), { ssr: false });
 
 export default function MapPage() {
   const [submitted, setSubmitted] = useState(false);

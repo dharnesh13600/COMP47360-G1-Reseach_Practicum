@@ -1,5 +1,5 @@
 import './styles/dateItem.css';
-import styles from '@/app/styles/sidebar.module.css';
+import styles from '@/app/components/sidebar/sidebar.module.css';
 const DateItem=({children,onClick, className=''})=>{
     
     return (
