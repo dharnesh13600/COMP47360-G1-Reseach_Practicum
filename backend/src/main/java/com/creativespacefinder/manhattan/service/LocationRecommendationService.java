@@ -173,6 +173,9 @@ public class LocationRecommendationService {
             int limit = Math.min(predictions.length, sample.size());
             Map<UUID, BigDecimal> mlScores = new HashMap<>();
 
+            // Get the activity name in lowercase for condition checking
+            String activityLowerCase = activityName.toLowerCase();
+
             for (int i = 0; i < limit; i++) {
                 LocationActivityScore las = sample.get(i);
                 PredictionResponse p = predictions[i];
@@ -181,8 +184,32 @@ public class LocationRecommendationService {
                 double crowdScore = p.getCrowdScore();
                 int crowdNumber = p.getEstimatedCrowdNumber();
 
-                // Muse Score calculation at 60% crowd + 40% cultural activity
-                double museValue = (crowdScore * 0.6) + (cultScore * 0.4);
+                // Apply crowd score inversion for activities other than busking and art sale
+                double adjustedCrowdScore = crowdScore;
+                if (!activityLowerCase.equals("busking") && !activityLowerCase.equals("art sale")) {
+                    adjustedCrowdScore = 10.0 - crowdScore;
+                }
+                
+                // Muse Score calculation with activity-specific weightings
+                double museValue;
+                if (activityLowerCase.equals("busking")) {
+                    museValue = (adjustedCrowdScore * 0.65) + (cultScore * 0.35);
+                } else if (activityLowerCase.equals("art sale")) {
+                    museValue = (adjustedCrowdScore * 0.60) + (cultScore * 0.40);
+                } else if (activityLowerCase.equals("filmmaking")) {
+                    museValue = (adjustedCrowdScore * 0.55) + (cultScore * 0.45);
+                } else if (activityLowerCase.equals("street photography")) {
+                    museValue = (adjustedCrowdScore * 0.40) + (cultScore * 0.60);
+                } else if (activityLowerCase.equals("portrait photography")) {
+                    museValue = (adjustedCrowdScore * 0.30) + (cultScore * 0.70);
+                } else if (activityLowerCase.equals("portrait painting")) {
+                    museValue = (adjustedCrowdScore * 0.35) + (cultScore * 0.65);
+                } else if (activityLowerCase.equals("landscape painting")) {
+                    museValue = (adjustedCrowdScore * 0.35) + (cultScore * 0.65);
+                } else {
+                    // Default case for any other activities
+                    museValue = (adjustedCrowdScore * 0.6) + (cultScore * 0.4);
+                }
                 
                 // Make sure the muse score is between 1.0 and 10.0
                 museValue = Math.max(1.0, Math.min(10.0, museValue));

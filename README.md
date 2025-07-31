@@ -2,7 +2,7 @@
 
 A location recommendation system for artists in Manhattan that suggests optimal locations for artistic activities based on crowd levels and past event data for the creative disciplines.
 
-## 📋 Project Overview
+## Project Overview
 
 Manhattan Muse is a summer research project that creates a web application to help artists find the perfect spots in Manhattan to perform their artistic activities. Users input their activity type, preferred date/time, and receive personalized location recommendations with real-time weather forecasts.
 
@@ -16,7 +16,7 @@ Manhattan Muse is a summer research project that creates a web application to he
 - **Interactive Map**: Visual exploration of recommended locations with MapBox integration
 - **Admin Dashboard**: Backend management and cache warming capabilities
 
-## 🏗️ Architecture
+## Architecture
 
 ### Frontend (Next.js)
 - **Design Mockup**: Figma
@@ -45,177 +45,49 @@ Manhattan Muse is a summer research project that creates a web application to he
 ## Web Design 
 **Design Process, Key Elements and Changes**: [https://drive.google.com/file/d/1nqOlq860SyPoxcr4U6ZHBvl_H_NyLCZY/view?usp=sharing](https://drive.google.com/drive/folders/1WgBpJfn9HCT-EWYug160Cbf_rA_pVuan?usp=sharing)
 
-## 🚀 API Endpoints
+--- 
 
-### Public Endpoints
+## Project Structure
 
-#### Activities Management
-```http
-GET /api/recommendations/activities
-```
-Returns all available artistic activities for dropdown selection.
+├── backend/
+│   ├── src/main/java/com/creativespacefinder/manhattan/
+│   │   ├── controller/  # REST API endpoints (e.g., RecommendationController)
+│   │   ├── service/     # Core business logic (e.g., LocationRecommendationService)
+│   │   ├── repository/  # Data access layer using Spring Data JPA
+│   │   └── entity/      # Database models/entities (e.g., EventLocation, TaxiZone)
+│   ├── src/test/        # Unit and integration tests (JUnit, Mockito, Testcontainers)
+│   ├── pom.xml          # Maven project dependencies and build configuration
+│   └── Dockerfile       # Container definition for the Java API
+├── data-analytics/
+│   ├── data pre-processing/ # Jupyter notebooks for initial data cleaning (e.g., Yellow_Taxi_cleaning.ipynb)
+│   ├── data processing/     # Scripts for feature engineering (e.g., creative_activity_score.ipynb)
+│   └── data modeling/
+│       ├── notebooks/     # Experimental models (RandomForest, CatBoost, LightGBM)
+│       ├── main.py        # FastAPI application to serve the model
+│       └── xgboost_model.pkl  # Final serialized prediction model
+├── frontend/
+│   ├── src/app/
+│   │   ├── (site)/      # Public-facing pages (map, about, home)
+│   │   ├── admin/       # Protected admin dashboard routes
+│   │   ├── api/         # Next.js API routes for server-side functions
+│   │   └── components/  # Reusable React components (map, sidebar, dropdowns)
+│   ├── public/          # Static assets (images, icons)
+│   ├── next.config.mjs  # Next.js application configuration
+│   └── Dockerfile       # Multi-stage container definition for the Next.js app
+├── k8s/
+│   ├── backend-deployment.tmpl    # Kubernetes manifest for deploying the backend
+│   ├── frontend-deployment.tmpl   # Kubernetes manifest for deploying the frontend
+│   └── ingress.tmpl             # Kubernetes Ingress resource configuration
+├── load-testing/
+│   └── ManhattanMuse-Heavy-Test.jmx # JMeter test plan for high-traffic simulation
+├── nginx/
+│   ├── nginx.conf       # Reverse proxy rules for the Ingress controller
+│   └── Dockerfile       # Container definition for the Nginx proxy
+└── README.md
 
-#### Weather Services
-```http
-GET /api/forecast
-GET /api/forecast/available-datetimes
-GET /api/forecast/at?dateTime=2025-07-12T08:00
-```
-Comprehensive weather data with hourly forecasts and specific datetime queries.
+---
 
-#### Location Recommendations
-```http
-POST /api/recommendations
-Content-Type: application/json
-
-{
-  "activity": "photography",
-  "dateTime": "2025-07-12T08:00",
-  "selectedZone": "west village" // optional for zone-specific search
-}
-```
-Core recommendation engine returning up to 10 optimized locations with scoring breakdown.
-
-#### Zone Management
-```http
-GET /api/recommendations/zones
-```
-Available Manhattan zones for area-specific searches.
-
-#### Health Check
-```http
-GET /api/recommendations/health
-```
-
-### Analytics Endpoints
-
-#### Popular Combinations
-```http
-GET /api/analytics/popular-combinations
-```
-Returns most requested activity/time combinations for cache optimization and usage insights.
-
-**Response Structure:**
-```json
-[
-  {
-    "activity": "Portrait photography",
-    "hour": 15,
-    "dayOfWeek": 6,
-    "requestCount": 25,
-    "lastRequested": "2025-07-25T15:30:00",
-    "avgResponseTime": 1250
-  }
-]
-```
-
-#### Cache Performance Analysis
-```http
-GET /api/analytics/cache-performance
-```
-Monitor cache effectiveness across different activities and times.
-
-**Response Structure:**
-```json
-[
-  {
-    "activity": "Street photography",
-    "hour": 17,
-    "cacheHitRate": "89.5%",
-    "totalRequests": 45,
-    "avgResponseTime": 850
-  }
-]
-```
-
-#### Activity Trends
-```http
-GET /api/analytics/activity-trends
-```
-Understand overall activity popularity and performance metrics.
-
-**Response Structure:**
-```json
-[
-  {
-    "activity": "Portrait photography",
-    "totalRequests": 150,
-    "avgResponseTime": 1100,
-    "lastRequested": "2025-07-25T16:00:00"
-  }
-]
-```
-
-#### Hourly Usage Patterns
-```http
-GET /api/analytics/hourly-patterns
-```
-Identify peak usage hours and activity diversity for capacity planning.
-
-**Response Structure:**
-```json
-[
-  {
-    "hour": 15,
-    "totalRequests": 85,
-    "uniqueActivities": 7
-  }
-]
-```
-
-#### Recent Activity
-```http
-GET /api/analytics/recent-activity
-```
-Monitor recent system usage (last 7 days) with detailed metrics.
-
-**Response Structure:**
-```json
-[
-  {
-    "activity": "Filmmaking",
-    "hour": 14,
-    "requestCount": 3,
-    "lastRequested": "2025-07-25T14:30:00",
-    "cacheHit": true,
-    "responseTime": 95
-  }
-]
-```
-
-#### Analytics Dashboard
-```http
-GET /api/analytics/dashboard
-```
-Executive summary of user statistics, system metrics and performance indicators.
-
-**Response Structure:**
-```json
-{
-  "popularCombinations": 25,
-  "avgCacheHitRate": "85.3%",
-  "totalActivities": 8,
-  "totalRequests": 1250,
-  "recentActivityCount": 45
-}
-```
-
-### Admin Endpoints (Authentication Required)
-
-#### Authentication
-```http
-POST /api/admin/login
-GET /api/admin/validate-session
-POST /api/admin/logout
-```
-
-#### Cache Management
-```http
-POST /api/admin/warm-cache
-GET /api/admin/cache-status
-```
-
-## 🛠️ Setup & Installation
+## Setup & Installation
 
 ### Prerequisites
 - **Java 17+** for backend services
@@ -289,7 +161,7 @@ python app.py
 - Run initial data migrations
 - Verify database connectivity to Java backend
 
-## 🎯 Usage
+## Usage
 
 ### For Artists
 1. **Select Activity**: Choose your artistic pursuit from the dropdown
@@ -307,7 +179,7 @@ python app.py
 4. **Session Management**: Monitor active admin sessions
 5. **User Analytics**: View user selection insights
 
-## 🔧 Development
+## Development
 
 ### Backend Development
 - **Framework**: Spring Boot with Maven
@@ -325,7 +197,7 @@ python app.py
 - **Data Processing**: ETL pipelines for location and activity data
 - **Model Deployment**: Automated .pkl file generation and deployment
 
-## 🧪 Testing
+## Testing
 
 ### API Testing
 Use the provided `test-all.http` file for comprehensive endpoint testing:
@@ -370,36 +242,7 @@ GET /api/analytics/hourly-patterns
 GET /api/analytics/recent-activity
 ```
 
-## 📊 Data Models
-
-### Location Recommendation Response
-```json
-{
-  "locations": [
-    {
-      "id": "888a34ae-dcfd-4e2f-bfb5-43782c91aecd",
-      "zoneName": "Washington Square Park: Arch Plaza",
-      "latitude": 40.7312185,
-      "longitude": -73.9970929,
-      "combinedScore": 5.03,
-      "activityScore": 4.14,
-      "museScore": 6.5,
-      "crowdScore": 8,
-      "estimatedCrowdNumber": 250,
-      "scoreBreakdown": {
-        "activityScore": 4.14,
-        "museScore": 6.5,
-        "crowdScore": 8
-      }
-    }
-  ],
-  "activity": "photography",
-  "requestedDateTime": "2025-07-12T08:00",
-  "totalResults": 10
-}
-```
-
-## 🚀 Deployment
+## Deployment
 
 ### Our Production Deployment
 - **Environment Configuration**: Separate configs for dev/staging/prod
@@ -414,7 +257,7 @@ GET /api/analytics/recent-activity
 - **Error Tracking**: Comprehensive error handling and reporting
 - **Cache Analytics**: Monitor cache hit rates and performance
 
-## 👥 Team
+## The Team
 
 - **Backend Team Lead**: Mark Tully
 - **Data Analytics Lead**: Rahul Murali
@@ -423,7 +266,7 @@ GET /api/analytics/recent-activity
 - **Customer Lead**: Phirada Kanjanangkuplpunt
 - **Coordination Lead**: Ting Li
 
-## 📝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create feature branches (`git checkout -b feature/new-feature`)
@@ -431,7 +274,7 @@ GET /api/analytics/recent-activity
 4. Push to branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is developed as part of a summer research program, for COMP47360 via group 1.
 
