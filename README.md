@@ -48,43 +48,50 @@ Manhattan Muse is a summer research project that creates a web application to he
 --- 
 
 ## Project Structure
-
+```plaintext
+.
 ├── backend/
 │   ├── src/main/java/com/creativespacefinder/manhattan/
-│   │   ├── controller/  # REST API endpoints (e.g., RecommendationController)
-│   │   ├── service/     # Core business logic (e.g., LocationRecommendationService)
-│   │   ├── repository/  # Data access layer using Spring Data JPA
-│   │   └── entity/      # Database models/entities (e.g., EventLocation, TaxiZone)
-│   ├── src/test/        # Unit and integration tests (JUnit, Mockito, Testcontainers)
-│   ├── pom.xml          # Maven project dependencies and build configuration
-│   └── Dockerfile       # Container definition for the Java API
+│   │   ├── controller/      # REST API endpoints (e.g., RecommendationController)
+│   │   ├── service/         # Core business logic (e.g., LocationRecommendationService)
+│   │   ├── repository/      # Data access layer using Spring Data JPA
+│   │   └── entity/          # Database models/entities (e.g., EventLocation, TaxiZone)
+│   ├── src/test/            # Unit and integration tests (JUnit, Mockito, Testcontainers)
+│   ├── pom.xml              # Maven project dependencies and build configuration
+│   └── Dockerfile           # Container definition for the Java API
+│
 ├── data-analytics/
 │   ├── data pre-processing/ # Jupyter notebooks for initial data cleaning (e.g., Yellow_Taxi_cleaning.ipynb)
 │   ├── data processing/     # Scripts for feature engineering (e.g., creative_activity_score.ipynb)
 │   └── data modeling/
-│       ├── notebooks/     # Experimental models (RandomForest, CatBoost, LightGBM)
-│       ├── main.py        # FastAPI application to serve the model
+│       ├── notebooks/       # Experimental models (RandomForest, CatBoost, LightGBM)
+│       ├── main.py          # FastAPI application to serve the model
 │       └── xgboost_model.pkl  # Final serialized prediction model
+│
 ├── frontend/
 │   ├── src/app/
-│   │   ├── (site)/      # Public-facing pages (map, about, home)
-│   │   ├── admin/       # Protected admin dashboard routes
-│   │   ├── api/         # Next.js API routes for server-side functions
-│   │   └── components/  # Reusable React components (map, sidebar, dropdowns)
-│   ├── public/          # Static assets (images, icons)
-│   ├── next.config.mjs  # Next.js application configuration
-│   └── Dockerfile       # Multi-stage container definition for the Next.js app
+│   │   ├── (site)/          # Public-facing pages (map, about, home)
+│   │   ├── admin/           # Protected admin dashboard routes
+│   │   ├── api/             # Next.js API routes for server-side functions
+│   │   └── components/      # Reusable React components (map, sidebar, dropdowns)
+│   ├── public/              # Static assets (images, icons)
+│   ├── next.config.mjs      # Next.js application configuration
+│   └── Dockerfile           # Multi-stage container definition for the Next.js app
+│
 ├── k8s/
-│   ├── backend-deployment.tmpl    # Kubernetes manifest for deploying the backend
-│   ├── frontend-deployment.tmpl   # Kubernetes manifest for deploying the frontend
-│   └── ingress.tmpl             # Kubernetes Ingress resource configuration
+│   ├── backend-deployment.tmpl   # Kubernetes manifest for deploying the backend
+│   ├── frontend-deployment.tmpl  # Kubernetes manifest for deploying the frontend
+│   └── ingress.tmpl              # Kubernetes Ingress resource configuration
+│
 ├── load-testing/
 │   └── ManhattanMuse-Heavy-Test.jmx # JMeter test plan for high-traffic simulation
+│
 ├── nginx/
-│   ├── nginx.conf       # Reverse proxy rules for the Ingress controller
-│   └── Dockerfile       # Container definition for the Nginx proxy
+│   ├── nginx.conf           # Reverse proxy rules for the Ingress controller
+│   └── Dockerfile           # Container definition for the Nginx proxy
+│
 └── README.md
-
+```
 ---
 
 ## Setup & Installation
@@ -153,7 +160,7 @@ npm run dev
 ```bash
 cd data-analytics
 pip install -r requirements.txt
-python app.py
+uvicorn main:app --reload
 ```
 
 5. **Database Setup**

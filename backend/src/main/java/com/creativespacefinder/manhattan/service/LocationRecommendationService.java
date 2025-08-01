@@ -184,13 +184,13 @@ public class LocationRecommendationService {
                 double crowdScore = p.getCrowdScore();
                 int crowdNumber = p.getEstimatedCrowdNumber();
 
-                // Apply crowd score inversion for activities other than busking and art sale
+                // Crowd score inversion for activities other than busking and art sale (explaned in the report)
                 double adjustedCrowdScore = crowdScore;
                 if (!activityLowerCase.equals("busking") && !activityLowerCase.equals("art sale")) {
                     adjustedCrowdScore = 10.0 - crowdScore;
                 }
                 
-                // Muse Score calculation with activity-specific weightings
+                // Muse Score calculation with weightings dependent on activity (justified and referenced in the final report)
                 double museValue;
                 if (activityLowerCase.equals("busking")) {
                     museValue = (adjustedCrowdScore * 0.65) + (cultScore * 0.35);
@@ -211,7 +211,7 @@ public class LocationRecommendationService {
                     museValue = (adjustedCrowdScore * 0.6) + (cultScore * 0.4);
                 }
                 
-                // Make sure the muse score is between 1.0 and 10.0
+                // Don't need to but just incase: make sure the muse score is between 1.0 and 10.0
                 museValue = Math.max(1.0, Math.min(10.0, museValue));
 
                 // Convert it to a BigDecimal
