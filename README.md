@@ -265,7 +265,9 @@ GET /api/analytics/recent-activity
 - **Cache Analytics**: Monitor cache hit rates and performance
 
 ### CI/CD Pipelines
-We use Jenkins to fully automate build, test, containerization and deploy steps for both frontend and backend services. The Docker images are created and stored in Google Artifact Registry(AR) and deployeed in Google Kubernetes Engine.
+- **We use Jenkins to fully automate build, test, containerization and deploy steps for both frontend and backend services. 
+- **The Docker images are created and stored in Google Artifact Registry(AR) and deployeed in Google Kubernetes Engine.
+- **For the backend CICD we have used SonarQube for security testing and coverage.
 
 ## The Team
 
