@@ -1,10 +1,8 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-// import Sidebar from '../src/app/components/sidebar/sidebar'
-// ⬅️ ADDED: import the real component under a different name
+
 import RealSidebar from '../src/app/components/sidebar/sidebar'
-// ⬅️ ADDED: wrapper that injects safe defaults for the missing callbacks
 const Sidebar = props => (
   <RealSidebar
     onSelectedTimeChange={() => {}}
