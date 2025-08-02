@@ -264,6 +264,9 @@ GET /api/analytics/recent-activity
 - **Error Tracking**: Comprehensive error handling and reporting
 - **Cache Analytics**: Monitor cache hit rates and performance
 
+### CI/CD Pipelines
+We use Jenkins to fully automate build, test, containerization and deploy steps for both frontend and backend services. The Docker images are created and stored in Google Artifact Registry(AR) and deployeed in Google Kubernetes Engine.
+
 ## The Team
 
 - **Backend Team Lead**: Mark Tully
@@ -272,14 +275,6 @@ GET /api/analytics/recent-activity
 - **Maintenance Lead**: Dharnesh Vasudev Indumathi Ramesh Kumar
 - **Customer Lead**: Phirada Kanjanangkuplpunt
 - **Coordination Lead**: Ting Li
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branches (`git checkout -b feature/new-feature`)
-3. Commit changes (`git commit -m 'Add new feature'`)
-4. Push to branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
 
 ## License
 
