@@ -7,7 +7,7 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }))
 
-import Home from '../src/app/page'  
+import Home from '../src/app/(site)/page'  
 
 describe('<Home /> “Go To Map” button', () => {
   beforeEach(() => {

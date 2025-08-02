@@ -7,7 +7,7 @@ jest.mock('next/link', () => {
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Navbar from '../src/app/components/header';
+import Navbar from '../src/app/components/homeComponent/header';
 import { createMockRouter } from './nextRouterMock';
 
 jest.mock('next/navigation', () => ({

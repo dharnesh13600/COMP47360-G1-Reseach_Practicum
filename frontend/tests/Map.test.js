@@ -30,7 +30,7 @@ jest.mock('mapbox-gl', () => {
 
 
 const mapboxgl = require('mapbox-gl')
-const { default: Map } = require('../src/app/components/map.js')
+const { default: Map } = require('../src/app/components/mapComponent/map')
 
 const { flyToMock, onMock } = mapboxgl
 

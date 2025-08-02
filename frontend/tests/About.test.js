@@ -14,7 +14,7 @@ jest.mock('next/link', () => {
   return { __esModule: true, default: Link, Link }
 })
 
-import About from '../src/app/components/about'
+import About from '../src/app/components/aboutComponent/about'
 
 describe('<About /> “Go To Map” link', () => {
   it('renders the Go To Map link pointing at /map', () => {
