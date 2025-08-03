@@ -143,7 +143,7 @@ public class RecommendationControllerIT {
         mvc.perform(MockMvcRequestBuilders.post("/api/recommendations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().is4xxClientError())  // ✅ Changed from is5xxServerError() to is4xxClientError()
+                .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.message").value("Activity is required"));
     }

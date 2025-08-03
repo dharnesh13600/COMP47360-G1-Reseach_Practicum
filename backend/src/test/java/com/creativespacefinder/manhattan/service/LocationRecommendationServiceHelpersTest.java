@@ -79,7 +79,6 @@ class LocationRecommendationServiceHelpersTest {
 
   @Test
   void isQuietActivity_detectsQuietKeywords() {
-    // private method via reflection
     boolean b1 = (boolean) ReflectionTestUtils.invokeMethod(svc, "isQuietActivity", "reading");
     boolean b2 = (boolean) ReflectionTestUtils.invokeMethod(svc, "isQuietActivity", "hiking");
 

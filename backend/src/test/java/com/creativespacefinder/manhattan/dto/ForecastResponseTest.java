@@ -21,6 +21,8 @@ class ForecastResponseTest {
         objectMapper = new ObjectMapper();
     }
 
+    // full json payload deserializes correctly
+
     @Test
     void testJsonDeserialization() throws Exception {
         String json = """
@@ -90,7 +92,9 @@ class ForecastResponseTest {
                                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         assertEquals(expectedReadableTime, firstForecast.getReadableTime());
     }
-
+    
+    // getTemp should return 0.0
+    
     @Test
     void testGetTemp_NoTempInfo() throws Exception {
         String jsonWithNullMain = """
@@ -103,6 +107,8 @@ class ForecastResponseTest {
         ForecastResponse.HourlyForecast forecast = objectMapper.readValue(jsonWithNullMain, ForecastResponse.HourlyForecast.class);
         assertEquals(0.0, forecast.getTemp());
     }
+
+    // getCondition() should return "Unknown" weather array is missing
 
     @Test
     void testGetCondition_NoWeatherInfo() throws Exception {
@@ -126,6 +132,8 @@ class ForecastResponseTest {
         ForecastResponse.HourlyForecast forecastEmptyWeather = objectMapper.readValue(jsonWithEmptyWeather, ForecastResponse.HourlyForecast.class);
         assertEquals("Unknown", forecastEmptyWeather.getCondition());
     }
+
+    // Round trip serializaton produces identical data
 
     @Test
     void testSerializationAndDeserializationConsistency() throws Exception {

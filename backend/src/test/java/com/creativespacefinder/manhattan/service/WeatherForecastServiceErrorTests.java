@@ -44,7 +44,6 @@ class WeatherForecastServiceErrorTests {
         var data = spy.getWeatherForDateTime(target);
 
         assertThat(data.getDateTime()).isEqualTo(target);
-        // ← changed here:
         assertThat(data.getTemperature()).isEqualByComparingTo("70.0");
         assertThat(data.getCondition()).isEqualTo("Clear");
         assertThat(data.getDescription()).isEqualTo("clear sky");

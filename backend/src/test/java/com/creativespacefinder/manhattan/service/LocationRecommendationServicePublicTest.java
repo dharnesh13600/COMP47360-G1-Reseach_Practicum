@@ -75,13 +75,11 @@ class LocationRecommendationServicePublicTest {
 
     @Test
     void whenActivityNotFound_thenThrowsRuntimeException() {
-        // Arrange: make findByName return empty
         when(activityRepo.findByName("MissingActivity"))
                 .thenReturn(Optional.empty());
 
         RecommendationRequest req = new RecommendationRequest("MissingActivity", NOW, null);
 
-        // Act & Assert
         RuntimeException ex = assertThrows(
                 RuntimeException.class,
                 () -> service.getLocationRecommendations(req)
@@ -102,7 +100,7 @@ class LocationRecommendationServicePublicTest {
         var s1 = makeScore(id1, 40.0, -73.0, "Z");
         var s2 = makeScore(id2, 40.00045, -73.0, "Z");
         when(lasRepo.findByIdsWithEagerLoading(any()))
-                .thenReturn(new ArrayList<>(List.of(s1, s2))); // mutable list
+                .thenReturn(new ArrayList<>(List.of(s1, s2))); 
 
         stubML(2);
         RecommendationResponse resp = service.getLocationRecommendations(
@@ -125,7 +123,7 @@ class LocationRecommendationServicePublicTest {
         var s1 = makeScore(id1, 40.0, -73.0, "Z");
         var s2 = makeScore(id2, 40.009, -73.0, "Z");
         when(lasRepo.findByIdsWithEagerLoading(any()))
-                .thenReturn(new ArrayList<>(List.of(s1, s2))); // mutable list
+                .thenReturn(new ArrayList<>(List.of(s1, s2))); 
 
         stubML(2);
         RecommendationResponse resp = service.getLocationRecommendations(
