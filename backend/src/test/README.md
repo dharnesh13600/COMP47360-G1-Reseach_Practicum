@@ -14,7 +14,7 @@ Boots the whole spring context, wires up an H2 in memory database, and starts a 
 
 ### Unit Testing
 
-* **Controllers**  
+**Controllers**  
 
 * `AdminControllerTest`- authenticates, warmsand clears the cache and protects the endpoints.
 * `WeatherForecastControllerTest` - tests the flow of the weather forecast endpoint, 200/400/500 flows, forecast time limits and wrong methods.
@@ -22,9 +22,9 @@ Boots the whole spring context, wires up an H2 in memory database, and starts a 
 * `HealthControllerTest` - tests basic health checks as well as error paths.
 * `HealthControllerBadRequestTest` - tests invalid paths and internal failures.
 
-* **Services** 
+**Services** 
 
-* `LocationRecommendationServiceTest*` - tests the service's workflow, behaviourwhen there are no location match and error is raised when there is no activity.
+* `LocationRecommendationServiceTest` - tests the service's workflow, behaviourwhen there are no location match and error is raised when there is no activity.
 * `LocationRecommendationServiceSimpleTests` - tests the getters for activities, dates, time and zones.
 * `LocationRecommendationServiceHelpersTest` - tests the hepler methods that forward queries to the repository, hamdles the user's "quite-location" preference.
 * `LocationRecommendationServiceHelperTest` - tests all the hepler methods that builds repository query ensuring zome filters are correctly applied or skipped.
@@ -33,19 +33,19 @@ Boots the whole spring context, wires up an H2 in memory database, and starts a 
 * `WeatherForecastServiceTest` - tests the happy path of openweather, handling of 404 errors and json errors and the default 70F when the waether API is down.
 * `WeatherForecastServiceErrorTests` - tests the malformed responses and the API failures
 
-* **Repositories** - 
+**Repositories** - 
 
 * `ActivityRepositoryTest`- case-insensitive finds and exists queries.
 * `LocationActivityScoreRepositoryTest` - finds date or time, ML vs historical counts, eager loading and H2-limitation guard.
 
-* **DTOs** 
+**DTOs** 
 
 * `ForeccastResponseTest` - tests whether the forecast response can make a complete round trip, checks whether the hepler methods return null pointer exceptions
 * `ForecastResponseUnknownPropsTest` - ignores extra fields in json.
 * `LocationRecommendationResponseTest` - tests all getters,setters, constructors work as expected
 * `PredictionResponseTest` - handles null muse scores,checks, checks all the variants of constructors.
 
-* **Entities**
+**Entities**
 
 * `ActivityTest` - Tests all the getters and setters work, checks the equals() and hashcode() methods.
 * `EventLocationTest` - helper constructor + tests for basic getters and setters.
@@ -53,7 +53,12 @@ Boots the whole spring context, wires up an H2 in memory database, and starts a 
 * `TaxiZonetest` - simple sanity tests for each and every constructor, accessor and a readable toString()
 * `RequestAnalyticsTest` - tests the default values, round-trip setters and counter increment.
 
-* **Exceptions**
+**Exceptions**
 
 * `ApiExceptionTest` - ensures both constructors preserve the message and confirms the excpetion serialises with no side effects.
 * `GlobalExceptionHandlerTest` - maps 8 error categories to REST json responses.
+
+### Integration Testing
+
+**`RecommendationControllerIT`** - it hits `/api/recommendations`, `/api/activities`, `/api/zones` , seeds the database with Flyway and uses wiremock for external calls
+
