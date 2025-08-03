@@ -36,7 +36,7 @@ public class HealthControllerBadRequestTest {
     void invalidEndpoint_returns500() throws Exception {
         // calls a bad path which should give HTTP 500
         mockMvc.perform(get("/api/health/badpath"))
-                .andExpect(status().isInternalServerError());    // ← now expecting 500
+                .andExpect(status().isInternalServerError());   
     }
 
     @Test

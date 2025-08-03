@@ -60,5 +60,5 @@ Boots the whole spring context, wires up an H2 in memory database, and starts a 
 
 ### Integration Testing
 
-**`RecommendationControllerIT`** - it hits `/api/recommendations`, `/api/activities`, `/api/zones` , seeds the database with Flyway and uses wiremock for external calls
+**`RecommendationControllerIT`** - it hits `/api/recommendations`, `/api/activities`, `/api/zones` , seeds the database with Flyway and uses wiremock for external calls.
 

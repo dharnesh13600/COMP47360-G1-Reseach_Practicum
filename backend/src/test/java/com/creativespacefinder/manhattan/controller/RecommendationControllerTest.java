@@ -26,16 +26,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(RecommendationController.class)
+@WebMvcTest(RecommendationController.class)            // scans the controller and MVC infra
 class RecommendationControllerTest {
 
     @Autowired
-    private MockMvc mvc;
+    private MockMvc mvc;        //fake http request
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper mapper;        //json deserialisation
 
-    // mock your controller's dependencies:
     @MockBean
     private LocationRecommendationService service;
 
@@ -44,6 +43,7 @@ class RecommendationControllerTest {
 
     private final LocalDateTime NOW = LocalDateTime.of(2025,7,17,15,0);
 
+         // valid json request returns 200 and correct body   
     @Test
     void postRecommendations_validRequest_returns200AndBody() throws Exception {
         RecommendationRequest req = new RecommendationRequest("Art", NOW, null);
@@ -72,8 +72,10 @@ class RecommendationControllerTest {
                 .andExpect(jsonPath("$.totalResults").value(1));
     }
 
+  // Missing body should return 400 Bad request
+
     @Test
-    @DisplayName("POST /api/recommendations with empty body → 400 Bad Request")
+    @DisplayName("POST /api/recommendations with empty body - 400 Bad Request")
     void postMissingBody_returns400() throws Exception {
         mvc.perform(post("/api/recommendations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -81,15 +83,19 @@ class RecommendationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    // Wrong http methods results in 405 method not allowed
+
     @Test
-    @DisplayName("PUT /api/recommendations/activities → 405 Method Not Allowed")
+    @DisplayName("PUT /api/recommendations/activities - 405 Method Not Allowed")
     void activities_whenPut_returns405() throws Exception {
         mvc.perform(put("/api/recommendations/activities"))
                 .andExpect(status().isMethodNotAllowed());
     }
 
+    
+    // GET available zones returns 200 and an empty array when nothing exists
     @Test
-    @DisplayName("GET /api/recommendations/zones empty → 200 + empty array")
+    @DisplayName("GET /api/recommendations/zones empty - 200 + empty array")
     void zones_emptyList_returns200AndEmptyArray() throws Exception {
         given(service.getAvailableZones()).willReturn(List.of());
         mvc.perform(get("/api/recommendations/zones"))
@@ -98,10 +104,11 @@ class RecommendationControllerTest {
                 .andExpect(jsonPath("$").isEmpty());
     }
 
+    // POST with too large payload returns 400 Bad Request
     @Test
-    @DisplayName("POST /api/recommendations with too large payload → 400 Bad Request")
+    @DisplayName("POST /api/recommendations with too large payload - 400 Bad Request")
     void postTooLarge_returns400() throws Exception {
-        // create a ~1MB string
+       
         StringBuilder sb = new StringBuilder("{\"x\":\"");
         for (int i = 0; i < 1024*1024; i++) sb.append('A');
         sb.append("\"}");
@@ -111,10 +118,11 @@ class RecommendationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    // missing datatime field gives 400 Bad request
     @Test
-    @DisplayName("POST /api/recommendations missing dateTime → 400 Bad Request")
+    @DisplayName("POST /api/recommendations missing dateTime - 400 Bad Request")
     void postMissingDateTime_returns400() throws Exception {
-        // dateTime = null
+        
         RecommendationRequest req = new RecommendationRequest("Art", null, null);
         mvc.perform(post("/api/recommendations")
                         .contentType(MediaType.APPLICATION_JSON)

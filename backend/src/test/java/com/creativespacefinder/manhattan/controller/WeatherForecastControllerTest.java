@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(print = MockMvcPrint.SYSTEM_OUT, addFilters = false)
 @WebMvcTest(controllers = WeatherForecastController.class)
-@Import(GlobalExceptionHandler.class)
+@Import(GlobalExceptionHandler.class)   //using real error handler for json errors
 class WeatherForecastControllerTest {
 
     @Autowired
@@ -38,8 +38,10 @@ class WeatherForecastControllerTest {
     @MockBean
     private WeatherForecastService wxSvc;
 
+    // GET /api/forecast with no query parameters return a 96 hour forecast and http 200 code
+
     @Test
-    @DisplayName("GET /api/forecast → 200 + JSON (no param)")
+    @DisplayName("GET /api/forecast - 200 + JSON (no param)")
     void getForecastWithoutParam_returns200() throws Exception {
         when(wxSvc.get96HourForecast()).thenReturn(new ForecastResponse());
 
@@ -49,8 +51,9 @@ class WeatherForecastControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
+        // Wrong HTTP method should respond with 405 error code
     @Test
-    @DisplayName("PUT /api/forecast → 405 METHOD_NOT_ALLOWED")
+    @DisplayName("PUT /api/forecast - 405 METHOD_NOT_ALLOWED")
     void putForecast_returns405() throws Exception {
         mvc.perform(put("/api/forecast")
                         .accept(MediaType.APPLICATION_JSON))
@@ -61,10 +64,8 @@ class WeatherForecastControllerTest {
                         containsString("Request method 'PUT' is not supported")));
     }
 
-
-
     @Test
-    @DisplayName("GET /api/forecast?datetime=valid → 200 + JSON body")
+    @DisplayName("GET /api/forecast?datetime=valid - 200 + JSON body")
     void getForecastWithParam_returnsJsonBody() throws Exception {
         WeatherData wd = new WeatherData();
         wd.setDateTime(LocalDateTime.of(2025, 7, 20, 9, 0));
@@ -80,8 +81,9 @@ class WeatherForecastControllerTest {
                 .andExpect(jsonPath("$.temperature").value(21.5));
     }
 
+    // Invalid date time format
     @Test
-    @DisplayName("GET /api/forecast?datetime=invalid → 400 INVALID_DATETIME")
+    @DisplayName("GET /api/forecast?datetime=invalid - 400 INVALID_DATETIME")
     void getForecast_invalidDate_returns400() throws Exception {
         mvc.perform(get("/api/forecast")
                         .param("datetime", "not-a-date")
@@ -93,8 +95,10 @@ class WeatherForecastControllerTest {
                         containsString("could not be parsed")));
     }
 
+    // Service throws a runtime exception
+
     @Test
-    @DisplayName("GET /api/forecast?datetime=… service throws → 500 INTERNAL_ERROR")
+    @DisplayName("GET /api/forecast?datetime = service throws - 500 INTERNAL_ERROR")
     void getForecast_serviceThrows_returns500() throws Exception {
         when(wxSvc.getWeatherForDateTime(any(LocalDateTime.class)))
                 .thenThrow(new RuntimeException("ups"));
@@ -108,8 +112,10 @@ class WeatherForecastControllerTest {
                 .andExpect(jsonPath("$.message").value("ups"));
     }
 
+ // GET availaable datetimes
+
     @Test
-    @DisplayName("GET /api/forecast/available-datetimes → 200 + JSON array")
+    @DisplayName("GET /api/forecast/available-datetimes - 200 + JSON array")
     void getForecastTimes_returnsJsonArray() throws Exception {
         var times = List.of(
                 LocalDateTime.of(2025, 7, 20, 9, 0),
@@ -126,8 +132,9 @@ class WeatherForecastControllerTest {
                 .andExpect(jsonPath("$[1]").value("2025-07-20T12:00:00"));
     }
 
+   
     @Test
-    @DisplayName("GET /api/forecast/available-datetimes service throws → 500 INTERNAL_ERROR")
+    @DisplayName("GET /api/forecast/available-datetimes service throws - 500 INTERNAL_ERROR")
     void getForecastTimes_serviceThrows_returns500() throws Exception {
         when(wxSvc.getAvailableForecastDateTimes())
                 .thenThrow(new RuntimeException("boom"));
@@ -141,7 +148,7 @@ class WeatherForecastControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/forecast/available-datetimes Accept=XML → 406 Not Acceptable")
+    @DisplayName("GET /api/forecast/available-datetimes Accept=XML - 406 Not Acceptable")
     void getAvailableDatetimes_wrongAccept_returns406() throws Exception {
         mvc.perform(get("/api/forecast/available-datetimes")
                         .accept(MediaType.APPLICATION_XML))

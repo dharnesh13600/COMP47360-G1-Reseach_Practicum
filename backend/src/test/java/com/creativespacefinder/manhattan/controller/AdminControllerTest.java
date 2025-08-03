@@ -118,7 +118,7 @@ class AdminControllerTest {
 
                 // Login and call the validate session with the session
 
-        @Test @DisplayName("validate-session after login → 200")
+        @Test @DisplayName("validate-session after login - 200")
         void validate_after() throws Exception {
             MockHttpSession sess = login();
             mvc.perform(get("/api/admin/validate-session").session(sess))
@@ -141,7 +141,7 @@ class AdminControllerTest {
                     .triggerAsyncDailyPrecomputation();
         }
 
-        @Test @DisplayName("POST /warm-cache no auth → 401")
+        @Test @DisplayName("POST /warm-cache no auth - 401")
         void warm_noAuth() throws Exception {
             stubWarmService();
             MockHttpSession empty = new MockHttpSession();
@@ -151,7 +151,7 @@ class AdminControllerTest {
             verify(dailyPrecomputationService, never()).triggerAsyncDailyPrecomputation();
         }
 
-        @Test @DisplayName("POST /warm-cache with auth → 200")
+        @Test @DisplayName("POST /warm-cache with auth - 200")
         void warm_withAuth() throws Exception {
             stubWarmService();
             MockHttpSession sess = login();
@@ -161,7 +161,7 @@ class AdminControllerTest {
             verify(dailyPrecomputationService, times(1)).triggerAsyncDailyPrecomputation();
         }
 
-        @Test @DisplayName("GET /cache-status no auth → 401")
+        @Test @DisplayName("GET /cache-status no auth - 401")
         void status_noAuth() throws Exception {
             stubWarmService();
             MockHttpSession empty = new MockHttpSession();
@@ -170,7 +170,7 @@ class AdminControllerTest {
                     .andExpect(content().string("Authentication required"));
         }
 
-        @Test @DisplayName("GET /cache-status with auth → 200")
+        @Test @DisplayName("GET /cache-status with auth - 200")
         void status_withAuth() throws Exception {
             stubWarmService();
             MockHttpSession sess = login();
@@ -182,7 +182,7 @@ class AdminControllerTest {
 
     @Nested @DisplayName(" Debug & Clear Cache Endpoints")
     class CacheTests {
-        @Test @DisplayName("GET /cache-debug no auth → 401")
+        @Test @DisplayName("GET /cache-debug no auth - 401")
         void debug_noAuth() throws Exception {
             MockHttpSession empty = new MockHttpSession();
             mvc.perform(get("/api/admin/cache-debug").session(empty))
@@ -190,7 +190,7 @@ class AdminControllerTest {
                     .andExpect(jsonPath("$.error").value("Authentication required"));
         }
 
-        @Test @DisplayName("GET /cache-debug missing → info")
+        @Test @DisplayName("GET /cache-debug missing - info")
         void debug_missing() throws Exception {
             when(cacheManager.getCache("recommendations")).thenReturn(null);
             MockHttpSession sess = login();
@@ -200,7 +200,7 @@ class AdminControllerTest {
                     .andExpect(jsonPath("$.error").value("Cache 'recommendations' not found"));
         }
 
-        @Test @DisplayName("GET /cache-debug non‑Caffeine → limited")
+        @Test @DisplayName("GET /cache-debug non‑Caffeine - limited")
         void debug_nonCaffeine() throws Exception {
             Cache fake = mock(Cache.class);
             when(cacheManager.getCache("recommendations")).thenReturn(fake);
@@ -233,7 +233,7 @@ class AdminControllerTest {
                     .andExpect(jsonPath("$.totalKeys").value(2));
         }
 
-        @Test @DisplayName("POST /clear-cache no auth → 401")
+        @Test @DisplayName("POST /clear-cache no auth - 401")
         void clear_noAuth() throws Exception {
             MockHttpSession empty = new MockHttpSession();
             mvc.perform(post("/api/admin/clear-cache").session(empty))
@@ -241,7 +241,7 @@ class AdminControllerTest {
                     .andExpect(content().string("Authentication required"));
         }
 
-        @Test @DisplayName("POST /clear-cache missing → 404")
+        @Test @DisplayName("POST /clear-cache missing - 404")
         void clear_missing() throws Exception {
             when(cacheManager.getCache("recommendations")).thenReturn(null);
             MockHttpSession sess = login();
@@ -250,7 +250,7 @@ class AdminControllerTest {
                     .andExpect(content().string("Cache 'recommendations' not found"));
         }
 
-        @Test @DisplayName("POST /clear-cache success → 200")
+        @Test @DisplayName("POST /clear-cache success - 200")
         void clear_success() throws Exception {
             com.github.benmanes.caffeine.cache.Cache<Object,Object> nativeCache =
                     Caffeine.newBuilder().build();
